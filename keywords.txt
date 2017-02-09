@@ -1,0 +1,38 @@
+ESATClock KEYWORD1
+read KEYWORD2
+write KEYWORD2
+
+ESATCommandDispatcher KEYWORD1
+dispatchCommands KEYWORD2
+
+ESATCommandHandler KEYWORD1
+handleCommand KEYWORD2
+
+ESATCOMMSInterface KEYWORD1
+begin KEYWORD2
+handleCommand KEYWORD2
+readTelemetry KEYWORD2
+readCommand KEYWORD2
+writePacket KEYWORD2
+
+ESATOBC KEYWORD1
+begin KEYWORD2
+handleCommand KEYWORD2
+readTelemetry KEYWORD2
+update KEYWORD2
+
+ESATStorage KEYWORD1
+begin KEYWORD2
+write KEYWORD2
+
+ESATTelemetrySender KEYWORD1
+sendTelemetry KEYWORD2
+
+ESATTelemetrySource KEYWORD1
+readTelemetry KEYWORD2
+
+ESATUpdatable KEYWORD1
+update KEYWORD2
+
+ESATUpdater KEYWORD1
+update KEYWORD2
