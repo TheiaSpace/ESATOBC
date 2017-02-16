@@ -37,6 +37,7 @@ void ESATOBCSubsystem::begin()
   Serial.begin(115200);
   Storage.begin();
   I2C.begin();
+  Clock.begin();
   loadIdentifier();
 }
 
