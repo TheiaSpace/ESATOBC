@@ -25,6 +25,11 @@ byte ESATClock::BCDToBinary(byte value)
   return value - 6 * (value >> 4);
 }
 
+void ESATClock::begin()
+{
+  (void) read();
+}
+
 byte ESATClock::binaryToBCD(byte value)
 {
   return value + 6 * (value / 10);
