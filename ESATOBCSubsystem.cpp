@@ -96,7 +96,8 @@ String ESATOBCSubsystem::readTelemetry()
 {
   const unsigned int load = 100 * Timer.ellapsedMilliseconds() / Timer.period;
   const byte status =
-    (ADCSSubsystem.inertialMeasurementUnitAlive << IMU_OFFSET)
+    (Clock.alive << CLOCK_OFFSET)
+    | (ADCSSubsystem.inertialMeasurementUnitAlive << IMU_OFFSET)
     | (EPSSubsystem.responding << EPS_OFFSET)
     | (Storage.working << STORAGE_OFFSET)
     | ((COMMSSubsystem.status & COMMS_MASK) << COMMS_OFFSET);
