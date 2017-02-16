@@ -58,7 +58,6 @@ String ESATClock::read()
   {
     return "00000000000000";
   }
-  return timestamp;
 }
 
 void ESATClock::write(String time)
