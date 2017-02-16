@@ -18,6 +18,7 @@
 
 #include "ESATOBCSubsystem.h"
 #include <MspFlash.h>
+#include "ESATADCSSubsystem.h"
 #include "ESATClock.h"
 #include "ESATCOMMSSubsystem.h"
 #include "ESATEPSSubsystem.h"
@@ -95,7 +96,8 @@ String ESATOBCSubsystem::readTelemetry()
 {
   const unsigned int load = 100 * Timer.ellapsedMilliseconds() / Timer.period;
   const byte status =
-    (EPSSubsystem.responding << EPS_OFFSET)
+    (ADCSSubsystem.inertialMeasurementUnitAlive << IMU_OFFSET)
+    | (EPSSubsystem.responding << EPS_OFFSET)
     | (Storage.working << STORAGE_OFFSET)
     | ((COMMSSubsystem.status & COMMS_MASK) << COMMS_OFFSET);
   String telemetry = Util.intToHexadecimal(status)
