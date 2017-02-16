@@ -24,6 +24,9 @@
 class ESATClock
 {
   public:
+    // True if the clock is alive.
+    boolean alive;
+
     // Read the current time.
     String read();
 

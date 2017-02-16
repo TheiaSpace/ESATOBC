@@ -57,6 +57,7 @@ class ESATOBCSubsystem: public ESATSubsystem
       STORE_TELEMETRY = 2,
     };
 
+    static const byte CLOCK_OFFSET = 0;
     static const byte IMU_OFFSET = 1;
     static const byte EPS_OFFSET = 2;
     static const byte STORAGE_OFFSET = 3;
