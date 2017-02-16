@@ -21,7 +21,7 @@
 
 void ESATStorage::begin()
 {
-  SD.begin(pin);
+  working = SD.begin(pin);
 }
 
 void ESATStorage::write(String filename, String text)
