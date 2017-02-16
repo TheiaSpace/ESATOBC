@@ -41,14 +41,23 @@ String ESATClock::format(byte BCDNumber, byte length)
 String ESATClock::read()
 {
   byte rawTime[7];
-  (void) I2C.read(address, timeRegister, rawTime, sizeof(rawTime));
-  String timestamp = "20"
-                   + format(rawTime[6], 2)
-                   + format(rawTime[5], 2)
-                   + format(rawTime[4], 2)
-                   + format(rawTime[2], 2)
-                   + format(rawTime[1], 2)
-                   + format(rawTime[0] & 0x7F, 2);
+  const byte errorCode =
+    I2C.read(address, timeRegister, rawTime, sizeof(rawTime));
+  alive = (errorCode == 0);
+  if (alive)
+  {
+    return "20"
+      + format(rawTime[6], 2)
+      + format(rawTime[5], 2)
+      + format(rawTime[4], 2)
+      + format(rawTime[2], 2)
+      + format(rawTime[1], 2)
+      + format(rawTime[0] & 0x7F, 2);
+  }
+  else
+  {
+    return "00000000000000";
+  }
   return timestamp;
 }
 
@@ -69,7 +78,9 @@ void ESATClock::write(String time)
     binaryToBCD(year),
     0
   };
-  (void) I2C.write(address, timeRegister, timestamp, sizeof(timestamp));
+  const byte errorCode =
+    I2C.write(address, timeRegister, timestamp, sizeof(timestamp));
+  alive = (errorCode == 0);
 }
 
 ESATClock Clock;
