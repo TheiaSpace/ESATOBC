@@ -47,6 +47,7 @@ String ESATADCSSubsystem::readTelemetry()
 void ESATADCSSubsystem::update()
 {
   ADCS.update();
+  inertialMeasurementUnitAlive = ADCS.inertialMeasurementUnitAlive;
 }
 
 ESATADCSSubsystem ADCSSubsystem;

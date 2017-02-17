@@ -25,6 +25,9 @@
 class ESATADCSSubsystem: public ESATSubsystem
 {
   public:
+    // True if the inertial measurement unit is alive.
+    boolean inertialMeasurementUnitAlive;
+
     // Start this subsystem.
     virtual void begin();
 
