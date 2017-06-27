@@ -18,9 +18,11 @@
 
 #include "ESATSubsystemManager.h"
 #include "ESATADCSSubsystem.h"
+#include "ESATClock.h"
 #include "ESATCOMMSSubsystem.h"
 #include "ESATEPSSubsystem.h"
 #include "ESATOBCSubsystem.h"
+#include "ESATStorage.h"
 #include "ESATTelemetryManager.h"
 #include <ESATUtil.h>
 
@@ -48,6 +50,17 @@ void ESATSubsystemManager::beginSubsystems()
   {
     sortedSubsystems[i]->begin();
   }
+}
+
+String ESATSubsystemManager::buildPacket(String content, byte type, byte subsystemIdentifier)
+{
+  String checksum = "FFFF";
+  String packet = String(int(subsystemIdentifier), DEC).substring(0, 1)
+                + Util.byteToHexadecimal(byte(content.length()))
+                + Util.byteToHexadecimal(type)
+                + content
+                + checksum;
+  return packet;
 }
 
 void ESATSubsystemManager::dispatchCommand(byte subsystemIdentifier, byte commandCode, String parameters)
@@ -89,6 +102,20 @@ void ESATSubsystemManager::registerSubsystem(ESATSubsystem* subsystem)
 {
   subsystems[numberOfSubsystems] = subsystem;
   numberOfSubsystems = numberOfSubsystems + 1;
+}
+
+void ESATSubsystemManager::sendTelemetry(String telemetry, byte type, byte subsystemIdentifier)
+{
+  String packet = buildPacket(telemetry, type, subsystemIdentifier);
+  COMMSSubsystem.writePacket(packet);
+}
+
+void ESATSubsystemManager::storeTelemetry(String telemetry)
+{
+  String timestamp = Clock.read();
+  String filename = timestamp.substring(0, 8)
+                  + ".txt";
+  Storage.write(filename, timestamp + " " + telemetry);
 }
 
 void ESATSubsystemManager::updateSubsystems()

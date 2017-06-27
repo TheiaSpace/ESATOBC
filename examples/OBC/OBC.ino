@@ -21,7 +21,6 @@
 #include <ESATOBCSubsystem.h>
 #include <ESATSubsystem.h>
 #include <ESATSubsystemManager.h>
-#include <ESATTelemetryManager.h>
 #include <ESATTimer.h>
 #include <MspFlash.h>
 #include <SD.h>
@@ -42,9 +41,9 @@ void loop()
   ESATCommand command = ESATSubsystemManager.readCommand();
   if (command.valid)
   {
-    TelemetryManager.send("ACK",
-                          TelemetryManager.EVENT_TELEMETRY,
-                          COMMSSubsystem.getSubsystemIdentifier());
+    SubsystemManager.sendTelemetry("ACK",
+                                   SubsystemManager.EVENT_TELEMETRY,
+                                   COMMSSubsystem.getSubsystemIdentifier());
     SubsystemManager.dispatchCommand(command.subsystemIdentifier,
                                      command.commandCode,
                                      command.parameters);
@@ -53,9 +52,9 @@ void loop()
   String telemetry = SubsystemManager.readSubsystemsTelemetry();
   if (OBCSubsystem.storeTelemetry)
   {
-    TelemetryManager.store(telemetry);
+    SubsystemManager.storeTelemetry(telemetry);
   }
-  TelemetryManager.send(telemetry,
-                        TelemetryManager.HOUSEKEEPING_TELEMETRY,
-                        OBCSubsystem.getSubsystemIdentifier());
+  SubsystemManager.sendTelemetry(telemetry,
+                                 SubsystemManager.HOUSEKEEPING_TELEMETRY,
+                                 OBCSubsystem.getSubsystemIdentifier());
 }

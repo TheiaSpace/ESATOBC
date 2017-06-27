@@ -26,6 +26,12 @@
 class ESATSubsystemManager
 {
   public:
+    enum TelemetryType
+    {
+      HOUSEKEEPING_TELEMETRY = 1,
+      EVENT_TELEMETRY = 2,
+    };
+
     ESATSubsystemManager();
 
     // Begin the registered subsystems.
@@ -46,6 +52,12 @@ class ESATSubsystemManager
     // Read the telemetry vector from the registered subsystems.
     String readSubsystemsTelemetry();
 
+    // Send a telemetry packet.
+    void sendTelemetry(String telemetry, byte type, byte subsystemIdentifier);
+
+    // Store a telemetry packet.
+    void storeTelemetry(String telemetry);
+
     // Update the registered subsystems.
     void updateSubsystems();
 
@@ -53,6 +65,9 @@ class ESATSubsystemManager
     static const byte maximumNumberOfSubsystems = 16;
     ESATSubsystem* subsystems[maximumNumberOfSubsystems];
     byte numberOfSubsystems;
+
+    // Build a telemetry packet.
+    String buildPacket(String content, byte type, byte subsystemIdentifier);
 };
 
 extern ESATSubsystemManager SubsystemManager;
