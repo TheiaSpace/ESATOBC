@@ -62,6 +62,11 @@ void ESATSubsystemManager::dispatchCommand(byte subsystemIdentifier, byte comman
   }
 }
 
+ESATCommand ESATSubsystemManager::readCommand()
+{
+  return COMMSSubsystem.readCommand();
+}
+
 String ESATSubsystemManager::readSubsystemsTelemetry()
 {
   String telemetry = "";

@@ -39,7 +39,7 @@ void setup()
 void loop()
 {
   Timer.waitUntilNextCycle();
-  ESATCommand command = COMMSSubsystem.readCommand();
+  ESATCommand command = ESATSubsystemManager.readCommand();
   if (command.valid)
   {
     TelemetryManager.send("ACK",

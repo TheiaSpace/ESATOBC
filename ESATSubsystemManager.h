@@ -20,6 +20,7 @@
 #define ESATSubsystemManager_h
 
 #include <Energia.h>
+#include "ESATCommand.h"
 #include "ESATSubsystem.h"
 
 class ESATSubsystemManager
@@ -32,6 +33,9 @@ class ESATSubsystemManager
 
     // Dispatch a command on the registered subsystems.
     void dispatchCommand(byte subsystemIdentifier, byte commandCode, String parameters);
+
+    // Read an incomming telecommand.
+    ESATCommand readCommand();
 
     // Register the default subsystems.
     void registerDefaultSubsystems();
