@@ -16,7 +16,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESATSubsystemManager.h"
+#include "ESATOnBoardDataHandling.h"
 #include "ESATADCSSubsystem.h"
 #include "ESATClock.h"
 #include "ESATCOMMSSubsystem.h"
@@ -26,11 +26,11 @@
 #include "ESATTelemetryManager.h"
 #include <ESATUtil.h>
 
-ESATSubsystemManager::ESATSubsystemManager(): numberOfSubsystems(0)
+ESATOnBoardDataHandling::ESATOnBoardDataHandling(): numberOfSubsystems(0)
 {
 }
 
-void ESATSubsystemManager::beginSubsystems()
+void ESATOnBoardDataHandling::beginSubsystems()
 {
   ESATSubsystem* sortedSubsystems[numberOfSubsystems];
   memcpy(sortedSubsystems, subsystems, sizeof(sortedSubsystems));
@@ -52,7 +52,7 @@ void ESATSubsystemManager::beginSubsystems()
   }
 }
 
-String ESATSubsystemManager::buildPacket(String content, byte type, byte subsystemIdentifier)
+String ESATOnBoardDataHandling::buildPacket(String content, byte type, byte subsystemIdentifier)
 {
   String checksum = "FFFF";
   String packet = String(int(subsystemIdentifier), DEC).substring(0, 1)
@@ -63,7 +63,7 @@ String ESATSubsystemManager::buildPacket(String content, byte type, byte subsyst
   return packet;
 }
 
-void ESATSubsystemManager::dispatchCommand(byte subsystemIdentifier, byte commandCode, String parameters)
+void ESATOnBoardDataHandling::dispatchCommand(byte subsystemIdentifier, byte commandCode, String parameters)
 {
   for (unsigned int i = 0; i < numberOfSubsystems; ++i)
   {
@@ -75,12 +75,12 @@ void ESATSubsystemManager::dispatchCommand(byte subsystemIdentifier, byte comman
   }
 }
 
-ESATCommand ESATSubsystemManager::readCommand()
+ESATCommand ESATOnBoardDataHandling::readCommand()
 {
   return COMMSSubsystem.readCommand();
 }
 
-String ESATSubsystemManager::readSubsystemsTelemetry()
+String ESATOnBoardDataHandling::readSubsystemsTelemetry()
 {
   String telemetry = "";
   for (unsigned int i = 0; i < numberOfSubsystems; ++i)
@@ -90,7 +90,7 @@ String ESATSubsystemManager::readSubsystemsTelemetry()
   return telemetry;
 }
 
-void ESATSubsystemManager::registerDefaultSubsystems()
+void ESATOnBoardDataHandling::registerDefaultSubsystems()
 {
   registerSubsystem(&EPSSubsystem);
   registerSubsystem(&ADCSSubsystem);
@@ -98,19 +98,19 @@ void ESATSubsystemManager::registerDefaultSubsystems()
   registerSubsystem(&OBCSubsystem);
 }
 
-void ESATSubsystemManager::registerSubsystem(ESATSubsystem* subsystem)
+void ESATOnBoardDataHandling::registerSubsystem(ESATSubsystem* subsystem)
 {
   subsystems[numberOfSubsystems] = subsystem;
   numberOfSubsystems = numberOfSubsystems + 1;
 }
 
-void ESATSubsystemManager::sendTelemetry(String telemetry, byte type, byte subsystemIdentifier)
+void ESATOnBoardDataHandling::sendTelemetry(String telemetry, byte type, byte subsystemIdentifier)
 {
   String packet = buildPacket(telemetry, type, subsystemIdentifier);
   COMMSSubsystem.writePacket(packet);
 }
 
-void ESATSubsystemManager::storeTelemetry(String telemetry)
+void ESATOnBoardDataHandling::storeTelemetry(String telemetry)
 {
   String timestamp = Clock.read();
   String filename = timestamp.substring(0, 8)
@@ -118,7 +118,7 @@ void ESATSubsystemManager::storeTelemetry(String telemetry)
   Storage.write(filename, timestamp + " " + telemetry);
 }
 
-void ESATSubsystemManager::updateSubsystems()
+void ESATOnBoardDataHandling::updateSubsystems()
 {
   for (unsigned int i = 0; i < numberOfSubsystems; ++i)
   {
@@ -126,4 +126,4 @@ void ESATSubsystemManager::updateSubsystems()
   }
 }
 
-ESATSubsystemManager SubsystemManager;
+ESATOnBoardDataHandling OnBoardDataHandling;

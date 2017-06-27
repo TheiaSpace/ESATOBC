@@ -16,14 +16,14 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESATSubsystemManager_h
-#define ESATSubsystemManager_h
+#ifndef ESATOnBoardDataHandling_h
+#define ESATOnBoardDataHandling_h
 
 #include <Energia.h>
 #include "ESATCommand.h"
 #include "ESATSubsystem.h"
 
-class ESATSubsystemManager
+class ESATOnBoardDataHandling
 {
   public:
     enum TelemetryType
@@ -32,7 +32,7 @@ class ESATSubsystemManager
       EVENT_TELEMETRY = 2,
     };
 
-    ESATSubsystemManager();
+    ESATOnBoardDataHandling();
 
     // Begin the registered subsystems.
     void beginSubsystems();
@@ -70,6 +70,6 @@ class ESATSubsystemManager
     String buildPacket(String content, byte type, byte subsystemIdentifier);
 };
 
-extern ESATSubsystemManager SubsystemManager;
+extern ESATOnBoardDataHandling OnBoardDataHandling;
 
 #endif
