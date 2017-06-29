@@ -23,7 +23,6 @@
 #include "ESATEPSSubsystem.h"
 #include "ESATOBCSubsystem.h"
 #include "ESATStorage.h"
-#include "ESATTelemetryManager.h"
 #include <ESATUtil.h>
 
 ESATOnBoardDataHandling::ESATOnBoardDataHandling(): numberOfSubsystems(0)
