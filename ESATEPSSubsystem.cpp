@@ -54,7 +54,7 @@ String ESATEPSSubsystem::readTelemetry()
       data += Util.byteToHexadecimal(byte(Wire.read()));
       delay(5);
     };
-    responding = true;
+    alive = true;
   }
   else
   {
@@ -62,7 +62,7 @@ String ESATEPSSubsystem::readTelemetry()
     {
       data += Util.byteToHexadecimal(byte(0));
     };
-    responding = false;
+    alive = false;
   }
   return data;
 }

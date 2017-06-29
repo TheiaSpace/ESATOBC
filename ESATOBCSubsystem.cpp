@@ -99,7 +99,7 @@ String ESATOBCSubsystem::readTelemetry()
   const byte status =
     (Clock.alive << CLOCK_OFFSET)
     | (ADCSSubsystem.inertialMeasurementUnitAlive << IMU_OFFSET)
-    | (EPSSubsystem.responding << EPS_OFFSET)
+    | (EPSSubsystem.alive << EPS_OFFSET)
     | (Storage.working << STORAGE_OFFSET)
     | ((COMMSSubsystem.status & COMMS_MASK) << COMMS_OFFSET);
   String telemetry = Util.intToHexadecimal(status)

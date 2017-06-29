@@ -46,7 +46,7 @@ class ESATEPSSubsystem: public ESATSubsystem
     // Update the subsystem.
     virtual void update();
 
-    boolean responding;
+    boolean alive;
 
   private:
     static const byte address = 2;
