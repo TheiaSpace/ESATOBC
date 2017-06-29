@@ -100,7 +100,7 @@ String ESATOBCSubsystem::readTelemetry()
     (Clock.alive << CLOCK_OFFSET)
     | (ADCSSubsystem.inertialMeasurementUnitAlive << IMU_OFFSET)
     | (EPSSubsystem.alive << EPS_OFFSET)
-    | (Storage.working << STORAGE_OFFSET)
+    | (Storage.alive << STORAGE_OFFSET)
     | ((COMMSSubsystem.status & COMMS_MASK) << COMMS_OFFSET);
   String telemetry = Util.intToHexadecimal(status)
     + Util.intToHexadecimal(load);
