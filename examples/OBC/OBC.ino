@@ -20,8 +20,7 @@
 #include <ESATEPSSubsystem.h>
 #include <ESATOBCSubsystem.h>
 #include <ESATSubsystem.h>
-#include <ESATSubsystemManager.h>
-#include <ESATTelemetryManager.h>
+#include <ESATOnBoardDataHandling.h>
 #include <ESATTimer.h>
 #include <MspFlash.h>
 #include <SD.h>
@@ -31,31 +30,31 @@
 
 void setup()
 {
-  SubsystemManager.registerDefaultSubsystems();
-  SubsystemManager.beginSubsystems();
+  OnBoardDataHandling.registerDefaultSubsystems();
+  OnBoardDataHandling.beginSubsystems();
   Timer.begin(1000);
 }
 
 void loop()
 {
   Timer.waitUntilNextCycle();
-  ESATCommand command = COMMSSubsystem.readCommand();
+  ESATCommand command = OnBoardDataHandling.readCommand();
   if (command.valid)
   {
-    TelemetryManager.send("ACK",
-                          TelemetryManager.EVENT_TELEMETRY,
-                          COMMSSubsystem.getSubsystemIdentifier());
-    SubsystemManager.dispatchCommand(command.subsystemIdentifier,
-                                     command.commandCode,
-                                     command.parameters);
+    OnBoardDataHandling.sendTelemetry("ACK",
+                                      OnBoardDataHandling.EVENT_TELEMETRY,
+                                      OBCSubsystem.getSubsystemIdentifier());
+    OnBoardDataHandling.dispatchCommand(command.subsystemIdentifier,
+                                        command.commandCode,
+                                        command.parameters);
   }
-  SubsystemManager.updateSubsystems();
-  String telemetry = SubsystemManager.readSubsystemsTelemetry();
+  OnBoardDataHandling.updateSubsystems();
+  String telemetry = OnBoardDataHandling.readSubsystemsTelemetry();
   if (OBCSubsystem.storeTelemetry)
   {
-    TelemetryManager.store(telemetry);
+    OnBoardDataHandling.storeTelemetry(telemetry);
   }
-  TelemetryManager.send(telemetry,
-                        TelemetryManager.HOUSEKEEPING_TELEMETRY,
-                        OBCSubsystem.getSubsystemIdentifier());
+  OnBoardDataHandling.sendTelemetry(telemetry,
+                                    OnBoardDataHandling.HOUSEKEEPING_TELEMETRY,
+                                    OBCSubsystem.getSubsystemIdentifier());
 }
