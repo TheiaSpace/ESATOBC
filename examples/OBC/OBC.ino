@@ -28,9 +28,43 @@
 #include <USBSerial.h>
 #include <Servo.h>
 
+class ESATExampleSubsystem: public ESATSubsystem
+{
+public:
+  virtual void begin()
+  {
+  }
+
+  virtual byte getStartOrder()
+  {
+    return 5;
+  }
+
+  virtual byte getSubsystemIdentifier()
+  {
+    return 5;
+  }
+
+  virtual void handleCommand(byte commandCode, String parameters)
+  {
+  }
+
+  virtual String readTelemetry()
+  {
+    return "";
+  }
+
+  virtual void update()
+  {
+  }
+};
+
+ESATExampleSubsystem ExampleSubsystem;
+
 void setup()
 {
   OnBoardDataHandling.registerDefaultSubsystems();
+  OnBoardDataHandling.registerSubsystem(&ExampleSubsystem);
   OnBoardDataHandling.beginSubsystems();
   Timer.begin(1000);
 }
