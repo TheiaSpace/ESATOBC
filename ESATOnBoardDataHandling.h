@@ -16,22 +16,32 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESATSubsystemManager_h
-#define ESATSubsystemManager_h
+#ifndef ESATOnBoardDataHandling_h
+#define ESATOnBoardDataHandling_h
 
 #include <Energia.h>
+#include "ESATCommand.h"
 #include "ESATSubsystem.h"
 
-class ESATSubsystemManager
+class ESATOnBoardDataHandling
 {
   public:
-    ESATSubsystemManager();
+    enum TelemetryType
+    {
+      HOUSEKEEPING_TELEMETRY = 1,
+      EVENT_TELEMETRY = 2,
+    };
+
+    ESATOnBoardDataHandling();
 
     // Begin the registered subsystems.
     void beginSubsystems();
 
     // Dispatch a command on the registered subsystems.
     void dispatchCommand(byte subsystemIdentifier, byte commandCode, String parameters);
+
+    // Read an incomming telecommand.
+    ESATCommand readCommand();
 
     // Register the default subsystems.
     void registerDefaultSubsystems();
@@ -42,6 +52,12 @@ class ESATSubsystemManager
     // Read the telemetry vector from the registered subsystems.
     String readSubsystemsTelemetry();
 
+    // Send a telemetry packet.
+    void sendTelemetry(String telemetry, byte type, byte subsystemIdentifier);
+
+    // Store a telemetry packet.
+    void storeTelemetry(String telemetry);
+
     // Update the registered subsystems.
     void updateSubsystems();
 
@@ -49,8 +65,11 @@ class ESATSubsystemManager
     static const byte maximumNumberOfSubsystems = 16;
     ESATSubsystem* subsystems[maximumNumberOfSubsystems];
     byte numberOfSubsystems;
+
+    // Build a telemetry packet.
+    String buildPacket(String content, byte type, byte subsystemIdentifier);
 };
 
-extern ESATSubsystemManager SubsystemManager;
+extern ESATOnBoardDataHandling OnBoardDataHandling;
 
 #endif

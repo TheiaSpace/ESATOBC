@@ -24,7 +24,7 @@
 class ESATStorage
 {
   public:
-    boolean working;
+    boolean alive;
 
     // Begin the SD card subsystem.
     void begin();

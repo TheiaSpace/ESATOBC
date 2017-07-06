@@ -21,7 +21,7 @@
 
 void ESATStorage::begin()
 {
-  working = SD.begin(pin);
+  alive = SD.begin(pin);
 }
 
 void ESATStorage::write(String filename, String text)
@@ -31,11 +31,11 @@ void ESATStorage::write(String filename, String text)
   {
     file.println(text);
     file.close();
-    working = true;
+    alive = true;
   }
   else
   {
-    working = false;
+    alive = false;
   }
 }
 
