@@ -13,20 +13,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <ESATADCS.h>
-#include <ESATADCSSubsystem.h>
-#include <ESATCommand.h>
-#include <ESATCOMMSSubsystem.h>
-#include <ESATEPSSubsystem.h>
 #include <ESATOBCSubsystem.h>
-#include <ESATSubsystem.h>
 #include <ESATOnBoardDataHandling.h>
 #include <ESATTimer.h>
-#include <MspFlash.h>
-#include <SD.h>
-#include <SPI.h>
-#include <USBSerial.h>
-#include <Servo.h>
 
 class ESATExampleSubsystem: public ESATSubsystem
 {
