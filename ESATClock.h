@@ -21,6 +21,10 @@
 
 #include <Energia.h>
 
+// Real-time clock.
+// The underlying hardware is the DS1338 serial real-time clock
+// mounted on the ESATOBC board.
+// Communications are done through the OBC I2C bus.
 class ESATClock
 {
   public:
@@ -31,9 +35,11 @@ class ESATClock
     void begin();
 
     // Read the current time.
+    // Return the date and time in ISO 8601 format.
     String read();
 
     // Set the current time.
+    // Pass the date and time in ISO 8601 format.
     void write(String time);
 
   private:

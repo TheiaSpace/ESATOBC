@@ -53,38 +53,42 @@ String ESATClock::read()
     alive = false;
     return "00000000000000";
   }
-  const byte bytesToRead = 7;
+  const byte bytesToRead = 6;
   const byte bytesRead = Wire.requestFrom(address, bytesToRead);
   if (bytesRead != bytesToRead)
   {
     alive = false;
     return "00000000000000";
   }
-  const byte year = Wire.read();
-  const byte month = Wire.read();
-  const byte day = Wire.read();
-  (void) Wire.read();
-  const byte hours = Wire.read();
-  const byte minutes = Wire.read();
   const byte seconds = Wire.read();
+  const byte minutes = Wire.read();
+  const byte hours = Wire.read();
+  const byte day = Wire.read();
+  const byte month = Wire.read();
+  const byte year = Wire.read();
   alive = true;
   return "20"
     + format(year, 2)
+    + "-"
     + format(month, 2)
+    + "-"
     + format(day, 2)
+    + "T"
     + format(hours, 2)
+    + ":"
     + format(minutes, 2)
+    + ":"
     + format(seconds & 0x7F, 2);
 }
 
 void ESATClock::write(String time)
 {
   const byte year = time.substring(0, 4).toInt() - 2000;
-  const byte month = time.substring(4, 6).toInt();
-  const byte day = time.substring(6, 8).toInt();
-  const byte hours = time.substring(8, 10).toInt();
-  const byte minutes = time.substring(10, 12).toInt();
-  const byte seconds = time.substring(12, 14).toInt();
+  const byte month = time.substring(5, 7).toInt();
+  const byte day = time.substring(8, 10).toInt();
+  const byte hours = time.substring(11, 13).toInt();
+  const byte minutes = time.substring(14, 16).toInt();
+  const byte seconds = time.substring(17, 19).toInt();
   Wire.beginTransmission(address);
   Wire.write(timeRegister);
   Wire.write(binaryToBCD(seconds));
