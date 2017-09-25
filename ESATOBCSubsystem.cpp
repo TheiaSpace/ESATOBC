@@ -18,11 +18,11 @@
 
 #include "ESATOBCSubsystem.h"
 #include <MspFlash.h>
+#include <Wire.h>
 #include "ESATADCSSubsystem.h"
 #include "ESATClock.h"
 #include "ESATCOMMSSubsystem.h"
 #include "ESATEPSSubsystem.h"
-#include <ESATI2C.h>
 #include <ESATTimer.h>
 #include "ESATStorage.h"
 #include <ESATUtil.h>
@@ -36,7 +36,7 @@ void ESATOBCSubsystem::begin()
   USB.begin();
   Serial.begin(115200);
   Storage.begin();
-  I2C.begin();
+  Wire.begin();
   Clock.begin();
   loadIdentifier();
 }
