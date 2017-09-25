@@ -53,20 +53,19 @@ String ESATClock::read()
     alive = false;
     return "00000000000000";
   }
-  const byte bytesToRead = 7;
+  const byte bytesToRead = 6;
   const byte bytesRead = Wire.requestFrom(address, bytesToRead);
   if (bytesRead != bytesToRead)
   {
     alive = false;
     return "00000000000000";
   }
-  const byte year = Wire.read();
-  const byte month = Wire.read();
-  const byte day = Wire.read();
-  (void) Wire.read();
-  const byte hours = Wire.read();
-  const byte minutes = Wire.read();
   const byte seconds = Wire.read();
+  const byte minutes = Wire.read();
+  const byte hours = Wire.read();
+  const byte day = Wire.read();
+  const byte month = Wire.read();
+  const byte year = Wire.read();
   alive = true;
   return "20"
     + format(year, 2)
