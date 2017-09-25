@@ -21,6 +21,10 @@
 
 #include <Energia.h>
 
+// Real-time clock.
+// The underlying hardware is the DS1338 serial real-time clock
+// mounted on the ESATOBC board.
+// Communications are done through the OBC I2C bus.
 class ESATClock
 {
   public:
