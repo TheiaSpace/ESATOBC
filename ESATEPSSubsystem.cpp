@@ -17,7 +17,6 @@
  */
 
 #include "ESATEPSSubsystem.h"
-#include <ESATI2C.h>
 #include <ESATUtil.h>
 #include <Wire.h>
 
@@ -37,7 +36,10 @@ byte ESATEPSSubsystem::getSubsystemIdentifier()
 
 void ESATEPSSubsystem::handleCommand(byte commandCode, String parameters)
 {
-  (void) I2C.write(address, commandCode, parameters.toInt());
+  Wire.beginTransmission(address);
+  Wire.write(commandCode);
+  Wire.write(parameters.toInt());
+  (void) Wire.endTransmission();
 }
 
 String ESATEPSSubsystem::readTelemetry()
