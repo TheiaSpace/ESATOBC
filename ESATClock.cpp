@@ -17,8 +17,8 @@
  */
 
 #include "ESATClock.h"
-#include <ESATI2C.h>
 #include <ESATUtil.h>
+#include <Wire.h>
 
 byte ESATClock::BCDToBinary(byte value)
 {
@@ -45,24 +45,36 @@ String ESATClock::format(byte BCDNumber, byte length)
 
 String ESATClock::read()
 {
-  byte rawTime[7];
-  const byte errorCode =
-    I2C.read(address, timeRegister, rawTime, sizeof(rawTime));
-  alive = (errorCode == 0);
-  if (alive)
+  Wire.beginTransmission(address);
+  Wire.write(timeRegister);
+  const byte errorCode = Wire.endTransmission();
+  if (errorCode != 0)
   {
-    return "20"
-      + format(rawTime[6], 2)
-      + format(rawTime[5], 2)
-      + format(rawTime[4], 2)
-      + format(rawTime[2], 2)
-      + format(rawTime[1], 2)
-      + format(rawTime[0] & 0x7F, 2);
-  }
-  else
-  {
+    alive = false;
     return "00000000000000";
   }
+  const byte bytesToRead = 7;
+  const byte bytesRead = Wire.requestFrom(address, bytesToRead);
+  if (bytesRead != bytesToRead)
+  {
+    alive = false;
+    return "00000000000000";
+  }
+  const byte year = Wire.read();
+  const byte month = Wire.read();
+  const byte day = Wire.read();
+  (void) Wire.read();
+  const byte hours = Wire.read();
+  const byte minutes = Wire.read();
+  const byte seconds = Wire.read();
+  alive = true;
+  return "20"
+    + format(year, 2)
+    + format(month, 2)
+    + format(day, 2)
+    + format(hours, 2)
+    + format(minutes, 2)
+    + format(seconds & 0x7F, 2);
 }
 
 void ESATClock::write(String time)
@@ -73,18 +85,24 @@ void ESATClock::write(String time)
   const byte hours = time.substring(8, 10).toInt();
   const byte minutes = time.substring(10, 12).toInt();
   const byte seconds = time.substring(12, 14).toInt();
-  byte timestamp[] = {
-    binaryToBCD(seconds),
-    binaryToBCD(minutes),
-    binaryToBCD(hours),
-    binaryToBCD(day),
-    binaryToBCD(month),
-    binaryToBCD(year),
-    0
-  };
-  const byte errorCode =
-    I2C.write(address, timeRegister, timestamp, sizeof(timestamp));
-  alive = (errorCode == 0);
+  Wire.beginTransmission(address);
+  Wire.write(timeRegister);
+  Wire.write(binaryToBCD(seconds));
+  Wire.write(binaryToBCD(minutes));
+  Wire.write(binaryToBCD(hours));
+  Wire.write(binaryToBCD(day));
+  Wire.write(binaryToBCD(month));
+  Wire.write(binaryToBCD(year));
+  Wire.write(0);
+  const byte errorCode = Wire.endTransmission();
+  if (errorCode == 0)
+  {
+    alive = true;
+  }
+  else
+  {
+    alive = false;
+  }
 }
 
 ESATClock Clock;
