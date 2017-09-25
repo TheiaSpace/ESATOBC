@@ -35,6 +35,7 @@ class ESATClock
     void begin();
 
     // Read the current time.
+    // Return the date and time in ISO 8601 format.
     String read();
 
     // Set the current time.

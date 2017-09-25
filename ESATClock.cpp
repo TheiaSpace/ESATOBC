@@ -69,10 +69,15 @@ String ESATClock::read()
   alive = true;
   return "20"
     + format(year, 2)
+    + "-"
     + format(month, 2)
+    + "-"
     + format(day, 2)
+    + "T"
     + format(hours, 2)
+    + ":"
     + format(minutes, 2)
+    + ":"
     + format(seconds & 0x7F, 2);
 }
 
