@@ -84,11 +84,11 @@ String ESATClock::read()
 void ESATClock::write(String time)
 {
   const byte year = time.substring(0, 4).toInt() - 2000;
-  const byte month = time.substring(4, 6).toInt();
-  const byte day = time.substring(6, 8).toInt();
-  const byte hours = time.substring(8, 10).toInt();
-  const byte minutes = time.substring(10, 12).toInt();
-  const byte seconds = time.substring(12, 14).toInt();
+  const byte month = time.substring(5, 7).toInt();
+  const byte day = time.substring(8, 10).toInt();
+  const byte hours = time.substring(11, 13).toInt();
+  const byte minutes = time.substring(14, 16).toInt();
+  const byte seconds = time.substring(17, 19).toInt();
   Wire.beginTransmission(address);
   Wire.write(timeRegister);
   Wire.write(binaryToBCD(seconds));
