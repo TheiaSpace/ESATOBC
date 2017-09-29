@@ -32,7 +32,7 @@
 
 void ESATOBCSubsystem::begin()
 {
-  storeTelemetry = false;
+  storeTelemetry = true;
   USB.begin();
   Serial.begin(115200);
   Storage.begin();
