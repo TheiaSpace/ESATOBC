@@ -51,14 +51,14 @@ String ESATClock::read()
   if (errorCode != 0)
   {
     alive = false;
-    return "00000000000000";
+    return "0000-00-00T00:00:00";
   }
   const byte bytesToRead = 6;
   const byte bytesRead = Wire.requestFrom(address, bytesToRead);
   if (bytesRead != bytesToRead)
   {
     alive = false;
-    return "00000000000000";
+    return "0000-00-00T00:00:00";
   }
   const byte seconds = Wire.read();
   const byte minutes = Wire.read();
@@ -107,6 +107,20 @@ void ESATClock::write(String time)
   {
     alive = false;
   }
+}
+
+String ESATClock::getDateWithoutDashes(String timestamp){
+  String date;
+  if(timestamp.length() != timestampLength)
+  {
+    date = "00000000";
+  }
+  else
+  {
+    date = timestamp.substring(0, 10);
+    date.replace("-","");
+  }
+  return date;
 }
 
 ESATClock Clock;

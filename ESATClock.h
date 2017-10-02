@@ -41,10 +41,14 @@ class ESATClock
     // Set the current time.
     // Pass the date and time in ISO 8601 format.
     void write(String time);
+    
+    // util to get the date from the timestamp
+    String getDateWithoutDashes(String timestamp);
 
   private:
     static const byte address = 0x68;
     static const byte timeRegister = 0;
+    static const byte timestampLength = 19;
 
     // BCD to binary conversion.
     byte BCDToBinary(byte value);
