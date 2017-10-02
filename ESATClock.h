@@ -44,6 +44,7 @@ class ESATClock
     
     // util to get the date from the timestamp
     String getDateWithoutDashes(String timestamp);
+    
 
   private:
     static const byte address = 0x68;
@@ -61,5 +62,25 @@ class ESATClock
 };
 
 extern ESATClock Clock;
+
+class ESATTimeStamp
+{
+  public:
+    byte hours;
+    byte minutes;
+    byte seconds;
+    byte year;
+    byte month;
+    byte day;
+    
+    ESATTimeStamp(byte Hour, byte Minute, byte Second, 
+                   byte Year, byte Month, byte Day);
+    ESATTimeStamp(String timestamp);
+    boolean isHigherThan(ESATTimeStamp timeStamp);
+    String toStringTimeStamp();
+  private:
+  
+};
+
 
 #endif

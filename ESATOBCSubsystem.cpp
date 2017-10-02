@@ -33,6 +33,7 @@
 void ESATOBCSubsystem::begin()
 {
   storeTelemetry = true;
+  DownloadStoredTelemetry = true;
   USB.begin();
   Serial.begin(115200);
   Storage.begin();
@@ -64,6 +65,8 @@ void ESATOBCSubsystem::handleCommand(byte opcode, String parameters)
   case STORE_TELEMETRY:
       handleStoreTelemetry(parameters);
       break;
+  case DOWNLOAD_TELEMETRY:
+      handleDownloadTelemetry(parameters);
     default:
       break;
   }
@@ -86,6 +89,18 @@ void ESATOBCSubsystem::handleSetTimeCommand(String parameters)
 void ESATOBCSubsystem::handleStoreTelemetry(String parameters)
 {
   storeTelemetry = !!parameters.toInt();
+}
+
+void ESATOBCSubsystem::handleDownloadTelemetry(String parameters)
+{
+  static const byte timestampLength = 19;
+  if(parameters.length() != timestampLength*2)
+  {
+    return;
+  }
+  downloadStoredTelemetryFromTimestamp = parameters.substring(0,timestampLength);
+  downloadStoredTelemetryToTimestamp = parameters.substring(timestampLength,timestampLength*2);
+  
 }
 
 byte ESATOBCSubsystem::loadIdentifier()

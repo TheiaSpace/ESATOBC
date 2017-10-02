@@ -124,3 +124,75 @@ String ESATClock::getDateWithoutDashes(String timestamp){
 }
 
 ESATClock Clock;
+
+ESATTimeStamp::ESATTimeStamp(byte Hour, byte Minute, byte Second, 
+                   byte Year, byte Month, byte Day)
+{
+  hours = Hour;
+  minutes = Minute;
+  seconds = Second;
+  year = Year;
+  month = Month;
+  day = Day;  
+}
+
+ESATTimeStamp::ESATTimeStamp(String time)
+{
+  year = time.substring(0, 4).toInt() - 2000;
+  month = time.substring(5, 7).toInt();
+  day = time.substring(8, 10).toInt();
+  hours = time.substring(11, 13).toInt();
+  minutes = time.substring(14, 16).toInt();
+  seconds = time.substring(17, 19).toInt();
+}
+
+String ESATTimeStamp::toStringTimeStamp()
+{
+  return "20"
+    + Util.pad(String(year % 100), '0', 2)
+    + "-"
+    + Util.pad(String(month % 100), '0', 2)
+    + "-"
+    + Util.pad(String(day % 100), '0', 2)
+    + "T"
+    + Util.pad(String(hours % 100), '0', 2)
+    + ":"
+    + Util.pad(String(minutes % 100), '0', 2)
+    + ":"
+    + Util.pad(String(seconds % 100), '0', 2);
+  
+}
+boolean ESATTimeStamp::isHigherThan(ESATTimeStamp timeStamp)
+{
+  if(timeStamp.year > year)
+  {
+    return false;
+  }
+  else if(timeStamp.month > month)
+  {
+    return false;
+  }
+  else if(timeStamp.day > day)
+  {
+    return false;
+  }
+  else if(timeStamp.hours > hours)
+  {
+    return false;
+  }
+  else if(timeStamp.minutes > minutes)
+  {
+    return false;
+  }
+  else if(timeStamp.seconds > seconds)
+  {
+    return false;
+  }
+  else
+  {
+    return true; 
+  }
+}
+
+
+
