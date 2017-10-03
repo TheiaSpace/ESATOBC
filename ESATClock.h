@@ -21,6 +21,28 @@
 
 #include <Energia.h>
 
+class ESATTimeStamp
+{
+  public:
+    ESATTimeStamp();
+    void update(byte Hour, byte Minute, byte Second, 
+           byte Year, byte Month, byte Day);
+    void update(String timestamp);
+    boolean isHigherThan(ESATTimeStamp timeStamp);
+    String toStringTimeStamp();    
+    // util to get the date from the timestamp
+    String getDateWithoutDashes();
+    
+    byte hours;
+    byte minutes;
+    byte seconds;
+    byte year;
+    byte month;
+    byte day;
+  
+};
+
+
 // Real-time clock.
 // The underlying hardware is the DS1338 serial real-time clock
 // mounted on the ESATOBC board.
@@ -36,14 +58,11 @@ class ESATClock
 
     // Read the current time.
     // Return the date and time in ISO 8601 format.
-    String read();
+    ESATTimeStamp read();
 
     // Set the current time.
     // Pass the date and time in ISO 8601 format.
     void write(String time);
-    
-    // util to get the date from the timestamp
-    String getDateWithoutDashes(String timestamp);
     
 
   private:
@@ -57,30 +76,11 @@ class ESATClock
     // Binary to BCD conversion.
     byte binaryToBCD(byte value);
 
-    // Format a BCD number as a string with leading zeros.
-    String format(byte number, byte length);
 };
 
 extern ESATClock Clock;
 
-class ESATTimeStamp
-{
-  public:
-    byte hours;
-    byte minutes;
-    byte seconds;
-    byte year;
-    byte month;
-    byte day;
-    
-    ESATTimeStamp(byte Hour, byte Minute, byte Second, 
-                   byte Year, byte Month, byte Day);
-    ESATTimeStamp(String timestamp);
-    boolean isHigherThan(ESATTimeStamp timeStamp);
-    String toStringTimeStamp();
-  private:
-  
-};
+
 
 
 #endif

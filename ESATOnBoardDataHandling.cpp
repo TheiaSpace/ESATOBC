@@ -25,6 +25,8 @@
 #include "ESATStorage.h"
 #include <ESATUtil.h>
 
+
+
 ESATOnBoardDataHandling::ESATOnBoardDataHandling(): numberOfSubsystems(0)
 {
 }
@@ -111,17 +113,18 @@ void ESATOnBoardDataHandling::sendTelemetry(String telemetry, byte type, byte su
 
 void ESATOnBoardDataHandling::storeTelemetry(String telemetry)
 {
-  String timestamp;
+  ESATTimeStamp timestamp = Clock.read();
   String filename;
-  timestamp = Clock.read();
+  String fullTimestamp;
   if(!Clock.alive)
   {
     return;
   }
+  fullTimestamp = timestamp.toStringTimeStamp();
   // You must use the 8.3 format in the filename
-  filename = Clock.getDateWithoutDashes(timestamp);  
-  filename = filename + ".txt";  
-  Storage.write(filename, timestamp + " " + telemetry);
+  filename = timestamp.getDateWithoutDashes();
+  filename = filename + ".txt";
+  Storage.write(filename, fullTimestamp + " " + telemetry);
 }
 
 void ESATOnBoardDataHandling::updateSubsystems()

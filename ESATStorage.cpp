@@ -39,4 +39,52 @@ void ESATStorage::write(String filename, String text)
   }
 }
 
+void ESATStorage::openReadFile(String filename)
+{
+  if(readFile)
+  {
+    closeReadFile();
+  }
+  thereAreMoreTextToRead = true;
+  readFile = SD.open(filename.c_str(), FILE_READ);
+}
+
+
+String ESATStorage::readLine(String filename, unsigned int maxNumCharacters)
+{
+  String line = "";
+  int Char;
+  if(!readFile)
+  {
+    alive = false;
+  }
+  else
+  {
+    alive = true;
+    for(unsigned int c = 0; c < maxNumCharacters; c++){
+      Char = readFile.read();
+      if(Char == '\n')
+      {
+        break;
+      }
+      if(Char == -1)
+      {
+        thereAreMoreTextToRead = false;
+        break;
+      }
+      line += (char)Char;
+    }
+  }
+  line.trim();
+  return line;
+}
+
+void ESATStorage::closeReadFile()
+{
+  if(readFile)
+  {
+    readFile.close();
+  }
+}
+
 ESATStorage Storage;

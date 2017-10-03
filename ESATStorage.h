@@ -20,6 +20,7 @@
 #define ESATStorage_h
 
 #include <Energia.h>
+#include <SD.h>
 
 class ESATStorage
 {
@@ -31,9 +32,21 @@ class ESATStorage
 
     // Write text to a file.
     void write(String filename, String text);
+    
+    // Open a file to read it
+    void openReadFile(String filename);
+    
+    // Read the next text line from a file.
+    String readLine(String filename, unsigned int maxNumCharacters);
+    
+    // Close the file opened to read it
+    void closeReadFile();
+    
+    boolean thereAreMoreTextToRead;
 
   private:
     static const byte pin = 45;
+    File readFile;
 };
 
 extern ESATStorage Storage;

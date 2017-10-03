@@ -21,6 +21,7 @@
 
 #include <Energia.h>
 #include "ESATSubsystem.h"
+#include "ESATClock.h"
 
 class ESATOBCSubsystem: public ESATSubsystem
 {
@@ -48,6 +49,8 @@ class ESATOBCSubsystem: public ESATSubsystem
 
     // Update the subsystem.
     virtual void update();
+    
+    void handleDownloadTelemetry(String parameters);
 
   private:
     enum CommandCode
@@ -55,7 +58,7 @@ class ESATOBCSubsystem: public ESATSubsystem
       STORE_ID = 0,
       SET_TIME = 1,
       STORE_TELEMETRY = 2,
-      DOWNLOAD_TELEMETRY = 3
+      DOWNLOAD_TELEMETRY = 3,
     };
 
     static const byte CLOCK_OFFSET = 0;
@@ -66,15 +69,14 @@ class ESATOBCSubsystem: public ESATSubsystem
     static const byte COMMS_MASK = (1 << 0) | (1 << 1);
     
     // Download stored telemetry 
-    boolean DownloadStoredTelemetry;
-    String downloadStoredTelemetryFromTimestamp;
-    String downloadStoredTelemetryToTimestamp;
-    
+    boolean downloadStoredTelemetry;
+    ESATTimeStamp downloadStoredTelemetryFromTimestamp;
+    ESATTimeStamp downloadStoredTelemetryToTimestamp;
+    ESATTimeStamp lastStoredTelemetryDownloadedTimestamp;
 
     void handleStoreIdCommand(String parameters);
     void handleSetTimeCommand(String parameters);
     void handleStoreTelemetry(String parameters);
-    void handleDownloadTelemetry(String parameters);
 
     byte loadIdentifier();
 };

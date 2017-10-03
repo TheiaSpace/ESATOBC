@@ -20,6 +20,7 @@
 #include <ESATUtil.h>
 #include <Wire.h>
 
+
 byte ESATClock::BCDToBinary(byte value)
 {
   return value - 6 * (value >> 4);
@@ -35,30 +36,23 @@ byte ESATClock::binaryToBCD(byte value)
   return value + 6 * (value / 10);
 }
 
-String ESATClock::format(byte BCDNumber, byte length)
+ESATTimeStamp ESATClock::read()
 {
-  const byte binaryNumber = BCDToBinary(BCDNumber);
-  String unpaddedText = String(int(binaryNumber), DEC);
-  String paddedText = Util.pad(unpaddedText, '0', 2);
-  return paddedText;
-}
-
-String ESATClock::read()
-{
+  ESATTimeStamp timestamp;
   Wire.beginTransmission(address);
   Wire.write(timeRegister);
   const byte errorCode = Wire.endTransmission();
   if (errorCode != 0)
   {
     alive = false;
-    return "0000-00-00T00:00:00";
+    return timestamp;
   }
   const byte bytesToRead = 6;
   const byte bytesRead = Wire.requestFrom(address, bytesToRead);
   if (bytesRead != bytesToRead)
   {
     alive = false;
-    return "0000-00-00T00:00:00";
+    return timestamp;
   }
   const byte seconds = Wire.read();
   const byte minutes = Wire.read();
@@ -67,18 +61,9 @@ String ESATClock::read()
   const byte month = Wire.read();
   const byte year = Wire.read();
   alive = true;
-  return "20"
-    + format(year, 2)
-    + "-"
-    + format(month, 2)
-    + "-"
-    + format(day, 2)
-    + "T"
-    + format(hours, 2)
-    + ":"
-    + format(minutes, 2)
-    + ":"
-    + format(seconds & 0x7F, 2);
+  timestamp.update(BCDToBinary(year),BCDToBinary(month),BCDToBinary(day),
+                   BCDToBinary(hours),BCDToBinary(minutes),BCDToBinary(seconds & 0x7F));
+  return timestamp;
 }
 
 void ESATClock::write(String time)
@@ -109,23 +94,21 @@ void ESATClock::write(String time)
   }
 }
 
-String ESATClock::getDateWithoutDashes(String timestamp){
-  String date;
-  if(timestamp.length() != timestampLength)
-  {
-    date = "00000000";
-  }
-  else
-  {
-    date = timestamp.substring(0, 10);
-    date.replace("-","");
-  }
-  return date;
-}
+
 
 ESATClock Clock;
 
-ESATTimeStamp::ESATTimeStamp(byte Hour, byte Minute, byte Second, 
+ESATTimeStamp::ESATTimeStamp()
+{
+  hours = 0;
+  minutes = 0;
+  seconds = 0;
+  year = 0;
+  month = 0;
+  day = 0;  
+}
+
+void ESATTimeStamp::update(byte Hour, byte Minute, byte Second, 
                    byte Year, byte Month, byte Day)
 {
   hours = Hour;
@@ -136,7 +119,7 @@ ESATTimeStamp::ESATTimeStamp(byte Hour, byte Minute, byte Second,
   day = Day;  
 }
 
-ESATTimeStamp::ESATTimeStamp(String time)
+void ESATTimeStamp::update(String time)
 {
   year = time.substring(0, 4).toInt() - 2000;
   month = time.substring(5, 7).toInt();
@@ -164,35 +147,25 @@ String ESATTimeStamp::toStringTimeStamp()
 }
 boolean ESATTimeStamp::isHigherThan(ESATTimeStamp timeStamp)
 {
-  if(timeStamp.year > year)
-  {
-    return false;
-  }
-  else if(timeStamp.month > month)
-  {
-    return false;
-  }
-  else if(timeStamp.day > day)
-  {
-    return false;
-  }
-  else if(timeStamp.hours > hours)
-  {
-    return false;
-  }
-  else if(timeStamp.minutes > minutes)
-  {
-    return false;
-  }
-  else if(timeStamp.seconds > seconds)
-  {
-    return false;
-  }
-  else
-  {
-    return true; 
-  }
+  if     (timeStamp.year > year)       return false;
+  else if(timeStamp.year < year)       return true;
+  if     (timeStamp.month > month)     return false;
+  else if(timeStamp.month < month)     return true;
+  if     (timeStamp.day > day)         return false;
+  else if(timeStamp.day < day)         return true;
+  if     (timeStamp.hours > hours)     return false;
+  else if(timeStamp.hours < hours)     return true;
+  if     (timeStamp.minutes > minutes) return false;
+  else if(timeStamp.minutes < minutes) return true;
+  if     (timeStamp.seconds > seconds) return false;
+  else if(timeStamp.seconds < seconds) return true;
+  else                                 return false;
 }
 
-
+String ESATTimeStamp::getDateWithoutDashes(){
+   return "20"
+    + Util.pad(String(year % 100), '0', 2)
+    + Util.pad(String(month % 100), '0', 2)
+    + Util.pad(String(day % 100), '0', 2);
+}
 

@@ -33,7 +33,7 @@
 void ESATOBCSubsystem::begin()
 {
   storeTelemetry = true;
-  DownloadStoredTelemetry = true;
+  downloadStoredTelemetry = false;
   USB.begin();
   Serial.begin(115200);
   Storage.begin();
@@ -67,6 +67,7 @@ void ESATOBCSubsystem::handleCommand(byte opcode, String parameters)
       break;
   case DOWNLOAD_TELEMETRY:
       handleDownloadTelemetry(parameters);
+      break;
     default:
       break;
   }
@@ -83,7 +84,7 @@ void ESATOBCSubsystem::handleStoreIdCommand(String parameters)
 void ESATOBCSubsystem::handleSetTimeCommand(String parameters)
 {
   Clock.write(parameters);
-  USB.println(Clock.read());
+  USB.println(Clock.read().toStringTimeStamp());
 }
 
 void ESATOBCSubsystem::handleStoreTelemetry(String parameters)
@@ -96,16 +97,25 @@ void ESATOBCSubsystem::handleDownloadTelemetry(String parameters)
   static const byte timestampLength = 19;
   if(parameters.length() != timestampLength*2)
   {
+    downloadStoredTelemetry = false;
     return;
   }
-  downloadStoredTelemetryFromTimestamp = parameters.substring(0,timestampLength);
-  downloadStoredTelemetryToTimestamp = parameters.substring(timestampLength,timestampLength*2);
-  
+  downloadStoredTelemetryFromTimestamp.update(parameters.substring(0,timestampLength));
+  downloadStoredTelemetryToTimestamp.update(parameters.substring(timestampLength,timestampLength*2));  
+  if(downloadStoredTelemetryToTimestamp.isHigherThan(downloadStoredTelemetryFromTimestamp))
+  {
+    downloadStoredTelemetry = true;  
+    lastStoredTelemetryDownloadedTimestamp.update(parameters.substring(0,timestampLength));
+    }
+  else{
+    downloadStoredTelemetry = false;
+  }
 }
 
 byte ESATOBCSubsystem::loadIdentifier()
 {
   Flash.read(flash, &identifier, sizeof(identifier));
+  return identifier;
 }
 
 String ESATOBCSubsystem::readTelemetry()
@@ -124,6 +134,16 @@ String ESATOBCSubsystem::readTelemetry()
 
 void ESATOBCSubsystem::update()
 {
+  
+  // if(downloadStoredTelemetry){
+    // while(downloadStoredTelemetryToTimestamp.isHigherThan(lastStoredTelemetryDownloadedTimestamp))
+    // {
+      
+    // }
+    // downloadStoredTelemetry = false;
+  // }
+  
+  
 }
 
 ESATOBCSubsystem OBCSubsystem;
