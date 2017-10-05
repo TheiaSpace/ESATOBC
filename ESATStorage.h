@@ -24,16 +24,19 @@
 class ESATStorage
 {
   public:
-    boolean alive;
+    // True on input/output error.  Must be reset manually.
+    boolean error;
 
     // Begin the SD card subsystem.
+    // This will set the error flag on input/output error.
     void begin();
 
     // Write text to a file.
+    // This will set the error flag on input/output error.
     void write(String filename, String text);
 
   private:
-    static const byte pin = 45;
+    static const byte PIN = 45;
 };
 
 extern ESATStorage Storage;
