@@ -26,39 +26,40 @@
 class ESATCOMMSSubsystem: public ESATSubsystem
 {
   public:
-    int status;
-
     // Start the communications subsystem.
-    virtual void begin();
-
-    // Return the start order of this subsystem.  Subsystems with a
-    // low order number start/begin before subsystems with a high
-    // order number.
-    virtual byte getStartOrder();
+    void begin();
 
     // Return the identifier of this subsystem.
-    virtual byte getSubsystemIdentifier();
+    word getApplicationProcessIdentifier();
 
-    // Handle a command of given code and parameters.
-    virtual void handleCommand(byte commandCode, String parameters);
+    // Handle a telecommand.
+    void handleTelecommand(ESATCCSDSPacket& packet);
 
-    // Return a string with the next pending command.
-    // If there are no pending commands, return an empty string.
-    ESATCommand readCommand();
+    // Fill a packet with the next available telecommand.
+    void readTelecommand(ESATCCSDSPacket& packet);
 
-    // Return a string with the hexadecimal dump
-    // of the subsystem's telemetry.
-    virtual String readTelemetry();
+    // Fill a packet with the next telemetry packet available.
+    void readTelemetry(ESATCCSDSPacket& packet);
+
+    // Return true if there is new telemetry available;
+    // Otherwise return false.
+    boolean telemetryAvailable();
 
     // Update the subsystem.
-    virtual void update();
+    void update();
 
     // Write a telemetry packet.
-    void writePacket(String packet);
+    void writePacket(ESATCCSDSPacket& packet);
 
   private:
-    static const byte address = 2;
-    static const unsigned long baudRate = 115200;
+    // Unique identifier of the subsystem.
+    static const word APPLICATION_PROCESS_IDENTIFIER = 4;
+
+    // Read a packet from an input stream.
+    void readPacketFrom(Stream& input, ESATCCSDSPacket& packet);
+
+    // Write a telemetry packet to an output stream.
+    void writePacketTo(Stream& output, ESATCCSDSPacket& packet);
 };
 
 extern ESATCOMMSSubsystem COMMSSubsystem;
