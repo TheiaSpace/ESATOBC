@@ -45,19 +45,19 @@ String ESATClock::format(byte BCDNumber, byte length)
 
 String ESATClock::read()
 {
-  Wire.beginTransmission(address);
-  Wire.write(timeRegister);
+  Wire.beginTransmission(ADDRESS);
+  Wire.write(TIME_REGISTER);
   const byte errorCode = Wire.endTransmission();
   if (errorCode != 0)
   {
-    alive = false;
+    error = true;
     return "00000000000000";
   }
   const byte bytesToRead = 6;
-  const byte bytesRead = Wire.requestFrom(address, bytesToRead);
+  const byte bytesRead = Wire.requestFrom(ADDRESS, bytesToRead);
   if (bytesRead != bytesToRead)
   {
-    alive = false;
+    error = true;
     return "00000000000000";
   }
   const byte seconds = Wire.read();
@@ -66,7 +66,6 @@ String ESATClock::read()
   const byte day = Wire.read();
   const byte month = Wire.read();
   const byte year = Wire.read();
-  alive = true;
   return "20"
     + format(year, 2)
     + "-"
@@ -89,8 +88,8 @@ void ESATClock::write(String time)
   const byte hours = time.substring(11, 13).toInt();
   const byte minutes = time.substring(14, 16).toInt();
   const byte seconds = time.substring(17, 19).toInt();
-  Wire.beginTransmission(address);
-  Wire.write(timeRegister);
+  Wire.beginTransmission(ADDRESS);
+  Wire.write(TIME_REGISTER);
   Wire.write(binaryToBCD(seconds));
   Wire.write(binaryToBCD(minutes));
   Wire.write(binaryToBCD(hours));
@@ -99,13 +98,9 @@ void ESATClock::write(String time)
   Wire.write(binaryToBCD(year));
   Wire.write(0);
   const byte errorCode = Wire.endTransmission();
-  if (errorCode == 0)
+  if (errorCode != 0)
   {
-    alive = true;
-  }
-  else
-  {
-    alive = false;
+    error = true;
   }
 }
 

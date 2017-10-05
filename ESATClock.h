@@ -28,23 +28,25 @@
 class ESATClock
 {
   public:
-    // True if the clock is alive.
-    boolean alive;
+    // True on communication error.  Must be reset manually.
+    boolean error;
 
     // Start the clock.
     void begin();
 
     // Read the current time.
     // Return the date and time in ISO 8601 format.
+    // Set the error flag on error.
     String read();
 
     // Set the current time.
     // Pass the date and time in ISO 8601 format.
+    // Set the error flag on error.
     void write(String time);
 
   private:
-    static const byte address = 0x68;
-    static const byte timeRegister = 0;
+    static const byte ADDRESS = 0x68;
+    static const byte TIME_REGISTER = 0;
 
     // BCD to binary conversion.
     byte BCDToBinary(byte value);
