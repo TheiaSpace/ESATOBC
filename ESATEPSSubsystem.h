@@ -35,6 +35,7 @@ class ESATEPSSubsystem: public ESATSubsystem
     void handleTelecommand(ESATCCSDSPacket& telecommand);
 
     // Fill a packet with the next telemetry packet available.
+    // Set the error flag on error.
     void readTelemetry(ESATCCSDSPacket& telemetry);
 
     // Return true if a new telemetry packet is available.
@@ -42,8 +43,6 @@ class ESATEPSSubsystem: public ESATSubsystem
 
     // Update the subsystem.
     void update();
-
-    boolean alive;
 
   private:
     // I2C register numbers of the EPS board.

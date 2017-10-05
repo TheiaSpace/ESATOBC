@@ -56,7 +56,6 @@ void ESATEPSSubsystem::readTelemetry(ESATCCSDSPacket& packet)
   const byte headerTelemetryControlWriteStatus = Wire.endTransmission();
   if (headerTelemetryControlWriteStatus != 0)
   {
-    alive = false;
     return;
   }
   Wire.beginTransmission(ADDRESS);
@@ -64,14 +63,12 @@ void ESATEPSSubsystem::readTelemetry(ESATCCSDSPacket& packet)
   const byte headerTelemetryVectorWriteStatus = Wire.endTransmission();
   if (headerTelemetryVectorWriteStatus != 0)
   {
-    alive = false;
     return;
   }
   const byte headerBytesRead =
     Wire.requestFrom(ADDRESS, packet.PRIMARY_HEADER_LENGTH);
   if (headerBytesRead != packet.PRIMARY_HEADER_LENGTH)
   {
-    alive = false;
     return;
   }
   for (int i = 0; i < packet.PRIMARY_HEADER_LENGTH; i++)
@@ -97,7 +94,6 @@ void ESATEPSSubsystem::readTelemetry(ESATCCSDSPacket& packet)
     const byte telemetryControlWriteStatus = Wire.endTransmission();
     if (telemetryControlWriteStatus != 0)
     {
-      alive = false;
       packet.clear();
       return;
     }
@@ -106,7 +102,6 @@ void ESATEPSSubsystem::readTelemetry(ESATCCSDSPacket& packet)
     const byte telemetryVectorWriteStatus = Wire.endTransmission();
     if (telemetryVectorWriteStatus != 0)
     {
-      alive = false;
       packet.clear();
       return;
     }
@@ -118,7 +113,6 @@ void ESATEPSSubsystem::readTelemetry(ESATCCSDSPacket& packet)
     const byte bytesRead = Wire.requestFrom(int(ADDRESS), int(bytesToRead));
     if (bytesRead != bytesToRead)
     {
-      alive = false;
       packet.clear();
       return;
     }
