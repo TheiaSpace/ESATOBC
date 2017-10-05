@@ -69,11 +69,11 @@ void loop()
   const word bufferLength = 256;
   byte buffer[bufferLength];
   ESATCCSDSPacket packet(buffer, bufferLength);
-  OnBoardDataHandling.updateSubsystems();
   while (OnBoardDataHandling.readTelecommand(packet))
   {
     OnBoardDataHandling.dispatchTelecommand(packet);
   }
+  OnBoardDataHandling.updateSubsystems();
   while (OnBoardDataHandling.readSubsystemsTelemetry(packet))
   {
     OnBoardDataHandling.sendTelemetry(packet);
