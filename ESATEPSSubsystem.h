@@ -26,30 +26,49 @@ class ESATEPSSubsystem: public ESATSubsystem
 {
   public:
     // Start this subsystem.
-    virtual void begin();
-
-    // Return the start order of this subsystem.  Subsystems with a
-    // low order number start/begin before subsystems with a high
-    // order number.
-    virtual byte getStartOrder();
+    void begin();
 
     // Return the identifier of this subsystem.
-    virtual byte getSubsystemIdentifier();
+    word getApplicationProcessIdentifier();
 
-    // Handle a command of given code and parameters.
-    virtual void handleCommand(byte commandCode, String parameters);
+    // Handle a telecommand.
+    void handleTelecommand(ESATCCSDSPacket& telecommand);
 
-    // Return a string with the hexadecimal dump
-    // of the subsystem's telemetry.
-    virtual String readTelemetry();
+    // Fill a packet with the next telemetry packet available.
+    void readTelemetry(ESATCCSDSPacket& telemetry);
+
+    // Return true if a new telemetry packet is available.
+    boolean telemetryAvailable();
 
     // Update the subsystem.
-    virtual void update();
+    void update();
 
     boolean alive;
 
   private:
-    static const byte address = 2;
+    // I2C register numbers of the EPS board.
+    enum RegisterNumbers
+    {
+      TELECOMMAND_CONTROL = 0,
+      TELECOMMAND_STATUS = 1,
+      TELEMETRY_CONTROL = 2,
+      TELEMETRY_STATUS = 3,
+      TELEMETRY_VECTOR = 4,
+    };
+
+    // Identifier numbers of the telemetry packets.
+    enum TelemetryPacketIdentifier
+    {
+      HOUSEKEEPING = 0,
+    };
+
+    // I2C address of the EPS board.
+    static const byte ADDRESS = 2;
+
+    // Unique identifier of the subsystem.
+    static const word APPLICATION_PROCESS_IDENTIFIER = 2;
+
+    boolean newTelemetryPacket;
 };
 
 extern ESATEPSSubsystem EPSSubsystem;

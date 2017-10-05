@@ -17,60 +17,127 @@
  */
 
 #include "ESATEPSSubsystem.h"
-#include <ESATUtil.h>
 #include <Wire.h>
 
 void ESATEPSSubsystem::begin()
 {
+  newTelemetryPacket = false;
 }
 
-byte ESATEPSSubsystem::getStartOrder()
+word ESATEPSSubsystem::getApplicationProcessIdentifier()
 {
-  return 1;
+  return APPLICATION_PROCESS_IDENTIFIER;
 }
 
-byte ESATEPSSubsystem::getSubsystemIdentifier()
+void ESATEPSSubsystem::handleTelecommand(ESATCCSDSPacket& telecommand)
 {
-  return 2;
-}
-
-void ESATEPSSubsystem::handleCommand(byte commandCode, String parameters)
-{
-  Wire.beginTransmission(address);
-  Wire.write(commandCode);
-  Wire.write(parameters.toInt());
+  const word packetDataLength = telecommand.readPacketDataLength();
+  const word packetLength =
+    packetDataLength + telecommand.PRIMARY_HEADER_LENGTH;
+  Wire.beginTransmission(ADDRESS);
+  Wire.write(TELECOMMAND_CONTROL);
+  for (int index = 0; index < packetLength; index++)
+  {
+    Wire.write(telecommand.buffer[index]);
+  }
   (void) Wire.endTransmission();
 }
 
-String ESATEPSSubsystem::readTelemetry()
+void ESATEPSSubsystem::readTelemetry(ESATCCSDSPacket& packet)
 {
-  String data;
-  const unsigned int telemetrySize = 25;
-  Wire.beginTransmission(address);
-  const byte bytesRead = Wire.requestFrom(address, 2 * telemetrySize);
-  delay(10);
-  if (bytesRead > 0)
+  newTelemetryPacket = false;
+  packet.clear();
+  Wire.beginTransmission(ADDRESS);
+  (void) Wire.write(TELEMETRY_CONTROL);
+  (void) Wire.write(HOUSEKEEPING);
+  (void) Wire.write(true);
+  (void) Wire.write(0);
+  (void) Wire.write(0);
+  const byte headerTelemetryControlWriteStatus = Wire.endTransmission();
+  if (headerTelemetryControlWriteStatus != 0)
   {
-    for (int i = 0; i < 2 * telemetrySize; i++)
-    {
-      data += Util.byteToHexadecimal(byte(Wire.read()));
-      delay(5);
-    };
-    alive = true;
-  }
-  else
-  {
-    for (int i = 0; i < 2 * telemetrySize; i++)
-    {
-      data += Util.byteToHexadecimal(byte(0));
-    };
     alive = false;
+    return;
   }
-  return data;
+  Wire.beginTransmission(ADDRESS);
+  (void) Wire.write(TELEMETRY_VECTOR);
+  const byte headerTelemetryVectorWriteStatus = Wire.endTransmission();
+  if (headerTelemetryVectorWriteStatus != 0)
+  {
+    alive = false;
+    return;
+  }
+  const byte headerBytesRead =
+    Wire.requestFrom(ADDRESS, packet.PRIMARY_HEADER_LENGTH);
+  if (headerBytesRead != packet.PRIMARY_HEADER_LENGTH)
+  {
+    alive = false;
+    return;
+  }
+  for (int i = 0; i < packet.PRIMARY_HEADER_LENGTH; i++)
+  {
+    packet.buffer[i] = Wire.read();
+  }
+  const word packetDataLength = packet.readPacketDataLength();
+  const long packetLength = packet.PRIMARY_HEADER_LENGTH + packetDataLength;
+  if (packetLength > packet.bufferLength)
+  {
+    packet.clear();
+    return;
+  }
+  long readIndex = packet.PRIMARY_HEADER_LENGTH;
+  while(readIndex < packetLength)
+  {
+    Wire.beginTransmission(ADDRESS);
+    (void) Wire.write(TELEMETRY_CONTROL);
+    (void) Wire.write(HOUSEKEEPING);
+    (void) Wire.write(false);
+    (void) Wire.write(highByte(readIndex));
+    (void) Wire.write(lowByte(readIndex));
+    const byte telemetryControlWriteStatus = Wire.endTransmission();
+    if (telemetryControlWriteStatus != 0)
+    {
+      alive = false;
+      packet.clear();
+      return;
+    }
+    Wire.beginTransmission(ADDRESS);
+    (void) Wire.write(TELEMETRY_VECTOR);
+    const byte telemetryVectorWriteStatus = Wire.endTransmission();
+    if (telemetryVectorWriteStatus != 0)
+    {
+      alive = false;
+      packet.clear();
+      return;
+    }
+    byte bytesToRead = BUFFER_LENGTH;
+    if ((readIndex + bytesToRead) > packetLength)
+    {
+      bytesToRead = packetLength - readIndex;
+    }
+    const byte bytesRead = Wire.requestFrom(int(ADDRESS), int(bytesToRead));
+    if (bytesRead != bytesToRead)
+    {
+      alive = false;
+      packet.clear();
+      return;
+    }
+    for (int i = 0; i < bytesToRead; i++)
+    {
+      packet.buffer[readIndex + i] = Wire.read();
+    }
+    readIndex = readIndex + bytesRead;
+  }
+}
+
+boolean ESATEPSSubsystem::telemetryAvailable()
+{
+  return newTelemetryPacket;
 }
 
 void ESATEPSSubsystem::update()
 {
+  newTelemetryPacket = true;
 }
 
 ESATEPSSubsystem EPSSubsystem;
