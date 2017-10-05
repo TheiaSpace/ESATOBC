@@ -13,47 +13,52 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <ESATADCSSubsystem.h>
+#include <ESATCOMMSSubsystem.h>
+#include <ESATEPSSubsystem.h>
 #include <ESATOBCSubsystem.h>
 #include <ESATOnBoardDataHandling.h>
 #include <ESATTimer.h>
 
 class ESATExampleSubsystem: public ESATSubsystem
 {
-public:
-  virtual void begin()
-  {
-  }
+  public:
+    void begin()
+    {
+    }
 
-  virtual byte getStartOrder()
-  {
-    return 5;
-  }
+    word getApplicationProcessIdentifier()
+    {
+      return 5;
+    }
 
-  virtual byte getSubsystemIdentifier()
-  {
-    return 5;
-  }
+    void handleTelecommand(ESATCCSDSPacket& packet)
+    {
+    }
 
-  virtual void handleCommand(byte commandCode, String parameters)
-  {
-  }
+    void readTelemetry(ESATCCSDSPacket& packet)
+    {
+    }
 
-  virtual String readTelemetry()
-  {
-    return "";
-  }
+    boolean telemetryAvailable()
+    {
+      return false;
+    }
 
-  virtual void update()
-  {
-  }
+    void update()
+    {
+    }
 };
 
 ESATExampleSubsystem ExampleSubsystem;
 
 void setup()
 {
-  OnBoardDataHandling.registerDefaultSubsystems();
-  OnBoardDataHandling.registerSubsystem(&ExampleSubsystem);
+  OnBoardDataHandling.registerSubsystem(OBCSubsystem);
+  OnBoardDataHandling.registerSubsystem(EPSSubsystem);
+  OnBoardDataHandling.registerSubsystem(ADCSSubsystem);
+  OnBoardDataHandling.registerSubsystem(COMMSSubsystem);
+  OnBoardDataHandling.registerSubsystem(ExampleSubsystem);
   OnBoardDataHandling.beginSubsystems();
   Timer.begin(1000);
 }
@@ -61,23 +66,20 @@ void setup()
 void loop()
 {
   Timer.waitUntilNextCycle();
-  ESATCommand command = OnBoardDataHandling.readCommand();
-  if (command.valid)
-  {
-    OnBoardDataHandling.sendTelemetry("ACK",
-                                      OnBoardDataHandling.EVENT_TELEMETRY,
-                                      OBCSubsystem.getSubsystemIdentifier());
-    OnBoardDataHandling.dispatchCommand(command.subsystemIdentifier,
-                                        command.commandCode,
-                                        command.parameters);
-  }
+  const word bufferLength = 256;
+  byte buffer[bufferLength];
+  ESATCCSDSPacket packet(buffer, bufferLength);
   OnBoardDataHandling.updateSubsystems();
-  String telemetry = OnBoardDataHandling.readSubsystemsTelemetry();
-  if (OBCSubsystem.storeTelemetry)
+  while (OnBoardDataHandling.readTelecommand(packet))
   {
-    OnBoardDataHandling.storeTelemetry(telemetry);
+    OnBoardDataHandling.dispatchTelecommand(packet);
   }
-  OnBoardDataHandling.sendTelemetry(telemetry,
-                                    OnBoardDataHandling.HOUSEKEEPING_TELEMETRY,
-                                    OBCSubsystem.getSubsystemIdentifier());
+  while (OnBoardDataHandling.readSubsystemsTelemetry(packet))
+  {
+    OnBoardDataHandling.sendTelemetry(packet);
+    if (OBCSubsystem.storeTelemetry)
+    {
+      OnBoardDataHandling.storeTelemetry(packet);
+    }
+  }
 }
