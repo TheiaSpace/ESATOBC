@@ -17,7 +17,6 @@
  */
 
 #include "ESATOBCSubsystem.h"
-#include <MspFlash.h>
 #include <Wire.h>
 #include "ESATADCSSubsystem.h"
 #include "ESATClock.h"
@@ -28,87 +27,99 @@
 #include <ESATUtil.h>
 #include <USBSerial.h>
 
-#define flash SEGMENT_C
-
 void ESATOBCSubsystem::begin()
 {
+  newTelemetryPacket = false;
+  telemetryPacketSequenceCount = 0;
   storeTelemetry = false;
   USB.begin();
   Serial.begin(115200);
   Storage.begin();
   Wire.begin();
   Clock.begin();
-  loadIdentifier();
 }
 
-byte ESATOBCSubsystem::getStartOrder()
+word ESATOBCSubsystem::getApplicationProcessIdentifier()
 {
-  return 0;
+  return APPLICATION_PROCESS_IDENTIFIER;
 }
 
-byte ESATOBCSubsystem::getSubsystemIdentifier()
+void ESATOBCSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
 {
-  return 1;
-}
-
-void ESATOBCSubsystem::handleCommand(byte opcode, String parameters)
-{
-  switch (opcode)
+  packet.rewind();
+  const byte majorVersionNumber = packet.readByte();
+  const byte minorVersionNumber = packet.readByte();
+  const byte patchVersionNumber = packet.readByte();
+  if (majorVersionNumber < MAJOR_VERSION_NUMBER)
   {
-    case STORE_ID:
-      handleStoreIdCommand(parameters);
-      break;
+    return;
+  }
+  const byte commandCode = packet.readByte();
+  switch (commandCode)
+  {
     case SET_TIME:
-      handleSetTimeCommand(parameters);
+      handleSetTimeCommand(packet);
       break;
   case STORE_TELEMETRY:
-      handleStoreTelemetry(parameters);
+      handleStoreTelemetry(packet);
       break;
     default:
       break;
   }
 }
 
-void ESATOBCSubsystem::handleStoreIdCommand(String parameters)
+void ESATOBCSubsystem::handleSetTimeCommand(ESATCCSDSPacket& packet)
 {
-  byte id = parameters.toInt();
-  Flash.erase(flash);
-  Flash.write(flash, &id, sizeof(id));
-  identifier = id;
 }
 
-void ESATOBCSubsystem::handleSetTimeCommand(String parameters)
+void ESATOBCSubsystem::handleStoreTelemetry(ESATCCSDSPacket& packet)
 {
-  Clock.write(parameters);
-  USB.println(Clock.read());
+  const byte parameter = packet.readByte();
+  if (parameter > 0)
+  {
+    storeTelemetry = true;
+  }
+  else
+  {
+    storeTelemetry = false;
+  }
 }
 
-void ESATOBCSubsystem::handleStoreTelemetry(String parameters)
+void ESATOBCSubsystem::readTelemetry(ESATCCSDSPacket& packet)
 {
-  storeTelemetry = !!parameters.toInt();
-}
-
-byte ESATOBCSubsystem::loadIdentifier()
-{
-  Flash.read(flash, &identifier, sizeof(identifier));
-}
-
-String ESATOBCSubsystem::readTelemetry()
-{
+  newTelemetryPacket = false;
+  packet.clear();
+  packet.writePacketVersionNumber(0);
+  packet.writePacketType(packet.TELEMETRY);
+  packet.writeSecondaryHeaderFlag(packet.SECONDARY_HEADER_IS_PRESENT);
+  packet.writeApplicationProcessIdentifier(getApplicationProcessIdentifier());
+  packet.writeSequenceFlags(packet.UNSEGMENTED_USER_DATA);
+  packet.writePacketSequenceCount(telemetryPacketSequenceCount);
+  packet.writeByte(MAJOR_VERSION_NUMBER);
+  packet.writeByte(MINOR_VERSION_NUMBER);
+  packet.writeByte(PATCH_VERSION_NUMBER);
+  packet.writeByte(HOUSEKEEPING);
   const unsigned int load = 100 * Timer.ellapsedMilliseconds() / Timer.period;
-  const byte status =
-    (Clock.alive << CLOCK_OFFSET)
-    | (ADCSSubsystem.inertialMeasurementUnitAlive << IMU_OFFSET)
-    | (EPSSubsystem.alive << EPS_OFFSET)
-    | (Storage.alive << STORAGE_OFFSET)
-    | ((COMMSSubsystem.status & COMMS_MASK) << COMMS_OFFSET);
-  String telemetry = Util.intToHexadecimal(status)
-    + Util.intToHexadecimal(load);
-  return telemetry;
+  packet.writeByte(load);
+  if (storeTelemetry)
+  {
+    packet.writeByte(1);
+  }
+  else
+  {
+    packet.writeByte(0);
+  }
+  telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
+}
+
+boolean ESATOBCSubsystem::telemetryAvailable()
+{
+  return newTelemetryPacket;
 }
 
 void ESATOBCSubsystem::update()
 {
+  newTelemetryPacket = true;
 }
 
 ESATOBCSubsystem OBCSubsystem;
