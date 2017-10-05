@@ -25,29 +25,24 @@
 class ESATADCSSubsystem: public ESATSubsystem
 {
   public:
-    // True if the inertial measurement unit is alive.
-    boolean inertialMeasurementUnitAlive;
-
     // Start this subsystem.
-    virtual void begin();
-
-    // Return the start order of this subsystem.  Subsystems with a
-    // low order number start/begin before subsystems with a high
-    // order number.
-    virtual byte getStartOrder();
+    void begin();
 
     // Return the identifier of this subsystem.
-    virtual byte getSubsystemIdentifier();
+    word getApplicationProcessIdentifier();
 
-    // Handle a command of given code and parameters.
-    virtual void handleCommand(byte commandCode, String parameters);
+    // Handle a telecommand.
+    void handleTelecommand(ESATCCSDSPacket& packet);
 
-    // Return a string with the hexadecimal dump
-    // of the subsystem's telemetry.
-    virtual String readTelemetry();
+    // Fill a packet with the next telemetry packet available.
+    void readTelemetry(ESATCCSDSPacket& packet);
+
+    // Return true if there is new telemetry available;
+    // Otherwise return false.
+    boolean telemetryAvailable();
 
     // Update the subsystem.
-    virtual void update();
+    void update();
 };
 
 extern ESATADCSSubsystem ADCSSubsystem;

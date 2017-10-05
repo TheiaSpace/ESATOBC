@@ -19,56 +19,66 @@
 #ifndef ESATOBCSubsystem_h
 #define ESATOBCSubsystem_h
 
-#include <Energia.h>
+#include <Arduino.h>
 #include "ESATSubsystem.h"
 
 class ESATOBCSubsystem: public ESATSubsystem
 {
   public:
-    byte identifier;
     boolean storeTelemetry;
 
     // Start the OBC.
-    virtual void begin();
-
-    // Return the start order of this subsystem.  Subsystems with a
-    // low order number start/begin before subsystems with a high
-    // order number.
-    virtual byte getStartOrder();
+    void begin();
 
     // Return the identifier of this subsystem.
-    virtual byte getSubsystemIdentifier();
+    word getApplicationProcessIdentifier();
 
-    // Handle a command of given code and parameters.
-    virtual void handleCommand(byte commandCode, String parameters);
+    // Handle a telecommand.
+    void handleTelecommand(ESATCCSDSPacket& packet);
 
-    // Return a string with the hexadecimal dump
-    // of the subsystem's telemetry.
-    virtual String readTelemetry();
+    // Fill a packet with the next telemetry packet available.
+    void readTelemetry(ESATCCSDSPacket& packet);
+
+    // Return true if there is new telemetry available;
+    // Otherwise return false.
+    boolean telemetryAvailable();
 
     // Update the subsystem.
     virtual void update();
 
   private:
+    // Command codes.
     enum CommandCode
     {
-      STORE_ID = 0,
-      SET_TIME = 1,
-      STORE_TELEMETRY = 2,
+      SET_TIME = 0x00,
+      STORE_TELEMETRY = 0x01,
     };
 
-    static const byte CLOCK_OFFSET = 0;
-    static const byte IMU_OFFSET = 1;
-    static const byte EPS_OFFSET = 2;
-    static const byte STORAGE_OFFSET = 3;
-    static const byte COMMS_OFFSET = 4;
-    static const byte COMMS_MASK = (1 << 0) | (1 << 1);
+    // Telemetry packet identifiers.
+    enum TelemetryPacketIdentifier
+    {
+      HOUSEKEEPING = 0,
+    };
 
-    void handleStoreIdCommand(String parameters);
-    void handleSetTimeCommand(String parameters);
-    void handleStoreTelemetry(String parameters);
+    // Version numbers.
+    static const byte MAJOR_VERSION_NUMBER = 3;
+    static const byte MINOR_VERSION_NUMBER = 0;
+    static const byte PATCH_VERSION_NUMBER = 0;
 
-    byte loadIdentifier();
+    // Unique identifier of the subsystem.
+    static const word APPLICATION_PROCESS_IDENTIFIER = 1;
+
+    // True when a new telemetry packet is ready (after update()).
+    // False otherwise (after readTelemetry()).
+    boolean newTelemetryPacket;
+
+    // The telemetry packet sequence count is incremented every time a
+    // new telemetry packet is generated.
+    word telemetryPacketSequenceCount;
+
+    // Command handlers.
+    void handleSetTimeCommand(ESATCCSDSPacket& packet);
+    void handleStoreTelemetry(ESATCCSDSPacket& packet);
 };
 
 extern ESATOBCSubsystem OBCSubsystem;

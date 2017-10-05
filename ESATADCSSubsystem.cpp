@@ -24,30 +24,29 @@ void ESATADCSSubsystem::begin()
   ADCS.begin();
 }
 
-byte ESATADCSSubsystem::getStartOrder()
+word ESATADCSSubsystem::getApplicationProcessIdentifier()
 {
-  return 3;
+  return ADCS.getApplicationProcessIdentifier();
 }
 
-byte ESATADCSSubsystem::getSubsystemIdentifier()
+void ESATADCSSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
 {
-  return 3;
+  ADCS.handleTelecommand(packet);
 }
 
-void ESATADCSSubsystem::handleCommand(byte commandCode, String parameters)
+void ESATADCSSubsystem::readTelemetry(ESATCCSDSPacket& packet)
 {
-  ADCS.handleCommand(commandCode, parameters);
+  ADCS.readTelemetry(packet);
 }
 
-String ESATADCSSubsystem::readTelemetry()
+boolean ESATADCSSubsystem::telemetryAvailable()
 {
-  return ADCS.readTelemetry();
+  return ADCS.telemetryAvailable();
 }
 
 void ESATADCSSubsystem::update()
 {
   ADCS.update();
-  inertialMeasurementUnitAlive = ADCS.inertialMeasurementUnitAlive;
 }
 
 ESATADCSSubsystem ADCSSubsystem;

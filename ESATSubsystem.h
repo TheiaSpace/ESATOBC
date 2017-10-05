@@ -19,6 +19,9 @@
 #ifndef ESATSubsystem_h
 #define ESATSubsystem_h
 
+#include <Arduino.h>
+#include <ESATCCSDSPacket.h>
+
 class ESATSubsystem
 {
   public:
@@ -27,20 +30,19 @@ class ESATSubsystem
     // Start the subsystem.
     virtual void begin() = 0;
 
-    // Return the start order of this subsystem.  Subsystems with a
-    // low order number start/begin before subsystems with a high
-    // order number.
-    virtual byte getStartOrder() = 0;
+    // Return the application process identifier of this subsystem.
+    // Each subsystem must have a unique 11-bit application process identifier.
+    virtual word getApplicationProcessIdentifier() = 0;
 
-    // Return the identifier of this subsystem.
-    virtual byte getSubsystemIdentifier() = 0;
+    // Handle a telecommand.
+    virtual void handleTelecommand(ESATCCSDSPacket& telecommand) = 0;
 
-    // Handle a command of given code and parameters.
-    virtual void handleCommand(byte commandCode, String parameters) = 0;
+    // Fill a packet with the next telemetry packet available.
+    virtual void readTelemetry(ESATCCSDSPacket& packet) = 0;
 
-    // Return a string with the hexadecimal dump
-    // of the subsystem's telemetry.
-    virtual String readTelemetry() = 0;
+    // Return true if there is new telemetry available;
+    // Otherwise return false.
+    virtual boolean telemetryAvailable() = 0;
 
     // Update the subsystem.
     virtual void update() = 0;

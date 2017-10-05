@@ -21,7 +21,11 @@
 
 void ESATStorage::begin()
 {
-  alive = SD.begin(pin);
+  const boolean correctBegin = SD.begin(PIN);
+  if (!correctBegin)
+  {
+    error = true;
+  }
 }
 
 void ESATStorage::write(String filename, String text)
@@ -31,11 +35,10 @@ void ESATStorage::write(String filename, String text)
   {
     file.println(text);
     file.close();
-    alive = true;
   }
   else
   {
-    alive = false;
+    error = true;
   }
 }
 

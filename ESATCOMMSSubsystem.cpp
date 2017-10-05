@@ -17,122 +17,97 @@
  */
 
 #include "ESATCOMMSSubsystem.h"
-#include "ESATOBCSubsystem.h"
-#include <ESATUtil.h>
 #include <USBSerial.h>
 
 void ESATCOMMSSubsystem::begin()
 {
 }
 
-byte ESATCOMMSSubsystem::getStartOrder()
+word ESATCOMMSSubsystem::getApplicationProcessIdentifier()
 {
-  return 2;
+  return APPLICATION_PROCESS_IDENTIFIER;
 }
 
-byte ESATCOMMSSubsystem::getSubsystemIdentifier()
+void ESATCOMMSSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
 {
-  return 4;
+  writePacketTo(Serial, packet);
 }
 
-void ESATCOMMSSubsystem::handleCommand(byte commandCode, String parameters)
+void ESATCOMMSSubsystem::readTelecommand(ESATCCSDSPacket& packet)
 {
-  USB.println(parameters);
-  int repetitions = 10;
-  while (repetitions--)
-  {
-    USB.println(",");
-    Serial.flush();
-    Serial.println(parameters);
-    int timeout = 20;
-    while (timeout--)
-    {
-      delay(1000);
-      USB.print(".");
-      if (Serial.available())
-      {
-        String cmd = Serial.readStringUntil('\r');
-        if (cmd.indexOf("#s:") >= 0)
-        {
-          if (cmd.indexOf("#s:3") >= 0)
-          {
-            USB.println("Connection Success");
-            return;
-          }
-          else if (cmd.indexOf("#s:2") >= 0)
-          {
-            USB.println("Wifi:OK, Waiting for server");
-          }
-          else
-          {
-            USB.print("Wifi connection failed, Retrying");
-          }
-        }
-      }
-    }
-  }
-  USB.println("Connection error!");
-}
-
-ESATCommand ESATCOMMSSubsystem::readCommand()
-{
-  String packet;
-  ESATCommand command;
-  command.valid = false;
   if (Serial.available())
   {
-    packet = Serial.readStringUntil('\r');
+    readPacketFrom(Serial, packet);
   }
   else if (USB.available())
   {
-    packet = USB.readStringUntil('\r');
+    readPacketFrom(USB, packet);
   }
-  else
-  {
-    return command;
-  }
-  String identifier = packet.substring(0, 1);
-  if (identifier == "@")
-  {
-    command.valid = true;
-    command.subsystemIdentifier = packet.substring(2, 3).toInt();
-    command.commandCode = strtol(packet.substring(5, 7).c_str(), 0, 16);
-    const int commandLength = strtol(packet.substring(3, 5).c_str(), 0, 16);
-    command.parameters = packet.substring(7, 7 + commandLength);
-  }
-  else if (packet.indexOf("#s:") >= 0)
-  {
-    status = packet.substring(4).toInt();
-  }
-  else if (identifier == "#")
-  {
-    command.valid = true;
-    command.subsystemIdentifier = getSubsystemIdentifier();
-    command.commandCode = 0;
-    command.parameters = packet;
-  }
-  return command;
 }
 
-String ESATCOMMSSubsystem::readTelemetry()
+void ESATCOMMSSubsystem::readPacketFrom(Stream& input,
+                                        ESATCCSDSPacket& packet)
 {
-  return Util.intToHexadecimal(status);
+  packet.clear();
+  if (packet.bufferLength < packet.PRIMARY_HEADER_LENGTH)
+  {
+    return;
+  }
+  if (input.available() == 0)
+  {
+    return;
+  }
+  const byte headerBytesRead =
+    input.readBytes((char*) packet.buffer, packet.PRIMARY_HEADER_LENGTH);
+  if (headerBytesRead < packet.PRIMARY_HEADER_LENGTH)
+  {
+    packet.clear();
+    return;
+  }
+  const word packetDataLength = packet.readPacketDataLength();
+  const long packetLength = packetDataLength + packet.PRIMARY_HEADER_LENGTH;
+  if (packetLength > packet.bufferLength)
+  {
+    packet.clear();
+    return;
+  }
+  const word packetDataBytesRead =
+    input.readBytes((char*) packet.buffer, packetDataLength);
+  if (packetDataBytesRead != packetDataLength)
+  {
+    packet.clear();
+    return;
+  }
+}
+
+void ESATCOMMSSubsystem::readTelemetry(ESATCCSDSPacket& packet)
+{
+}
+
+boolean ESATCOMMSSubsystem::telemetryAvailable()
+{
+  return false;
 }
 
 void ESATCOMMSSubsystem::update()
 {
 }
 
-void ESATCOMMSSubsystem::writePacket(String packet)
+void ESATCOMMSSubsystem::writePacket(ESATCCSDSPacket& packet)
 {
-  Serial.flush();
-  Serial.print("@" + packet);
-  USB.println("{\"type\":\"onPacket\",\"id\":\""
-              + String(int(OBCSubsystem.identifier))
-              + "\",\"data\":\""
-              + String(int(OBCSubsystem.identifier), HEX).substring(0, 1)
-              + packet
-              +"\"}");
+  writePacketTo(Serial, packet);
+  writePacketTo(USB, packet);
+}
+
+void ESATCOMMSSubsystem::writePacketTo(Stream& output,
+                                       ESATCCSDSPacket& packet)
+{
+  const long packetLength =
+    packet.PRIMARY_HEADER_LENGTH + packet.readPacketDataLength();
+  for (long i = 0; i < packetLength; i++)
+  {
+    output.write(packet.buffer[i]);
+  }
 }
 
 ESATCOMMSSubsystem COMMSSubsystem;
