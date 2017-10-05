@@ -104,6 +104,8 @@ void ESATOBCSubsystem::readTelemetry(ESATCCSDSPacket& packet)
   packet.writeBoolean(storeTelemetry);
   packet.writeBoolean(Storage.error);
   Storage.error = false;
+  packet.writeBoolean(Clock.error);
+  Clock.error = false;
   telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
 }
 
