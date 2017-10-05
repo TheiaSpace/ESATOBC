@@ -101,14 +101,7 @@ void ESATOBCSubsystem::readTelemetry(ESATCCSDSPacket& packet)
   packet.writeByte(HOUSEKEEPING);
   const unsigned int load = 100 * Timer.ellapsedMilliseconds() / Timer.period;
   packet.writeByte(load);
-  if (storeTelemetry)
-  {
-    packet.writeByte(1);
-  }
-  else
-  {
-    packet.writeByte(0);
-  }
+  packet.writeBoolean(storeTelemetry);
   packet.writeBoolean(Storage.error);
   Storage.error = false;
   telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
