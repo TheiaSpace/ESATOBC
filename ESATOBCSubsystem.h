@@ -60,13 +60,13 @@ class ESATOBCSubsystem: public ESATSubsystem
       HOUSEKEEPING = 0,
     };
 
+    // Unique identifier of the subsystem.
+    static const word APPLICATION_PROCESS_IDENTIFIER = 0;
+
     // Version numbers.
     static const byte MAJOR_VERSION_NUMBER = 3;
     static const byte MINOR_VERSION_NUMBER = 0;
     static const byte PATCH_VERSION_NUMBER = 0;
-
-    // Unique identifier of the subsystem.
-    static const word APPLICATION_PROCESS_IDENTIFIER = 0;
 
     // True when a new telemetry packet is ready (after update()).
     // False otherwise (after readTelemetry()).
