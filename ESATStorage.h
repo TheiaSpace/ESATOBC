@@ -42,11 +42,27 @@ class ESATStorage
     // Close the file opened to read it
     void closeReadFile();
     
+    // Save the current line position
+    void saveCurrentLinePosition();
+    
+    // Go to the last saved line position
+    void goToSavedPosition();
+    
+    // Reset the line position saved
+    void resetLinePosition();
+    
+    // Does the file exists?
+    boolean fileExists(char timestamp[]);
+    
+    // There are still more lines to read?
+    boolean available();
+    
     boolean thereAreMoreTextToRead;
 
   private:
     static const byte pin = 45;
     File readFile;
+    unsigned long fileCharPointer;
 };
 
 extern ESATStorage Storage;

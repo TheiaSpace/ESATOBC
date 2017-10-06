@@ -84,7 +84,10 @@ void ESATOBCSubsystem::handleStoreIdCommand(String parameters)
 void ESATOBCSubsystem::handleSetTimeCommand(String parameters)
 {
   Clock.write(parameters);
-  USB.println(Clock.read().toStringTimeStamp());
+  Timestamp ts = Clock.read();
+  char cts[ts.charTimestampLength];
+  ts.toStringTimeStamp(cts);
+  USB.println(cts);
 }
 
 void ESATOBCSubsystem::handleStoreTelemetry(String parameters)
@@ -100,12 +103,25 @@ void ESATOBCSubsystem::handleDownloadTelemetry(String parameters)
     downloadStoredTelemetry = false;
     return;
   }
-  downloadStoredTelemetryFromTimestamp.update(parameters.substring(0,timestampLength));
-  downloadStoredTelemetryToTimestamp.update(parameters.substring(timestampLength,timestampLength*2));  
-  if(downloadStoredTelemetryToTimestamp.isHigherThan(downloadStoredTelemetryFromTimestamp))
+  if(downloadStoredTelemetryFromTimestamp.update(parameters.substring(0,timestampLength).c_str())
+     == 
+     downloadStoredTelemetryFromTimestamp.INVALID_TIMESTAMP)
+  {
+    downloadStoredTelemetry = false;
+    return;    
+  }
+  if(downloadStoredTelemetryToTimestamp.update(parameters.substring(timestampLength,timestampLength*2).c_str()) 
+     == 
+     downloadStoredTelemetryToTimestamp.INVALID_TIMESTAMP)
+  {
+    downloadStoredTelemetry = false;
+    return;     
+  }
+  if(downloadStoredTelemetryToTimestamp > downloadStoredTelemetryFromTimestamp)
   {
     downloadStoredTelemetry = true;  
-    lastStoredTelemetryDownloadedTimestamp.update(parameters.substring(0,timestampLength));
+    lastStoredTelemetryDownloadedTimestamp.update(downloadStoredTelemetryFromTimestamp);
+    Storage.resetLinePosition();
     }
   else{
     downloadStoredTelemetry = false;
@@ -134,14 +150,53 @@ String ESATOBCSubsystem::readTelemetry()
 
 void ESATOBCSubsystem::update()
 {
+  static const byte MAX_TELEMETRY_SIZE = 255;
+  char cdate[lastStoredTelemetryDownloadedTimestamp.charDateLength + 4] = "";
+  char telemetry[MAX_TELEMETRY_SIZE + 1] = "";
+  Timestamp TelemetryTimestamp;
+  boolean telemetryFound = false;
   
-  // if(downloadStoredTelemetry){
-    // while(downloadStoredTelemetryToTimestamp.isHigherThan(lastStoredTelemetryDownloadedTimestamp))
-    // {
-      
-    // }
-    // downloadStoredTelemetry = false;
-  // }
+  while(downloadStoredTelemetry){
+    if(downloadStoredTelemetryToTimestamp > lastStoredTelemetryDownloadedTimestamp)
+    {
+      lastStoredTelemetryDownloadedTimestamp.getDateWithoutDashes(cdate);
+      strcat(cdate, ".txt");
+      if(Storage.fileExists(cdate))
+      {
+        Storage.openReadFile(cdate);
+        Storage.goToSavedPosition();
+        while(Storage.available())
+        {
+          Storage.readLine(telemetry, MAX_TELEMETRY_SIZE);
+          Storage.saveCurrentLinePosition();
+          if(TelemetryTimestamp.update(telemetry) == TelemetryTimestamp.VALID_TIMESTAMP)
+          {
+            if(TelemetryTimestamp > lastStoredTelemetryDownloadedTimestamp)
+            {
+              lastStoredTelemetryDownloadedTimestamp.update(TelemetryTimestamp);
+              if(downloadStoredTelemetryToTimestamp > lastStoredTelemetryDownloadedTimestamp)
+              {
+                // Update TM package with telemetrt string
+                USB.println(telemetry);
+                telemetryFound = true;
+              }
+              break;
+            }
+          }
+        }
+        Storage.closeReadFile();
+        lastStoredTelemetryDownloadedTimestamp.incrementDay();
+        Storage.resetLinePosition();        
+      }
+      else{
+        lastStoredTelemetryDownloadedTimestamp.incrementDay();
+        Storage.resetLinePosition();
+      }
+    }
+    else{
+      downloadStoredTelemetry = false;
+    }
+  }
   
   
 }

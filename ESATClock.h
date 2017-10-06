@@ -20,27 +20,7 @@
 #define ESATClock_h
 
 #include <Energia.h>
-
-class ESATTimeStamp
-{
-  public:
-    ESATTimeStamp();
-    void update(byte Hour, byte Minute, byte Second, 
-           byte Year, byte Month, byte Day);
-    void update(String timestamp);
-    boolean isHigherThan(ESATTimeStamp timeStamp);
-    String toStringTimeStamp();    
-    // util to get the date from the timestamp
-    String getDateWithoutDashes();
-    
-    byte hours;
-    byte minutes;
-    byte seconds;
-    byte year;
-    byte month;
-    byte day;
-  
-};
+#include "ESATTimestamp.h"
 
 
 // Real-time clock.
@@ -58,7 +38,7 @@ class ESATClock
 
     // Read the current time.
     // Return the date and time in ISO 8601 format.
-    ESATTimeStamp read();
+    ESATTimestamp read();
 
     // Set the current time.
     // Pass the date and time in ISO 8601 format.
@@ -68,7 +48,6 @@ class ESATClock
   private:
     static const byte address = 0x68;
     static const byte timeRegister = 0;
-    static const byte timestampLength = 19;
 
     // BCD to binary conversion.
     byte BCDToBinary(byte value);

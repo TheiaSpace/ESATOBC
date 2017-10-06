@@ -113,16 +113,16 @@ void ESATOnBoardDataHandling::sendTelemetry(String telemetry, byte type, byte su
 
 void ESATOnBoardDataHandling::storeTelemetry(String telemetry)
 {
-  ESATTimeStamp timestamp = Clock.read();
-  String filename;
-  String fullTimestamp;
+  ESATTimestamp timestamp = Clock.read();
+  String filename = "";
+  String fullTimestamp = "";
   if(!Clock.alive)
   {
     return;
   }
-  fullTimestamp = timestamp.toStringTimeStamp();
+  // fullTimestamp = timestamp.toStringTimeStamp();
   // You must use the 8.3 format in the filename
-  filename = timestamp.getDateWithoutDashes();
+  // filename = timestamp.getDateWithoutDashes();
   filename = filename + ".txt";
   Storage.write(filename, fullTimestamp + " " + telemetry);
 }

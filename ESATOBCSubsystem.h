@@ -70,9 +70,10 @@ class ESATOBCSubsystem: public ESATSubsystem
     
     // Download stored telemetry 
     boolean downloadStoredTelemetry;
-    ESATTimeStamp downloadStoredTelemetryFromTimestamp;
-    ESATTimeStamp downloadStoredTelemetryToTimestamp;
-    ESATTimeStamp lastStoredTelemetryDownloadedTimestamp;
+    ESATTimestamp downloadStoredTelemetryFromTimestamp;
+    ESATTimestamp downloadStoredTelemetryToTimestamp;
+    ESATTimestamp lastStoredTelemetryDownloadedTimestamp;
+    unsigned int fileCharPointer;
 
     void handleStoreIdCommand(String parameters);
     void handleSetTimeCommand(String parameters);
