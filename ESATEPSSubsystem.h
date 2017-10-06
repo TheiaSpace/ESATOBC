@@ -65,7 +65,7 @@ class ESATEPSSubsystem: public ESATSubsystem
     static const byte ADDRESS = 2;
 
     // Unique identifier of the subsystem.
-    static const word APPLICATION_PROCESS_IDENTIFIER = 2;
+    static const word APPLICATION_PROCESS_IDENTIFIER = 1;
 
     boolean newTelemetryPacket;
 };
