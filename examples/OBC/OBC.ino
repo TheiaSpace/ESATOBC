@@ -29,7 +29,7 @@ class ESATExampleSubsystem: public ESATSubsystem
 
     word getApplicationProcessIdentifier()
     {
-      return 5;
+      return 4;
     }
 
     void handleTelecommand(ESATCCSDSPacket& packet)
