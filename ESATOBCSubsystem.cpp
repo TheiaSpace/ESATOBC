@@ -103,9 +103,9 @@ void ESATOBCSubsystem::handleDownloadTelemetry(String parameters)
     downloadStoredTelemetry = false;
     return;
   }
-  if(downloadStoredTelemetryFromTimestamp.update(parameters.substring(0,timestampLength).c_str())
+  if(lastStoredTelemetryDownloadedTimestamp.update(parameters.substring(0,timestampLength).c_str())
      == 
-     downloadStoredTelemetryFromTimestamp.INVALID_TIMESTAMP)
+     lastStoredTelemetryDownloadedTimestamp.INVALID_TIMESTAMP)
   {
     downloadStoredTelemetry = false;
     return;    
@@ -117,10 +117,9 @@ void ESATOBCSubsystem::handleDownloadTelemetry(String parameters)
     downloadStoredTelemetry = false;
     return;     
   }
-  if(downloadStoredTelemetryToTimestamp > downloadStoredTelemetryFromTimestamp)
+  if(downloadStoredTelemetryToTimestamp > lastStoredTelemetryDownloadedTimestamp)
   {
     downloadStoredTelemetry = true;  
-    lastStoredTelemetryDownloadedTimestamp.update(downloadStoredTelemetryFromTimestamp);
     Storage.resetLinePosition();
     }
   else{
@@ -150,13 +149,15 @@ String ESATOBCSubsystem::readTelemetry()
 
 void ESATOBCSubsystem::update()
 {
+  // Iniciar un paquete en blanco
   static const byte MAX_TELEMETRY_SIZE = 255;
   char cdate[lastStoredTelemetryDownloadedTimestamp.charDateLength + 4] = "";
   char telemetry[MAX_TELEMETRY_SIZE + 1] = "";
   Timestamp TelemetryTimestamp;
   boolean telemetryFound = false;
   
-  while(downloadStoredTelemetry){
+  while(downloadStoredTelemetry)
+  {
     if(downloadStoredTelemetryToTimestamp > lastStoredTelemetryDownloadedTimestamp)
     {
       lastStoredTelemetryDownloadedTimestamp.getDateWithoutDashes(cdate);
@@ -176,22 +177,25 @@ void ESATOBCSubsystem::update()
               lastStoredTelemetryDownloadedTimestamp.update(TelemetryTimestamp);
               if(downloadStoredTelemetryToTimestamp > lastStoredTelemetryDownloadedTimestamp)
               {
-                // Update TM package with telemetrt string
-                USB.println(telemetry);
+                // Update TM package
                 telemetryFound = true;
+              }
+              else
+              {
+                downloadStoredTelemetry = false;
               }
               break;
             }
           }
         }
         Storage.closeReadFile();
-        lastStoredTelemetryDownloadedTimestamp.incrementDay();
-        Storage.resetLinePosition();        
+        if (telemetryFound)
+        {
+          break;
+        }      
       }
-      else{
-        lastStoredTelemetryDownloadedTimestamp.incrementDay();
-        Storage.resetLinePosition();
-      }
+      lastStoredTelemetryDownloadedTimestamp.incrementDay();
+      Storage.resetLinePosition();
     }
     else{
       downloadStoredTelemetry = false;
