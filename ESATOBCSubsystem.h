@@ -66,7 +66,7 @@ class ESATOBCSubsystem: public ESATSubsystem
     static const byte PATCH_VERSION_NUMBER = 0;
 
     // Unique identifier of the subsystem.
-    static const word APPLICATION_PROCESS_IDENTIFIER = 1;
+    static const word APPLICATION_PROCESS_IDENTIFIER = 0;
 
     // True when a new telemetry packet is ready (after update()).
     // False otherwise (after readTelemetry()).
