@@ -53,7 +53,7 @@ class ESATCOMMSSubsystem: public ESATSubsystem
 
   private:
     // Unique identifier of the subsystem.
-    static const word APPLICATION_PROCESS_IDENTIFIER = 4;
+    static const word APPLICATION_PROCESS_IDENTIFIER = 3;
 
     // Read a packet from an input stream.
     void readPacketFrom(Stream& input, ESATCCSDSPacket& packet);
