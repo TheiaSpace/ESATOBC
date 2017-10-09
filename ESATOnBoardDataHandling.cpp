@@ -100,10 +100,7 @@ void ESATOnBoardDataHandling::registerSubsystem(ESATSubsystem& subsystem)
 
 void ESATOnBoardDataHandling::sendTelemetry(ESATCCSDSPacket& packet)
 {
-  if (packet.readPacketDataLength() > 0)
-  {
-    COMMSSubsystem.writePacket(packet);
-  }
+  COMMSSubsystem.writePacket(packet);
 }
 
 void ESATOnBoardDataHandling::storeTelemetry(ESATCCSDSPacket& packet)
