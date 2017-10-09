@@ -21,6 +21,7 @@
 
 #include <Energia.h>
 #include <SD.h>
+#include "ESATTimestamp.h"
 
 class ESATStorage
 {
@@ -34,15 +35,14 @@ class ESATStorage
 
     // Write text to a file.
     // This will set the error flag on input/output error.
-    void write(char filename[], char timestamp[], char text[]);
-    // void write(char filename[], ESATTimestamp Timestamp, byte telemetry[], unsigned long telemetryLength);
+    void write(char filename[], ESATTimestamp Timestamp, byte telemetry[], unsigned long telemetryLength);
     
     // Open a file to read it
     void openReadFile(char filename[]);
     
     // Read the next text line from a file.
-    unsigned int readLine(char timestamp[], char line[], unsigned int maxNumCharacters);
-    // unsigned long readLine(ESATTimestamp Timestamp, byte telemetry[], unsigned int maxNumCharacters);
+    unsigned long readLine(ESATTimestamp Timestamp, byte telemetry[], unsigned int maxTelemetrySize);
+    
     // Close the file opened to read it
     void closeReadFile();
     
