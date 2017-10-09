@@ -20,7 +20,6 @@
 #define ESATStorage_h
 
 #include <Energia.h>
-#include <SD.h>
 
 class ESATStorage
 {
@@ -34,41 +33,10 @@ class ESATStorage
 
     // Write text to a file.
     // This will set the error flag on input/output error.
-    void write(char filename[], char timestamp[], char text[]);
-    // void write(char filename[], ESATTimestamp Timestamp, byte telemetry[], unsigned long telemetryLength);
-    
-    // Open a file to read it
-    void openReadFile(char filename[]);
-    
-    // Read the next text line from a file.
-    unsigned int readLine(char timestamp[], char line[], unsigned int maxNumCharacters);
-    // unsigned long readLine(ESATTimestamp Timestamp, byte telemetry[], unsigned int maxNumCharacters);
-    // Close the file opened to read it
-    void closeReadFile();
-    
-    // Save the current line position
-    void saveCurrentLinePosition();
-    
-    // Go to the last saved line position
-    void goToSavedPosition();
-    
-    // Reset the line position saved
-    void resetLinePosition();
-    
-    // Does the file exists?
-    boolean fileExists(char file[]);
-    
-    // There are still more lines to read?
-    int available();
-    
-    boolean charIsHex(char theChar);
-    
-    boolean thereAreMoreTextToRead;
+    void write(String filename, String text);
 
   private:
     static const byte PIN = 45;
-    File readFile;
-    unsigned long fileCharPointer;
 };
 
 extern ESATStorage Storage;

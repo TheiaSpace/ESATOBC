@@ -21,7 +21,6 @@
 
 #include <Arduino.h>
 #include "ESATSubsystem.h"
-#include "ESATClock.h"
 
 class ESATOBCSubsystem: public ESATSubsystem
 {
@@ -46,8 +45,6 @@ class ESATOBCSubsystem: public ESATSubsystem
 
     // Update the subsystem.
     virtual void update();
-    
-    void handleDownloadTelemetry(ESATCCSDSPacket& packet);
 
   private:
     // Command codes.
@@ -55,7 +52,6 @@ class ESATOBCSubsystem: public ESATSubsystem
     {
       SET_TIME = 0x00,
       STORE_TELEMETRY = 0x01,
-      DOWNLOAD_TELEMETRY = 0x02,
     };
 
     // Telemetry packet identifiers.
@@ -63,24 +59,18 @@ class ESATOBCSubsystem: public ESATSubsystem
     {
       HOUSEKEEPING = 0,
     };
-    
-    // Download stored telemetry 
-    boolean downloadStoredTelemetry;
-    ESATTimestamp downloadStoredTelemetryToTimestamp;
-    ESATTimestamp lastStoredTelemetryDownloadedTimestamp;
-    unsigned int fileCharPointer;
+
+    // Unique identifier of the subsystem.
+    static const word APPLICATION_PROCESS_IDENTIFIER = 0;
 
     // Version numbers.
     static const byte MAJOR_VERSION_NUMBER = 3;
     static const byte MINOR_VERSION_NUMBER = 0;
     static const byte PATCH_VERSION_NUMBER = 0;
 
-    // Unique identifier of the subsystem.
-    static const word APPLICATION_PROCESS_IDENTIFIER = 1;
-
     // True when a new telemetry packet is ready (after update()).
     // False otherwise (after readTelemetry()).
-    boolean newHousekeepingTelemetryPacket;
+    boolean newTelemetryPacket;
 
     // The telemetry packet sequence count is incremented every time a
     // new telemetry packet is generated.
@@ -89,7 +79,6 @@ class ESATOBCSubsystem: public ESATSubsystem
     // Command handlers.
     void handleSetTimeCommand(ESATCCSDSPacket& packet);
     void handleStoreTelemetry(ESATCCSDSPacket& packet);
-    void readStoredTelemetry(ESATCCSDSPacket& packet);
 };
 
 extern ESATOBCSubsystem OBCSubsystem;

@@ -20,7 +20,7 @@
 #define ESATOnBoardDataHandling_h
 
 #include <Energia.h>
-#include "ESATCommand.h"
+#include <ESATCCSDSPacket.h>
 #include "ESATSubsystem.h"
 
 class ESATOnBoardDataHandling
@@ -38,36 +38,36 @@ class ESATOnBoardDataHandling
     void beginSubsystems();
 
     // Dispatch a command on the registered subsystems.
-    void dispatchCommand(byte subsystemIdentifier, byte commandCode, String parameters);
+    void dispatchTelecommand(ESATCCSDSPacket& packet);
 
-    // Read an incomming telecommand.
-    ESATCommand readCommand();
-
-    // Register the default subsystems.
-    void registerDefaultSubsystems();
+    // Read an incomming telecommand and write it into a packet.
+    // Return true if there was a valid telecommand available;
+    // otherwise return false.
+    boolean readTelecommand(ESATCCSDSPacket& packet);
 
     // Register a subsystem.
-    void registerSubsystem(ESATSubsystem* subsystem);
+    void registerSubsystem(ESATSubsystem& subsystem);
 
-    // Read the telemetry vector from the registered subsystems.
-    String readSubsystemsTelemetry();
+    // Read the next available telemetry packet and write it into the
+    // provided packet object.
+    // Return true if there was a valid telemetry packet available;
+    // otherwise return false.
+    boolean readSubsystemsTelemetry(ESATCCSDSPacket& packet);
 
     // Send a telemetry packet.
-    void sendTelemetry(String telemetry, byte type, byte subsystemIdentifier);
+    void sendTelemetry(ESATCCSDSPacket& packet);
 
     // Store a telemetry packet.
-    void storeTelemetry(String telemetry);
+    void storeTelemetry(ESATCCSDSPacket& packet);
 
     // Update the registered subsystems.
     void updateSubsystems();
 
   private:
-    static const byte maximumNumberOfSubsystems = 16;
-    ESATSubsystem* subsystems[maximumNumberOfSubsystems];
+    static const byte MAXIMUM_NUMBER_OF_SUBSYSTEMS = 16;
+    ESATSubsystem* subsystems[MAXIMUM_NUMBER_OF_SUBSYSTEMS];
     byte numberOfSubsystems;
-
-    // Build a telemetry packet.
-    String buildPacket(String content, byte type, byte subsystemIdentifier);
+    byte telemetryIndex;
 };
 
 extern ESATOnBoardDataHandling OnBoardDataHandling;
