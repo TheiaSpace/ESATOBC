@@ -45,17 +45,6 @@ class ESATEPSSubsystem: public ESATSubsystem
     void update();
 
   private:
-    // I2C register numbers of the EPS board.
-    enum RegisterNumbers
-    {
-      TELECOMMAND_PRIMARY_HEADER = 0,
-      TELECOMMAND_PACKET_DATA = 1,
-      TELECOMMAND_STATUS = 2,
-      TELEMETRY_REQUEST = 3,
-      TELEMETRY_STATUS = 4,
-      TELEMETRY_VECTOR = 5,
-    };
-
     // Identifier numbers of the telemetry packets.
     enum TelemetryPacketIdentifier
     {
@@ -68,8 +57,11 @@ class ESATEPSSubsystem: public ESATSubsystem
     // Unique identifier of the subsystem.
     static const word APPLICATION_PROCESS_IDENTIFIER = 1;
 
-    // I2C messages are at most 16 bytes long.
-    static const byte I2C_CHUNK_LENGTH = 16;
+    // Time between I2C telecommand and telemetry transfer retries.
+    static const word MILLISECONDS_BETWEEN_RETRIES = 10;
+
+    // Number of tries for I2C telecommand and telemetry transfers.
+    static const byte TRIES = 10;
 
     boolean newTelemetryPacket;
 };
