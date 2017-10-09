@@ -35,8 +35,9 @@ class ESATEPSSubsystem: public ESATSubsystem
     void handleTelecommand(ESATCCSDSPacket& telecommand);
 
     // Fill a packet with the next telemetry packet available.
-    // Set the error flag on error.
-    void readTelemetry(ESATCCSDSPacket& telemetry);
+    // Return true if the operation was successful;
+    // otherwise return false.
+    boolean readTelemetry(ESATCCSDSPacket& telemetry);
 
     // Return true if a new telemetry packet is available.
     boolean telemetryAvailable();

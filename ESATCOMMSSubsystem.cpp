@@ -54,8 +54,9 @@ void ESATCOMMSSubsystem::readTelecommand(ESATCCSDSPacket& packet)
   }
 }
 
-void ESATCOMMSSubsystem::readTelemetry(ESATCCSDSPacket& packet)
+boolean ESATCOMMSSubsystem::readTelemetry(ESATCCSDSPacket& packet)
 {
+  return false;
 }
 
 boolean ESATCOMMSSubsystem::telemetryAvailable()

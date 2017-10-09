@@ -77,9 +77,9 @@ boolean ESATOnBoardDataHandling::readSubsystemsTelemetry(ESATCCSDSPacket& packet
   {
     if (subsystems[telemetryIndex]->telemetryAvailable())
     {
-      subsystems[telemetryIndex]->readTelemetry(packet);
-      if ((packet.readPacketType() == packet.TELEMETRY)
-          && (packet.readPacketDataLength() > 0))
+      const boolean successfulRead =
+        subsystems[telemetryIndex]->readTelemetry(packet);
+      if (successfulRead && (packet.readPacketType() == packet.TELEMETRY))
       {
         return true;
       }

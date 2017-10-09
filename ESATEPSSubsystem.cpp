@@ -39,8 +39,12 @@ void ESATEPSSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
                                     MILLISECONDS_BETWEEN_RETRIES);
 }
 
-void ESATEPSSubsystem::readTelemetry(ESATCCSDSPacket& packet)
+boolean ESATEPSSubsystem::readTelemetry(ESATCCSDSPacket& packet)
 {
+  if (!newTelemetryPacket)
+  {
+    return false;
+  }
   newTelemetryPacket = false;
   const boolean gotTelemetry =
     I2CMaster.readTelemetry(Wire,
@@ -49,10 +53,7 @@ void ESATEPSSubsystem::readTelemetry(ESATCCSDSPacket& packet)
                             packet,
                             TRIES,
                             MILLISECONDS_BETWEEN_RETRIES);
-  if (!gotTelemetry)
-  {
-    packet.clear();
-  }
+  return gotTelemetry;
 }
 
 boolean ESATEPSSubsystem::telemetryAvailable()
