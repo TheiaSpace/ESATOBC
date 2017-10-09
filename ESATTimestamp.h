@@ -31,7 +31,7 @@ class ESATTimestamp
     ESATTimestamp();
     void update(byte Hour, byte Minute, byte Second, 
            byte Year, byte Month, byte Day);
-    void update(char timestamp[]);
+    byte update(char timestamp[]);
     void update(ESATTimestamp timeStamp);
     void incrementDay();
     byte compare(ESATTimestamp timestamp);
@@ -41,19 +41,19 @@ class ESATTimestamp
     void toStringTimeStamp(char timestamp[]);    
     // util to get the date from the timestamp
     void getDateWithoutDashes(char date[]);
-  private:  
     byte hours;
     byte minutes;
     byte seconds;
     byte year;
     byte month;
     byte day;
+    static const byte INVALID_TIMESTAMP = 1;
+    static const byte VALID_TIMESTAMP = 2;
+  private:  
     static const byte THIS_IS_HIGHER = 1;
     static const byte THIS_IS_LOWER = 2;
     static const byte THIS_IS_EQUAL = 3;
 
-    static const byte INVALID_TIMESTAMP = 1;
-    static const byte VALID_TIMESTAMP = 2;
     
 };
 

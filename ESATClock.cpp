@@ -39,19 +39,19 @@ byte ESATClock::binaryToBCD(byte value)
 ESATTimestamp ESATClock::read()
 {
   ESATTimestamp timestamp;
-  Wire.beginTransmission(address);
-  Wire.write(timeRegister);
+  Wire.beginTransmission(ADDRESS);
+  Wire.write(TIME_REGISTER);
   const byte errorCode = Wire.endTransmission();
   if (errorCode != 0)
   {
-    alive = false;
+    error = true;
     return timestamp;
   }
   const byte bytesToRead = 6;
-  const byte bytesRead = Wire.requestFrom(address, bytesToRead);
+  const byte bytesRead = Wire.requestFrom(ADDRESS, bytesToRead);
   if (bytesRead != bytesToRead)
   {
-    alive = false;
+    error = true;
     return timestamp;
   }
   const byte seconds = Wire.read();
@@ -60,37 +60,26 @@ ESATTimestamp ESATClock::read()
   const byte day = Wire.read();
   const byte month = Wire.read();
   const byte year = Wire.read();
-  alive = true;
   timestamp.update(BCDToBinary(year),BCDToBinary(month),BCDToBinary(day),
                    BCDToBinary(hours),BCDToBinary(minutes),BCDToBinary(seconds & 0x7F));
   return timestamp;
 }
 
-void ESATClock::write(String time)
+void ESATClock::write(ESATTimestamp timestamp)
 {
-  const byte year = time.substring(0, 4).toInt() - 2000;
-  const byte month = time.substring(5, 7).toInt();
-  const byte day = time.substring(8, 10).toInt();
-  const byte hours = time.substring(11, 13).toInt();
-  const byte minutes = time.substring(14, 16).toInt();
-  const byte seconds = time.substring(17, 19).toInt();
-  Wire.beginTransmission(address);
-  Wire.write(timeRegister);
-  Wire.write(binaryToBCD(seconds));
-  Wire.write(binaryToBCD(minutes));
-  Wire.write(binaryToBCD(hours));
-  Wire.write(binaryToBCD(day));
-  Wire.write(binaryToBCD(month));
-  Wire.write(binaryToBCD(year));
+  Wire.beginTransmission(ADDRESS);
+  Wire.write(TIME_REGISTER);
+  Wire.write(binaryToBCD(timestamp.seconds));
+  Wire.write(binaryToBCD(timestamp.minutes));
+  Wire.write(binaryToBCD(timestamp.hours));
+  Wire.write(binaryToBCD(timestamp.day));
+  Wire.write(binaryToBCD(timestamp.month));
+  Wire.write(binaryToBCD(timestamp.year));
   Wire.write(0);
   const byte errorCode = Wire.endTransmission();
-  if (errorCode == 0)
+  if (errorCode != 0)
   {
-    alive = true;
-  }
-  else
-  {
-    alive = false;
+    error = true;
   }
 }
 

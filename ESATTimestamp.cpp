@@ -46,7 +46,7 @@ byte ESATTimestamp::update(char time[])
 {
   char substring[charTimestampLength];
   strncpy(substring, time, charTimestampLength - 1);
-  char substring[charTimestampLength - 1] = '\0';
+  substring[charTimestampLength - 1] = '\0';
   int theYear, theMonth, theDay, theHours, theMinutes, theSeconds;
   int n = sscanf(substring, "20%2i-%2i-%2iT%2i:%2i:%2i",&theYear, &theMonth, &theDay, &theHours, &theMinutes, &theSeconds);
   if(n < 6)

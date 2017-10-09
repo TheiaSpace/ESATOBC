@@ -23,116 +23,119 @@
 #include "ESATEPSSubsystem.h"
 #include "ESATOBCSubsystem.h"
 #include "ESATStorage.h"
-#include <ESATUtil.h>
 
-
-
-ESATOnBoardDataHandling::ESATOnBoardDataHandling(): numberOfSubsystems(0)
+ESATOnBoardDataHandling::ESATOnBoardDataHandling():
+  numberOfSubsystems(0),
+  telemetryIndex(0)
 {
 }
 
 void ESATOnBoardDataHandling::beginSubsystems()
 {
-  ESATSubsystem* sortedSubsystems[numberOfSubsystems];
-  memcpy(sortedSubsystems, subsystems, sizeof(sortedSubsystems));
-  for (int i = 1; i < numberOfSubsystems; ++i)
-  {
-    ESATSubsystem* currentSubsystem = sortedSubsystems[i];
-    int j = i - 1;
-    while ((j >= 0) && (sortedSubsystems[j]->getStartOrder() >
-                        currentSubsystem->getStartOrder()))
-    {
-      sortedSubsystems[j+1] = sortedSubsystems[j];
-      j = j - 1;
-    }
-    sortedSubsystems[j+1] = currentSubsystem;
-  }
+  telemetryIndex = 0;
   for (unsigned i = 0; i < numberOfSubsystems; ++i)
   {
-    sortedSubsystems[i]->begin();
+    subsystems[i]->begin();
   }
 }
 
-String ESATOnBoardDataHandling::buildPacket(String content, byte type, byte subsystemIdentifier)
+void ESATOnBoardDataHandling::dispatchTelecommand(ESATCCSDSPacket& packet)
 {
-  String checksum = "FFFF";
-  String packet = String(int(subsystemIdentifier), DEC).substring(0, 1)
-                + Util.byteToHexadecimal(byte(content.length()))
-                + Util.byteToHexadecimal(type)
-                + content
-                + checksum;
-  return packet;
-}
-
-void ESATOnBoardDataHandling::dispatchCommand(byte subsystemIdentifier, byte commandCode, String parameters)
-{
+  const word applicationProcessIdentifier =
+    packet.readApplicationProcessIdentifier();
   for (unsigned int i = 0; i < numberOfSubsystems; ++i)
   {
-    if (subsystems[i]->getSubsystemIdentifier() == subsystemIdentifier)
+    const word subsystemsApplicationProcessIdentifier =
+      subsystems[i]->getApplicationProcessIdentifier() & 0x07FF;
+    if (subsystemsApplicationProcessIdentifier == applicationProcessIdentifier)
     {
-      subsystems[i]->handleCommand(commandCode, parameters);
+      subsystems[i]->handleTelecommand(packet);
       return;
     }
   }
 }
 
-ESATCommand ESATOnBoardDataHandling::readCommand()
+boolean ESATOnBoardDataHandling::readTelecommand(ESATCCSDSPacket& packet)
 {
-  return COMMSSubsystem.readCommand();
-}
-
-String ESATOnBoardDataHandling::readSubsystemsTelemetry()
-{
-  String telemetry = "";
-  for (unsigned int i = 0; i < numberOfSubsystems; ++i)
+  packet.clear();
+  COMMSSubsystem.readTelecommand(packet);
+  if (packet.readPacketType() != packet.TELECOMMAND)
   {
-    telemetry = telemetry + subsystems[i]->readTelemetry();
+    return false;
   }
-  return telemetry;
+  if (packet.readPacketDataLength() == 0)
+  {
+    return false;
+  }
+  return true;
 }
 
-void ESATOnBoardDataHandling::registerDefaultSubsystems()
+boolean ESATOnBoardDataHandling::readSubsystemsTelemetry(ESATCCSDSPacket& packet)
 {
-  registerSubsystem(&EPSSubsystem);
-  registerSubsystem(&ADCSSubsystem);
-  registerSubsystem(&COMMSSubsystem);
-  registerSubsystem(&OBCSubsystem);
+  packet.clear();
+  while (telemetryIndex < numberOfSubsystems)
+  {
+    if (subsystems[telemetryIndex]->telemetryAvailable())
+    {
+      subsystems[telemetryIndex]->readTelemetry(packet);
+      if ((packet.readPacketType() == packet.TELEMETRY)
+          && (packet.readPacketDataLength() > 0))
+      {
+        return true;
+      }
+    }
+    else
+    {
+      telemetryIndex = telemetryIndex + 1;
+    }
+  }
+  return false;
 }
 
-void ESATOnBoardDataHandling::registerSubsystem(ESATSubsystem* subsystem)
+void ESATOnBoardDataHandling::registerSubsystem(ESATSubsystem& subsystem)
 {
-  subsystems[numberOfSubsystems] = subsystem;
+  subsystems[numberOfSubsystems] = &subsystem;
   numberOfSubsystems = numberOfSubsystems + 1;
 }
 
-void ESATOnBoardDataHandling::sendTelemetry(String telemetry, byte type, byte subsystemIdentifier)
+void ESATOnBoardDataHandling::sendTelemetry(ESATCCSDSPacket& packet)
 {
-  String packet = buildPacket(telemetry, type, subsystemIdentifier);
-  COMMSSubsystem.writePacket(packet);
+  if (packet.readPacketDataLength() > 0)
+  {
+    COMMSSubsystem.writePacket(packet);
+  }
 }
 
-void ESATOnBoardDataHandling::storeTelemetry(String telemetry)
+void ESATOnBoardDataHandling::storeTelemetry(ESATCCSDSPacket& packet)
 {
   ESATTimestamp timestamp = Clock.read();
-  String filename = "";
-  String fullTimestamp = "";
-  if(!Clock.alive)
+  if(Clock.error)
   {
     return;
   }
-  // fullTimestamp = timestamp.toStringTimeStamp();
-  // You must use the 8.3 format in the filename
-  // filename = timestamp.getDateWithoutDashes();
-  filename = filename + ".txt";
-  Storage.write(filename, fullTimestamp + " " + telemetry);
+  
+  char filename[timestamp.charDateLength + 4] = "";
+  timestamp.getDateWithoutDashes(filename);
+  strcat(filename, ".txt");
+  
+  char cTimestamp[timestamp.charTimestampLength] = "";
+  timestamp.toStringTimeStamp(cTimestamp);
+  
+  // packet size + '\0'
+  // unsigned long cPacketLength = packet.readPacketDataLength()*2 + 1; 
+  // char cPacket[cPacketLength] = "";
+  // packet.readCharPacket(cPacket);
+  
+  // Storage.write(filename, cTimestamp, cPacket);
 }
 
 void ESATOnBoardDataHandling::updateSubsystems()
 {
-  for (unsigned int i = 0; i < numberOfSubsystems; ++i)
+  for (int i = 0; i < numberOfSubsystems; ++i)
   {
     subsystems[i]->update();
   }
+  telemetryIndex = 0;
 }
 
 ESATOnBoardDataHandling OnBoardDataHandling;

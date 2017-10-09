@@ -25,20 +25,24 @@
 class ESATStorage
 {
   public:
-    boolean alive;
+    // True on input/output error.  Must be reset manually.
+    boolean error;
 
     // Begin the SD card subsystem.
+    // This will set the error flag on input/output error.
     void begin();
 
     // Write text to a file.
-    void write(String filename, String text);
+    // This will set the error flag on input/output error.
+    void write(char filename[], char timestamp[], char text[]);
+    // void write(char filename[], ESATTimestamp Timestamp, byte telemetry[], unsigned long telemetryLength);
     
     // Open a file to read it
-    void openReadFile(String filename);
+    void openReadFile(char filename[]);
     
     // Read the next text line from a file.
-    String readLine(String filename, unsigned int maxNumCharacters);
-    
+    unsigned int readLine(char timestamp[], char line[], unsigned int maxNumCharacters);
+    // unsigned long readLine(ESATTimestamp Timestamp, byte telemetry[], unsigned int maxNumCharacters);
     // Close the file opened to read it
     void closeReadFile();
     
@@ -52,15 +56,17 @@ class ESATStorage
     void resetLinePosition();
     
     // Does the file exists?
-    boolean fileExists(char timestamp[]);
+    boolean fileExists(char file[]);
     
     // There are still more lines to read?
-    boolean available();
+    int available();
+    
+    boolean charIsHex(char theChar);
     
     boolean thereAreMoreTextToRead;
 
   private:
-    static const byte pin = 45;
+    static const byte PIN = 45;
     File readFile;
     unsigned long fileCharPointer;
 };

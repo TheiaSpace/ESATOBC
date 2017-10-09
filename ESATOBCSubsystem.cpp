@@ -17,9 +17,9 @@
  */
 
 #include "ESATOBCSubsystem.h"
-#include <MspFlash.h>
 #include <Wire.h>
 #include "ESATADCSSubsystem.h"
+#include "ESATTimestamp.h"
 #include "ESATClock.h"
 #include "ESATCOMMSSubsystem.h"
 #include "ESATEPSSubsystem.h"
@@ -28,95 +28,105 @@
 #include <ESATUtil.h>
 #include <USBSerial.h>
 
-#define flash SEGMENT_C
-
 void ESATOBCSubsystem::begin()
 {
-  storeTelemetry = true;
-  downloadStoredTelemetry = false;
+  newHousekeepingTelemetryPacket = false;
+  telemetryPacketSequenceCount = 0;  
+  storeTelemetry = false;  
+  downloadStoredTelemetry = false;  
   USB.begin();
   Serial.begin(115200);
   Storage.begin();
   Wire.begin();
   Clock.begin();
-  loadIdentifier();
 }
 
-byte ESATOBCSubsystem::getStartOrder()
+word ESATOBCSubsystem::getApplicationProcessIdentifier()
 {
-  return 0;
+  return APPLICATION_PROCESS_IDENTIFIER;
 }
 
-byte ESATOBCSubsystem::getSubsystemIdentifier()
+void ESATOBCSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
 {
-  return 1;
-}
-
-void ESATOBCSubsystem::handleCommand(byte opcode, String parameters)
-{
-  switch (opcode)
+  packet.rewind();
+  const byte majorVersionNumber = packet.readByte();
+  const byte minorVersionNumber = packet.readByte();
+  const byte patchVersionNumber = packet.readByte();
+  if (majorVersionNumber < MAJOR_VERSION_NUMBER)
   {
-    case STORE_ID:
-      handleStoreIdCommand(parameters);
-      break;
+    return;
+  }
+  const byte commandCode = packet.readByte();
+  switch (commandCode)
+  {
     case SET_TIME:
-      handleSetTimeCommand(parameters);
+      handleSetTimeCommand(packet);
       break;
   case STORE_TELEMETRY:
-      handleStoreTelemetry(parameters);
+      handleStoreTelemetry(packet);
       break;
   case DOWNLOAD_TELEMETRY:
-      handleDownloadTelemetry(parameters);
+      handleDownloadTelemetry(packet);
       break;
     default:
       break;
   }
 }
 
-void ESATOBCSubsystem::handleStoreIdCommand(String parameters)
+void ESATOBCSubsystem::handleSetTimeCommand(ESATCCSDSPacket& packet)
 {
-  byte id = parameters.toInt();
-  Flash.erase(flash);
-  Flash.write(flash, &id, sizeof(id));
-  identifier = id;
+  if(packet.readBytesAvailable() < 6)
+  {
+    return;
+  }
+  ESATTimestamp Timestamp;
+  Timestamp.year = packet.readByte();
+  Timestamp.month = packet.readByte();
+  Timestamp.day = packet.readByte();
+  Timestamp.hours = packet.readByte();
+  Timestamp.minutes = packet.readByte();
+  Timestamp.seconds = packet.readByte();
+  Clock.write(Timestamp);
 }
 
-void ESATOBCSubsystem::handleSetTimeCommand(String parameters)
+void ESATOBCSubsystem::handleStoreTelemetry(ESATCCSDSPacket& packet)
 {
-  Clock.write(parameters);
-  Timestamp ts = Clock.read();
-  char cts[ts.charTimestampLength];
-  ts.toStringTimeStamp(cts);
-  USB.println(cts);
+  if(packet.readBytesAvailable() < 1)
+  {
+    return;
+  }
+  const byte parameter = packet.readByte();
+  if (parameter > 0)
+  {
+    storeTelemetry = true;
+  }
+  else
+  {
+    storeTelemetry = false;
+  }
 }
 
-void ESATOBCSubsystem::handleStoreTelemetry(String parameters)
+void ESATOBCSubsystem::handleDownloadTelemetry(ESATCCSDSPacket& packet)
 {
-  storeTelemetry = !!parameters.toInt();
-}
-
-void ESATOBCSubsystem::handleDownloadTelemetry(String parameters)
-{
-  static const byte timestampLength = 19;
-  if(parameters.length() != timestampLength*2)
+  if(packet.readBytesAvailable() < 12)
   {
     downloadStoredTelemetry = false;
     return;
   }
-  if(lastStoredTelemetryDownloadedTimestamp.update(parameters.substring(0,timestampLength).c_str())
-     == 
-     lastStoredTelemetryDownloadedTimestamp.INVALID_TIMESTAMP)
-  {
-    downloadStoredTelemetry = false;
-    return;    
-  }
-  if(downloadStoredTelemetryToTimestamp.update(parameters.substring(timestampLength,timestampLength*2).c_str()) 
-     == 
-     downloadStoredTelemetryToTimestamp.INVALID_TIMESTAMP)
-  {
-    downloadStoredTelemetry = false;
-    return;     
-  }
+  lastStoredTelemetryDownloadedTimestamp.year = packet.readByte();
+  lastStoredTelemetryDownloadedTimestamp.month = packet.readByte();
+  lastStoredTelemetryDownloadedTimestamp.day = packet.readByte();
+  lastStoredTelemetryDownloadedTimestamp.hours = packet.readByte();
+  lastStoredTelemetryDownloadedTimestamp.minutes = packet.readByte();
+  lastStoredTelemetryDownloadedTimestamp.seconds = packet.readByte();
+  
+  downloadStoredTelemetryToTimestamp.year = packet.readByte();
+  downloadStoredTelemetryToTimestamp.month = packet.readByte();
+  downloadStoredTelemetryToTimestamp.day = packet.readByte();
+  downloadStoredTelemetryToTimestamp.hours = packet.readByte();
+  downloadStoredTelemetryToTimestamp.minutes = packet.readByte();
+  downloadStoredTelemetryToTimestamp.seconds = packet.readByte();
+  
   if(downloadStoredTelemetryToTimestamp > lastStoredTelemetryDownloadedTimestamp)
   {
     downloadStoredTelemetry = true;  
@@ -127,33 +137,49 @@ void ESATOBCSubsystem::handleDownloadTelemetry(String parameters)
   }
 }
 
-byte ESATOBCSubsystem::loadIdentifier()
+void ESATOBCSubsystem::readTelemetry(ESATCCSDSPacket& packet)
 {
-  Flash.read(flash, &identifier, sizeof(identifier));
-  return identifier;
+  packet.clear();
+  
+  if(newHousekeepingTelemetryPacket)
+  {
+    newHousekeepingTelemetryPacket = false;
+    packet.clear();
+    packet.writePacketVersionNumber(0);
+    packet.writePacketType(packet.TELEMETRY);
+    packet.writeSecondaryHeaderFlag(packet.SECONDARY_HEADER_IS_PRESENT);
+    packet.writeApplicationProcessIdentifier(getApplicationProcessIdentifier());
+    packet.writeSequenceFlags(packet.UNSEGMENTED_USER_DATA);
+    packet.writePacketSequenceCount(telemetryPacketSequenceCount);
+    packet.writeByte(MAJOR_VERSION_NUMBER);
+    packet.writeByte(MINOR_VERSION_NUMBER);
+    packet.writeByte(PATCH_VERSION_NUMBER);
+    packet.writeByte(HOUSEKEEPING);
+    const unsigned int load = 100 * Timer.ellapsedMilliseconds() / Timer.period;
+    packet.writeByte(load);
+    packet.writeBoolean(storeTelemetry);
+    packet.writeBoolean(Storage.error);
+    Storage.error = false;
+    packet.writeBoolean(Clock.error);
+    Clock.error = false;
+    telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
+  }
+  else
+  {
+    readStoredTelemetry(packet);    
+  }    
+  
+  
+  
 }
 
-String ESATOBCSubsystem::readTelemetry()
+void ESATOBCSubsystem::readStoredTelemetry(ESATCCSDSPacket& packet)
 {
-  const unsigned int load = 100 * Timer.ellapsedMilliseconds() / Timer.period;
-  const byte status =
-    (Clock.alive << CLOCK_OFFSET)
-    | (ADCSSubsystem.inertialMeasurementUnitAlive << IMU_OFFSET)
-    | (EPSSubsystem.alive << EPS_OFFSET)
-    | (Storage.alive << STORAGE_OFFSET)
-    | ((COMMSSubsystem.status & COMMS_MASK) << COMMS_OFFSET);
-  String telemetry = Util.intToHexadecimal(status)
-    + Util.intToHexadecimal(load);
-  return telemetry;
-}
-
-void ESATOBCSubsystem::update()
-{
-  // Iniciar un paquete en blanco
-  static const byte MAX_TELEMETRY_SIZE = 255;
-  char cdate[lastStoredTelemetryDownloadedTimestamp.charDateLength + 4] = "";
-  char telemetry[MAX_TELEMETRY_SIZE + 1] = "";
-  Timestamp TelemetryTimestamp;
+  static const byte MAX_TELEMETRY_SIZE = packet.bufferLength;
+  char cdate[lastStoredTelemetryDownloadedTimestamp.charTimestampLength] = "";
+  // char telemetry[MAX_TELEMETRY_SIZE*2 + 1] = "";
+  word telemetryLength;
+  ESATTimestamp TelemetryTimestamp;
   boolean telemetryFound = false;
   
   while(downloadStoredTelemetry)
@@ -168,16 +194,17 @@ void ESATOBCSubsystem::update()
         Storage.goToSavedPosition();
         while(Storage.available())
         {
-          Storage.readLine(telemetry, MAX_TELEMETRY_SIZE);
+          // telemetryLength = Storage.readLine(cdate, telemetry, MAX_TELEMETRY_SIZE);
           Storage.saveCurrentLinePosition();
-          if(TelemetryTimestamp.update(telemetry) == TelemetryTimestamp.VALID_TIMESTAMP)
+          if(TelemetryTimestamp.update(cdate) == TelemetryTimestamp.VALID_TIMESTAMP)
           {
             if(TelemetryTimestamp > lastStoredTelemetryDownloadedTimestamp)
             {
               lastStoredTelemetryDownloadedTimestamp.update(TelemetryTimestamp);
               if(downloadStoredTelemetryToTimestamp > lastStoredTelemetryDownloadedTimestamp)
               {
-                // Update TM package
+                // Habria que resolver como mandar la fecha de la telemetria (guardada en cdate)
+                // packet.writeCharPacket(telemetry);
                 telemetryFound = true;
               }
               else
@@ -200,9 +227,17 @@ void ESATOBCSubsystem::update()
     else{
       downloadStoredTelemetry = false;
     }
-  }
-  
-  
+  }  
+}
+
+boolean ESATOBCSubsystem::telemetryAvailable()
+{
+  return newHousekeepingTelemetryPacket || downloadStoredTelemetry;
+}
+
+void ESATOBCSubsystem::update()
+{
+  newHousekeepingTelemetryPacket = true;
 }
 
 ESATOBCSubsystem OBCSubsystem;
