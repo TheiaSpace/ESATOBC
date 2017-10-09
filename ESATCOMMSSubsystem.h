@@ -36,7 +36,9 @@ class ESATCOMMSSubsystem: public ESATSubsystem
     void handleTelecommand(ESATCCSDSPacket& packet);
 
     // Fill a packet with the next available telecommand.
-    void readTelecommand(ESATCCSDSPacket& packet);
+    // Return true if there was a pending telecommand;
+    // otherwise return false.
+    boolean readTelecommand(ESATCCSDSPacket& packet);
 
     // Fill a packet with the next telemetry packet available.
     // Return true if the operation was successful;

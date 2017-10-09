@@ -33,7 +33,7 @@ void ESATCOMMSSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
   (void) packet.writeTo(Serial);
 }
 
-void ESATCOMMSSubsystem::readTelecommand(ESATCCSDSPacket& packet)
+boolean ESATCOMMSSubsystem::readTelecommand(ESATCCSDSPacket& packet)
 {
   boolean gotPacket = false;
   if (Serial.available())
@@ -46,12 +46,13 @@ void ESATCOMMSSubsystem::readTelecommand(ESATCCSDSPacket& packet)
   }
   if (!gotPacket)
   {
-    packet.clear();
+    return false;
   }
   if (packet.readPacketType() != packet.TELECOMMAND)
   {
-    packet.clear();
+    return false;
   }
+  return true;
 }
 
 boolean ESATCOMMSSubsystem::readTelemetry(ESATCCSDSPacket& packet)

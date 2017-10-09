@@ -57,17 +57,7 @@ void ESATOnBoardDataHandling::dispatchTelecommand(ESATCCSDSPacket& packet)
 
 boolean ESATOnBoardDataHandling::readTelecommand(ESATCCSDSPacket& packet)
 {
-  packet.clear();
-  COMMSSubsystem.readTelecommand(packet);
-  if (packet.readPacketType() != packet.TELECOMMAND)
-  {
-    return false;
-  }
-  if (packet.readPacketDataLength() == 0)
-  {
-    return false;
-  }
-  return true;
+  return COMMSSubsystem.readTelecommand(packet);
 }
 
 boolean ESATOnBoardDataHandling::readSubsystemsTelemetry(ESATCCSDSPacket& packet)
