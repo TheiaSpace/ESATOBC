@@ -20,6 +20,7 @@
 #include <ESATUtil.h>
 #include <Wire.h>
 
+
 byte ESATClock::BCDToBinary(byte value)
 {
   return value - 6 * (value >> 4);
@@ -35,30 +36,23 @@ byte ESATClock::binaryToBCD(byte value)
   return value + 6 * (value / 10);
 }
 
-String ESATClock::format(byte BCDNumber, byte length)
+ESATTimestamp ESATClock::read()
 {
-  const byte binaryNumber = BCDToBinary(BCDNumber);
-  String unpaddedText = String(int(binaryNumber), DEC);
-  String paddedText = Util.pad(unpaddedText, '0', 2);
-  return paddedText;
-}
-
-String ESATClock::read()
-{
+  ESATTimestamp timestamp;
   Wire.beginTransmission(ADDRESS);
   Wire.write(TIME_REGISTER);
   const byte errorCode = Wire.endTransmission();
   if (errorCode != 0)
   {
     error = true;
-    return "00000000000000";
+    return timestamp;
   }
   const byte bytesToRead = 6;
   const byte bytesRead = Wire.requestFrom(ADDRESS, bytesToRead);
   if (bytesRead != bytesToRead)
   {
     error = true;
-    return "00000000000000";
+    return timestamp;
   }
   const byte seconds = Wire.read();
   const byte minutes = Wire.read();
@@ -66,36 +60,21 @@ String ESATClock::read()
   const byte day = Wire.read();
   const byte month = Wire.read();
   const byte year = Wire.read();
-  return "20"
-    + format(year, 2)
-    + "-"
-    + format(month, 2)
-    + "-"
-    + format(day, 2)
-    + "T"
-    + format(hours, 2)
-    + ":"
-    + format(minutes, 2)
-    + ":"
-    + format(seconds & 0x7F, 2);
+  timestamp.update(BCDToBinary(year),BCDToBinary(month),BCDToBinary(day),
+                   BCDToBinary(hours),BCDToBinary(minutes),BCDToBinary(seconds & 0x7F));
+  return timestamp;
 }
 
-void ESATClock::write(String time)
+void ESATClock::write(ESATTimestamp timestamp)
 {
-  const byte year = time.substring(0, 4).toInt() - 2000;
-  const byte month = time.substring(5, 7).toInt();
-  const byte day = time.substring(8, 10).toInt();
-  const byte hours = time.substring(11, 13).toInt();
-  const byte minutes = time.substring(14, 16).toInt();
-  const byte seconds = time.substring(17, 19).toInt();
   Wire.beginTransmission(ADDRESS);
   Wire.write(TIME_REGISTER);
-  Wire.write(binaryToBCD(seconds));
-  Wire.write(binaryToBCD(minutes));
-  Wire.write(binaryToBCD(hours));
-  Wire.write(binaryToBCD(day));
-  Wire.write(binaryToBCD(month));
-  Wire.write(binaryToBCD(year));
+  Wire.write(binaryToBCD(timestamp.seconds));
+  Wire.write(binaryToBCD(timestamp.minutes));
+  Wire.write(binaryToBCD(timestamp.hours));
+  Wire.write(binaryToBCD(timestamp.day));
+  Wire.write(binaryToBCD(timestamp.month));
+  Wire.write(binaryToBCD(timestamp.year));
   Wire.write(0);
   const byte errorCode = Wire.endTransmission();
   if (errorCode != 0)
@@ -104,4 +83,9 @@ void ESATClock::write(String time)
   }
 }
 
+
+
 ESATClock Clock;
+
+
+

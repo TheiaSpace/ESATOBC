@@ -20,6 +20,8 @@
 #define ESATClock_h
 
 #include <Energia.h>
+#include "ESATTimestamp.h"
+
 
 // Real-time clock.
 // The underlying hardware is the DS1338 serial real-time clock
@@ -37,12 +39,13 @@ class ESATClock
     // Read the current time.
     // Return the date and time in ISO 8601 format.
     // Set the error flag on error.
-    String read();
+    ESATTimestamp read();
 
     // Set the current time.
     // Pass the date and time in ISO 8601 format.
     // Set the error flag on error.
-    void write(String time);
+    void write(ESATTimestamp time);
+    
 
   private:
     static const byte ADDRESS = 0x68;
@@ -54,10 +57,11 @@ class ESATClock
     // Binary to BCD conversion.
     byte binaryToBCD(byte value);
 
-    // Format a BCD number as a string with leading zeros.
-    String format(byte number, byte length);
 };
 
 extern ESATClock Clock;
+
+
+
 
 #endif
