@@ -111,6 +111,10 @@ boolean ESATOBCSubsystem::readTelemetry(ESATCCSDSPacket& packet)
   packet.writeBoolean(Clock.error);
   Clock.error = false;
   packet.updatePacketDataLength();
+  if (packet.readPacketDataLength() > packet.packetDataBufferLength)
+  {
+    return false;
+  }
   telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
   return true;
 }
