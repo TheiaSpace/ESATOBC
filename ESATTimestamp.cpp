@@ -21,6 +21,7 @@
  #include <ESATUtil.h>
  #include <string.h>
  
+ 
  ESATTimestamp::ESATTimestamp()
 {
   hours = 0;
@@ -44,14 +45,11 @@ void ESATTimestamp::update(byte Year, byte Month, byte Day,
 
 byte ESATTimestamp::update(char time[])
 {
-  char substring[charTimestampLength];
-  strncpy(substring, time, charTimestampLength - 1);
-  substring[charTimestampLength - 1] = '\0';
   int theYear, theMonth, theDay, theHours, theMinutes, theSeconds;
-  int n = sscanf(substring, "20%2i-%2i-%2iT%2i:%2i:%2i",&theYear, &theMonth, &theDay, &theHours, &theMinutes, &theSeconds);
+  int n = sscanf(time, "20%2u-%2u-%2uT%2u:%2u:%2u",&theYear, &theMonth, &theDay, &theHours, &theMinutes, &theSeconds);
   if(n < 6)
   {
-      return INVALID_TIMESTAMP;
+    return INVALID_TIMESTAMP;
   }
   year = (byte)theYear;
   month = (byte)theMonth;

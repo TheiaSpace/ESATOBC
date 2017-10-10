@@ -35,13 +35,13 @@ class ESATStorage
 
     // Write text to a file.
     // This will set the error flag on input/output error.
-    void write(char filename[], ESATTimestamp Timestamp, byte telemetry[], unsigned long telemetryLength);
+    void write(ESATTimestamp Timestamp, byte telemetry[], unsigned long telemetryLength);
     
     // Open a file to read it
-    void openReadFile(char filename[]);
+    void openReadFile(ESATTimestamp Timestamp);
     
     // Read the next text line from a file.
-    unsigned long readLine(ESATTimestamp Timestamp, byte telemetry[], unsigned int maxTelemetrySize);
+    unsigned long readLine(ESATTimestamp* Timestamp, byte telemetry[], unsigned int maxTelemetrySize);
     
     // Close the file opened to read it
     void closeReadFile();
@@ -56,19 +56,17 @@ class ESATStorage
     void resetLinePosition();
     
     // Does the file exists?
-    boolean fileExists(char file[]);
+    boolean fileExists(ESATTimestamp Timestamp);
     
     // There are still more lines to read?
     int available();
     
-    boolean charIsHex(char theChar);
     
-    boolean thereAreMoreTextToRead;
-
   private:
     static const byte PIN = 45;
     File readFile;
     unsigned long fileCharPointer;
+    boolean charIsHex(char theChar);
 };
 
 extern ESATStorage Storage;

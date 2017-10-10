@@ -188,9 +188,9 @@ void ESATOBCSubsystem::readStoredTelemetry(ESATCCSDSPacket& packet)
     {
       lastStoredTelemetryDownloadedTimestamp.getDateWithoutDashes(cdate);
       strcat(cdate, ".txt");
-      if(Storage.fileExists(cdate))
+      // if(Storage.fileExists(cdate))
       {
-        Storage.openReadFile(cdate);
+        // Storage.openReadFile(cdate);
         Storage.goToSavedPosition();
         while(Storage.available())
         {
@@ -215,7 +215,7 @@ void ESATOBCSubsystem::readStoredTelemetry(ESATCCSDSPacket& packet)
             }
           }
         }
-        Storage.closeReadFile();
+        // Storage.closeReadFile();
         if (telemetryFound)
         {
           break;

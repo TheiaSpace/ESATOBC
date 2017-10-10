@@ -108,25 +108,13 @@ void ESATOnBoardDataHandling::sendTelemetry(ESATCCSDSPacket& packet)
 
 void ESATOnBoardDataHandling::storeTelemetry(ESATCCSDSPacket& packet)
 {
-  ESATTimestamp timestamp = Clock.read();
+  ESATTimestamp Timestamp = Clock.read();
   if(Clock.error)
   {
     return;
   }
-  
-  char filename[timestamp.charDateLength + 4] = "";
-  timestamp.getDateWithoutDashes(filename);
-  strcat(filename, ".txt");
-  
-  char cTimestamp[timestamp.charTimestampLength] = "";
-  timestamp.toStringTimeStamp(cTimestamp);
-  
-  // packet size + '\0'
-  // unsigned long cPacketLength = packet.readPacketDataLength()*2 + 1; 
-  // char cPacket[cPacketLength] = "";
-  // packet.readCharPacket(cPacket);
-  
-  // Storage.write(filename, cTimestamp, cPacket);
+    
+  Storage.write(Timestamp, packet.buffer, packet.readPacketLength());
 }
 
 void ESATOnBoardDataHandling::updateSubsystems()

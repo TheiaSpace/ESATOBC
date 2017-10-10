@@ -20,6 +20,7 @@
 #include "ESATTimestamp.h"
 #include <SD.h>
 
+
 void ESATStorage::begin()
 {
   const boolean correctBegin = SD.begin(PIN);
@@ -28,18 +29,26 @@ void ESATStorage::begin()
     error = true;
   }
 }
-void ESATStorage::write(char filename[], ESATTimestamp Timestamp, byte telemetry[], unsigned long telemetryLength)
+void ESATStorage::write(ESATTimestamp Timestamp, byte telemetry[], unsigned long telemetryLength)
 {
   char cTimestamp[Timestamp.charTimestampLength];
-  char cbyte[3];
   Timestamp.toStringTimeStamp(cTimestamp);
+  
+  char filename[Timestamp.charDateLength + 4] = "";
+  Timestamp.getDateWithoutDashes(filename);
+  strcat(filename, ".txt");
+  
+  char cbyte[3];
+  
+  
   File file = SD.open(filename, FILE_WRITE);
   if (file)
   {
     file.print(cTimestamp);
+    file.print(' ');
     for(unsigned long indx = 0; indx < telemetryLength; indx++)
     {
-      sprintf(cbyte,"%2X",telemetry[indx]);
+      sprintf(cbyte,"%02X",telemetry[indx]);
       file.print(cbyte);
     }
     file.println();
@@ -51,8 +60,12 @@ void ESATStorage::write(char filename[], ESATTimestamp Timestamp, byte telemetry
   }
 }
 
-void ESATStorage::openReadFile(char filename[])
+void ESATStorage::openReadFile(ESATTimestamp Timestamp)
 {
+  char filename[Timestamp.charDateLength + 4] = "";
+  Timestamp.getDateWithoutDashes(filename);
+  strcat(filename, ".txt");
+  
   if(readFile)
   {
     closeReadFile();
@@ -61,12 +74,14 @@ void ESATStorage::openReadFile(char filename[])
 }
 
 
-unsigned long ESATStorage::readLine(ESATTimestamp Timestamp, byte telemetry[], unsigned int maxTelemetrySize)
+unsigned long ESATStorage::readLine(ESATTimestamp* Timestamp, byte telemetry[], unsigned int maxTelemetrySize)
 {
-  Timestamp.update(0,0,0,0,0,0);
-  char cTimestamp[Timestamp.charTimestampLength];
+  Timestamp->update(0,0,0,0,0,0);
+  char cTimestamp[Timestamp->charTimestampLength];
   unsigned int telemetryLength = 0;
+  unsigned long filePosition;
   int Char;
+  int nBytes;
   char cByte[3];
   cByte[2] = '\0';
   if(!readFile)
@@ -75,40 +90,46 @@ unsigned long ESATStorage::readLine(ESATTimestamp Timestamp, byte telemetry[], u
   }
   else
   {
-    for(unsigned int c = 0; c < Timestamp.charTimestampLength - 1; c++){
-      Char = readFile.read();
-      if(Char == '\n')
-      {
-        return 0;
-      }
-      else if(Char == -1)
-      {
-        return 0;
-      }
-      cTimestamp[c] = Char;
-    }
-    cTimestamp[Timestamp.charTimestampLength - 1] = '\0';
-    if(Timestamp.update(cTimestamp) == Timestamp.INVALID_TIMESTAMP)
-    {
-      return 0;
-    }
-    
-    for(unsigned int telemetryByte = 0; telemetryByte < maxTelemetrySize; telemetryByte++){
-      for(byte charIndx = 0; charIndx < 2; charIndx ++)
+    nBytes = readFile.read(cTimestamp, Timestamp->charTimestampLength - 1);
+    if(nBytes == Timestamp->charTimestampLength - 1){
+      cTimestamp[Timestamp->charTimestampLength - 1] = '\0';
+      if(Timestamp->update(cTimestamp) == Timestamp->VALID_TIMESTAMP)
       {
         Char = readFile.read();
-        if(!charIsHex(Char))
+        if(Char == ' ')
         {
-          break;
+          for(unsigned int telemetryByte = 0; telemetryByte < maxTelemetrySize; telemetryByte++){
+            Char = readFile.read();
+            if(!charIsHex(Char))
+            {
+              break;
+            }
+            cByte[0] = Char; 
+            Char = readFile.read();
+            if(!charIsHex(Char))
+            {
+              break;
+            }
+            cByte[1] = Char; 
+            
+            sscanf(cByte,"%2x",&Char);
+            telemetry[telemetryByte] = (byte)Char;
+            telemetryLength = telemetryLength + 1;
+          }          
         }
-        cByte[charIndx] = Char;          
-      }
-      sscanf(cByte,"%2x",&Char);
-      telemetry[telemetryByte] = (byte)Char;
-      telemetryLength = telemetryLength + 1;
+      }    
+    }    
+  }
+  filePosition = readFile.position();
+  readFile.seek(filePosition - 1);
+  Char = readFile.read();
+  while(Char != '\n')
+  {
+    if(!readFile.available())
+    {
+      break;
     }
-    
-    
+    Char = readFile.read();
   }
   return telemetryLength;
 }
@@ -179,9 +200,12 @@ void ESATStorage::resetLinePosition()
   
 }
     
-boolean ESATStorage::fileExists(char file[])
+boolean ESATStorage::fileExists(ESATTimestamp Timestamp)
 {
-  return SD.exists(file);
+  char filename[Timestamp.charDateLength + 4] = "";
+  Timestamp.getDateWithoutDashes(filename);
+  strcat(filename, ".txt");
+  return SD.exists(filename);
   
 }
     
