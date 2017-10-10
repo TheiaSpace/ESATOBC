@@ -47,7 +47,7 @@ ESATTimestamp ESATClock::read()
     error = true;
     return timestamp;
   }
-  const byte bytesToRead = 6;
+  const byte bytesToRead = 7;
   const byte bytesRead = Wire.requestFrom(ADDRESS, bytesToRead);
   if (bytesRead != bytesToRead)
   {
@@ -57,6 +57,7 @@ ESATTimestamp ESATClock::read()
   const byte seconds = Wire.read();
   const byte minutes = Wire.read();
   const byte hours = Wire.read();
+  const byte weekDay = Wire.read();
   const byte day = Wire.read();
   const byte month = Wire.read();
   const byte year = Wire.read();
@@ -72,6 +73,8 @@ void ESATClock::write(ESATTimestamp timestamp)
   Wire.write(binaryToBCD(timestamp.seconds));
   Wire.write(binaryToBCD(timestamp.minutes));
   Wire.write(binaryToBCD(timestamp.hours));
+  // Day of the week not used
+  Wire.write(binaryToBCD(2));
   Wire.write(binaryToBCD(timestamp.day));
   Wire.write(binaryToBCD(timestamp.month));
   Wire.write(binaryToBCD(timestamp.year));

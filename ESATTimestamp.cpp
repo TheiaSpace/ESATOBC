@@ -31,8 +31,8 @@
   day = 0;  
 }
 
-void ESATTimestamp::update(byte Hour, byte Minute, byte Second, 
-                   byte Year, byte Month, byte Day)
+void ESATTimestamp::update(byte Year, byte Month, byte Day, 
+                          byte Hour, byte Minute, byte Second)
 {
   hours = Hour;
   minutes = Minute;

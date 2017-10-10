@@ -29,8 +29,8 @@ class ESATTimestamp
     // the date length + 1
     static const byte charDateLength = 9;
     ESATTimestamp();
-    void update(byte Hour, byte Minute, byte Second, 
-           byte Year, byte Month, byte Day);
+    void update(byte Year, byte Month, byte Day, 
+                byte Hour, byte Minute, byte Second);
     byte update(char timestamp[]);
     void update(ESATTimestamp timeStamp);
     void incrementDay();
