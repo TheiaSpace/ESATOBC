@@ -29,7 +29,7 @@ void ESATStorage::begin()
     error = true;
   }
 }
-void ESATStorage::write(ESATTimestamp Timestamp, byte telemetry[], unsigned long telemetryLength)
+void ESATStorage::write(ESATTimestamp Timestamp, ESATCCSDSPacket& packet)
 {
   char cTimestamp[Timestamp.charTimestampLength];
   Timestamp.toStringTimeStamp(cTimestamp);
@@ -40,15 +40,22 @@ void ESATStorage::write(ESATTimestamp Timestamp, byte telemetry[], unsigned long
   
   char cbyte[3];
   
+  unsigned long packetDataLength = packet.readPacketDataLength();
+  
   
   File file = SD.open(filename, FILE_WRITE);
   if (file)
   {
     file.print(cTimestamp);
     file.print(' ');
-    for(unsigned long indx = 0; indx < telemetryLength; indx++)
+    for(byte indx = 0; indx < packet.PRIMARY_HEADER_LENGTH; indx++)
     {
-      sprintf(cbyte,"%02X",telemetry[indx]);
+      sprintf(cbyte,"%02X",packet.primaryHeader[indx]);
+      file.print(cbyte);
+    }
+    for(byte indx = 0; indx < packetDataLength; indx++)
+    {
+      sprintf(cbyte,"%02X",packet.packetData[indx]);
       file.print(cbyte);
     }
     file.println();
@@ -74,7 +81,7 @@ void ESATStorage::openReadFile(ESATTimestamp Timestamp)
 }
 
 
-unsigned long ESATStorage::readLine(ESATTimestamp* Timestamp, byte telemetry[], unsigned int maxTelemetrySize)
+unsigned long ESATStorage::read(ESATTimestamp* Timestamp, ESATCCSDSPacket& packet)
 {
   Timestamp->update(0,0,0,0,0,0);
   char cTimestamp[Timestamp->charTimestampLength];
@@ -82,8 +89,6 @@ unsigned long ESATStorage::readLine(ESATTimestamp* Timestamp, byte telemetry[], 
   unsigned long filePosition;
   int Char;
   int nBytes;
-  char cByte[3];
-  cByte[2] = '\0';
   if(!readFile)
   {
     error = true;
@@ -98,23 +103,10 @@ unsigned long ESATStorage::readLine(ESATTimestamp* Timestamp, byte telemetry[], 
         Char = readFile.read();
         if(Char == ' ')
         {
-          for(unsigned int telemetryByte = 0; telemetryByte < maxTelemetrySize; telemetryByte++){
-            Char = readFile.read();
-            if(!charIsHex(Char))
-            {
-              break;
-            }
-            cByte[0] = Char; 
-            Char = readFile.read();
-            if(!charIsHex(Char))
-            {
-              break;
-            }
-            cByte[1] = Char; 
-            
-            sscanf(cByte,"%2x",&Char);
-            telemetry[telemetryByte] = (byte)Char;
-            telemetryLength = telemetryLength + 1;
+          telemetryLength = readHexBytes(packet.primaryHeader, packet.PRIMARY_HEADER_LENGTH);
+          if(telemetryLength == packet.PRIMARY_HEADER_LENGTH)
+          {
+            telemetryLength += readHexBytes(packet.packetData, packet.packetDataBufferLength); 
           }          
         }
       }    
@@ -132,6 +124,34 @@ unsigned long ESATStorage::readLine(ESATTimestamp* Timestamp, byte telemetry[], 
     Char = readFile.read();
   }
   return telemetryLength;
+}
+
+unsigned long ESATStorage::readHexBytes(byte buf[], unsigned long bufSize)
+{
+  int Char;
+  char cByte[3];
+  cByte[2] = '\0';
+  unsigned long arrayLength = 0;
+  for(unsigned long indx = 0; indx < bufSize; indx++)
+  {
+    Char = readFile.read();
+    if(!charIsHex(Char))
+    {
+      break;
+    }
+    cByte[0] = Char; 
+    Char = readFile.read();
+    if(!charIsHex(Char))
+    {
+      break;
+    }
+    cByte[1] = Char; 
+    
+    sscanf(cByte,"%2x",&Char);
+    buf[indx] = (byte)Char;
+    arrayLength = arrayLength + 1;
+  }
+  return arrayLength;
 }
 
 boolean ESATStorage::charIsHex(char theChar){

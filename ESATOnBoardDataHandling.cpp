@@ -101,7 +101,7 @@ void ESATOnBoardDataHandling::storeTelemetry(ESATCCSDSPacket& packet)
     return;
   }
     
-  Storage.write(Timestamp, packet.buffer, packet.readPacketLength());
+  Storage.write(Timestamp, packet);
 }
 
 void ESATOnBoardDataHandling::updateSubsystems()

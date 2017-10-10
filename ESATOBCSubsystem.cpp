@@ -62,12 +62,12 @@ void ESATOBCSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
     case SET_TIME:
       handleSetTimeCommand(packet);
       break;
-  case STORE_TELEMETRY:
-      handleStoreTelemetry(packet);
-      break;
-  case DOWNLOAD_TELEMETRY:
-      handleDownloadTelemetry(packet);
-      break;
+    case STORE_TELEMETRY:
+        handleStoreTelemetry(packet);
+        break;
+    case DOWNLOAD_TELEMETRY:
+        handleDownloadTelemetry(packet);
+        break;
     default:
       break;
   }
@@ -75,7 +75,7 @@ void ESATOBCSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
 
 void ESATOBCSubsystem::handleSetTimeCommand(ESATCCSDSPacket& packet)
 {
-  if(packet.readBytesAvailable() < 6)
+  if(packet.availableBytesToRead() < 6)
   {
     return;
   }
@@ -91,7 +91,7 @@ void ESATOBCSubsystem::handleSetTimeCommand(ESATCCSDSPacket& packet)
 
 void ESATOBCSubsystem::handleStoreTelemetry(ESATCCSDSPacket& packet)
 {
-  if(packet.readBytesAvailable() < 1)
+  if(packet.availableBytesToRead() < 1)
   {
     return;
   }
@@ -108,7 +108,7 @@ void ESATOBCSubsystem::handleStoreTelemetry(ESATCCSDSPacket& packet)
 
 void ESATOBCSubsystem::handleDownloadTelemetry(ESATCCSDSPacket& packet)
 {
-  if(packet.readBytesAvailable() < 12)
+  if(packet.availableBytesToRead() < 12)
   {
     downloadStoredTelemetry = false;
     return;
@@ -119,7 +119,7 @@ void ESATOBCSubsystem::handleDownloadTelemetry(ESATCCSDSPacket& packet)
   downloadStoredTelemetryFromTimestamp.hours = packet.readByte();
   downloadStoredTelemetryFromTimestamp.minutes = packet.readByte();
   downloadStoredTelemetryFromTimestamp.seconds = packet.readByte();
-    
+  
   downloadStoredTelemetryToTimestamp.year = packet.readWord() - 2000;
   downloadStoredTelemetryToTimestamp.month = packet.readByte();
   downloadStoredTelemetryToTimestamp.day = packet.readByte();
@@ -129,6 +129,9 @@ void ESATOBCSubsystem::handleDownloadTelemetry(ESATCCSDSPacket& packet)
   
   downloadStoredTelemetry = true;
   Storage.resetLinePosition();
+  downloadStoredTelemetryUpdated = true;
+  
+  
 }
 
 boolean ESATOBCSubsystem::readTelemetry(ESATCCSDSPacket& packet)
@@ -181,7 +184,13 @@ boolean ESATOBCSubsystem::readStoredTelemetry(ESATCCSDSPacket& packet)
   word telemetryLength;
   ESATTimestamp TelemetryTimestamp;
   boolean telemetryFound = false;
+  static boolean previousStoreTelemetryValue;
   
+  if(downloadStoredTelemetryUpdated)
+  {
+    previousStoreTelemetryValue = storeTelemetry;
+    downloadStoredTelemetryUpdated = false;
+  }  
   while(downloadStoredTelemetry)
   {
     if(downloadStoredTelemetryToTimestamp >= downloadStoredTelemetryFromTimestamp)
@@ -192,17 +201,20 @@ boolean ESATOBCSubsystem::readStoredTelemetry(ESATCCSDSPacket& packet)
         Storage.goToSavedPosition();
         while(Storage.available())
         {
-          telemetryLength = Storage.readLine(&TelemetryTimestamp, packet.buffer, packet.bufferLength);
+          telemetryLength = Storage.read(&TelemetryTimestamp, packet);
           Storage.saveCurrentLinePosition();
-          if((telemetryLength > 0)&&(telemetryLength == packet.readPacketLength()))
+          if(telemetryLength > 0)
           {
-            if(TelemetryTimestamp >= downloadStoredTelemetryFromTimestamp)
+            if(telemetryLength == packet.readPacketDataLength() + packet.PRIMARY_HEADER_LENGTH)
             {
-              if(downloadStoredTelemetryToTimestamp >= TelemetryTimestamp)
+              if(TelemetryTimestamp >= downloadStoredTelemetryFromTimestamp)
               {
-                // Gestionar paquete
-                telemetryFound = true;
-                break;
+                if(downloadStoredTelemetryToTimestamp >= TelemetryTimestamp)
+                {
+                  // Gestionar paquete
+                  telemetryFound = true;
+                  break;
+                }
               }
             }
           }
@@ -223,10 +235,12 @@ boolean ESATOBCSubsystem::readStoredTelemetry(ESATCCSDSPacket& packet)
   }
   if(telemetryFound)
   {
+    storeTelemetry = false;  
     return true;
   }
   else
   {
+    storeTelemetry = previousStoreTelemetryValue;
     return false;
   }
 }

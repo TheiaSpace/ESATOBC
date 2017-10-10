@@ -70,7 +70,8 @@ class ESATOBCSubsystem: public ESATSubsystem
     boolean downloadStoredTelemetry;
     ESATTimestamp downloadStoredTelemetryToTimestamp;
     ESATTimestamp downloadStoredTelemetryFromTimestamp;
-    unsigned int fileCharPointer;
+    boolean downloadStoredTelemetryUpdated;
+    
 
     // Unique identifier of the subsystem.
     static const word APPLICATION_PROCESS_IDENTIFIER = 0;
@@ -91,7 +92,7 @@ class ESATOBCSubsystem: public ESATSubsystem
     // Command handlers.
     void handleSetTimeCommand(ESATCCSDSPacket& packet);
     void handleStoreTelemetry(ESATCCSDSPacket& packet);
-    void readStoredTelemetry(ESATCCSDSPacket& packet);
+    boolean readStoredTelemetry(ESATCCSDSPacket& packet);
 };
 
 extern ESATOBCSubsystem OBCSubsystem;
