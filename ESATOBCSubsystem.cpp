@@ -85,8 +85,12 @@ void ESATOBCSubsystem::handleStoreTelemetry(ESATCCSDSPacket& packet)
   }
 }
 
-void ESATOBCSubsystem::readTelemetry(ESATCCSDSPacket& packet)
+boolean ESATOBCSubsystem::readTelemetry(ESATCCSDSPacket& packet)
 {
+  if (!newTelemetryPacket)
+  {
+    return false;
+  }
   newTelemetryPacket = false;
   packet.clear();
   packet.writePacketVersionNumber(0);
@@ -106,7 +110,13 @@ void ESATOBCSubsystem::readTelemetry(ESATCCSDSPacket& packet)
   Storage.error = false;
   packet.writeBoolean(Clock.error);
   Clock.error = false;
+  packet.updatePacketDataLength();
+  if (packet.readPacketDataLength() > packet.packetDataBufferLength)
+  {
+    return false;
+  }
   telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
+  return true;
 }
 
 boolean ESATOBCSubsystem::telemetryAvailable()

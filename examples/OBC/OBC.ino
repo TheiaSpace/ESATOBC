@@ -36,8 +36,9 @@ class ESATExampleSubsystem: public ESATSubsystem
     {
     }
 
-    void readTelemetry(ESATCCSDSPacket& packet)
+    boolean readTelemetry(ESATCCSDSPacket& packet)
     {
+      return false;
     }
 
     boolean telemetryAvailable()

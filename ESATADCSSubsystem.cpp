@@ -34,9 +34,9 @@ void ESATADCSSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
   ADCS.handleTelecommand(packet);
 }
 
-void ESATADCSSubsystem::readTelemetry(ESATCCSDSPacket& packet)
+boolean ESATADCSSubsystem::readTelemetry(ESATCCSDSPacket& packet)
 {
-  ADCS.readTelemetry(packet);
+  return ADCS.readTelemetry(packet);
 }
 
 boolean ESATADCSSubsystem::telemetryAvailable()
