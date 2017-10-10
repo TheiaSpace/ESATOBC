@@ -189,15 +189,7 @@ void ESATStorage::goToSavedPosition()
     
 void ESATStorage::resetLinePosition()
 {
-  if(!readFile)
-  {
-    error = true;
-  }
-  else
-  {
-    fileCharPointer = 0;
-  }
-  
+  fileCharPointer = 0;
 }
     
 boolean ESATStorage::fileExists(ESATTimestamp Timestamp)

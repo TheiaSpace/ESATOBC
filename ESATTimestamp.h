@@ -36,7 +36,9 @@ class ESATTimestamp
     void incrementDay();
     byte compare(ESATTimestamp timestamp);
     boolean operator>(ESATTimestamp timeStamp);
+    boolean operator>=(ESATTimestamp timeStamp);
     boolean operator<(ESATTimestamp timeStamp);
+    boolean operator<=(ESATTimestamp timeStamp);
     boolean operator==(ESATTimestamp timeStamp);
     void toStringTimeStamp(char timestamp[]);    
     // util to get the date from the timestamp

@@ -171,9 +171,41 @@ boolean ESATTimestamp::operator>(ESATTimestamp timestamp)
     return false;
   }
 }
+boolean ESATTimestamp::operator>=(ESATTimestamp timestamp)
+{
+  byte result = compare(timestamp);
+   if(result == THIS_IS_HIGHER)
+  {
+    return true;
+  }
+  else if(result == THIS_IS_EQUAL)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
 boolean ESATTimestamp::operator<(ESATTimestamp timestamp)
 {
   if(compare(timestamp) == THIS_IS_LOWER)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
+boolean ESATTimestamp::operator<=(ESATTimestamp timestamp)
+{
+  byte result = compare(timestamp);
+  if(result == THIS_IS_LOWER)
+  {
+    return true;
+  }
+  else if(result == THIS_IS_EQUAL)
   {
     return true;
   }

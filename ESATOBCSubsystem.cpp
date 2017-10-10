@@ -113,28 +113,22 @@ void ESATOBCSubsystem::handleDownloadTelemetry(ESATCCSDSPacket& packet)
     downloadStoredTelemetry = false;
     return;
   }
-  lastStoredTelemetryDownloadedTimestamp.year = packet.readByte();
-  lastStoredTelemetryDownloadedTimestamp.month = packet.readByte();
-  lastStoredTelemetryDownloadedTimestamp.day = packet.readByte();
-  lastStoredTelemetryDownloadedTimestamp.hours = packet.readByte();
-  lastStoredTelemetryDownloadedTimestamp.minutes = packet.readByte();
-  lastStoredTelemetryDownloadedTimestamp.seconds = packet.readByte();
-  
-  downloadStoredTelemetryToTimestamp.year = packet.readByte();
+  downloadStoredTelemetryFromTimestamp.year = packet.readWord() - 2000;
+  downloadStoredTelemetryFromTimestamp.month = packet.readByte();
+  downloadStoredTelemetryFromTimestamp.day = packet.readByte();
+  downloadStoredTelemetryFromTimestamp.hours = packet.readByte();
+  downloadStoredTelemetryFromTimestamp.minutes = packet.readByte();
+  downloadStoredTelemetryFromTimestamp.seconds = packet.readByte();
+    
+  downloadStoredTelemetryToTimestamp.year = packet.readWord() - 2000;
   downloadStoredTelemetryToTimestamp.month = packet.readByte();
   downloadStoredTelemetryToTimestamp.day = packet.readByte();
   downloadStoredTelemetryToTimestamp.hours = packet.readByte();
   downloadStoredTelemetryToTimestamp.minutes = packet.readByte();
   downloadStoredTelemetryToTimestamp.seconds = packet.readByte();
   
-  if(downloadStoredTelemetryToTimestamp > lastStoredTelemetryDownloadedTimestamp)
-  {
-    downloadStoredTelemetry = true;  
-    Storage.resetLinePosition();
-    }
-  else{
-    downloadStoredTelemetry = false;
-  }
+  downloadStoredTelemetry = true;  
+  Storage.resetLinePosition();
 }
 
 void ESATOBCSubsystem::readTelemetry(ESATCCSDSPacket& packet)
@@ -173,58 +167,50 @@ void ESATOBCSubsystem::readTelemetry(ESATCCSDSPacket& packet)
   
 }
 
+
+
 void ESATOBCSubsystem::readStoredTelemetry(ESATCCSDSPacket& packet)
 {
-  static const byte MAX_TELEMETRY_SIZE = packet.bufferLength;
-  char cdate[lastStoredTelemetryDownloadedTimestamp.charTimestampLength] = "";
-  // char telemetry[MAX_TELEMETRY_SIZE*2 + 1] = "";
   word telemetryLength;
   ESATTimestamp TelemetryTimestamp;
   boolean telemetryFound = false;
   
   while(downloadStoredTelemetry)
   {
-    if(downloadStoredTelemetryToTimestamp > lastStoredTelemetryDownloadedTimestamp)
+    if(downloadStoredTelemetryToTimestamp >= downloadStoredTelemetryFromTimestamp)
     {
-      lastStoredTelemetryDownloadedTimestamp.getDateWithoutDashes(cdate);
-      strcat(cdate, ".txt");
-      // if(Storage.fileExists(cdate))
+      if(Storage.fileExists(downloadStoredTelemetryFromTimestamp))
       {
-        // Storage.openReadFile(cdate);
+        Storage.openReadFile(downloadStoredTelemetryFromTimestamp);
         Storage.goToSavedPosition();
         while(Storage.available())
         {
-          // telemetryLength = Storage.readLine(cdate, telemetry, MAX_TELEMETRY_SIZE);
+          telemetryLength = Storage.readLine(&TelemetryTimestamp, packet.buffer, packet.bufferLength);
           Storage.saveCurrentLinePosition();
-          if(TelemetryTimestamp.update(cdate) == TelemetryTimestamp.VALID_TIMESTAMP)
+          if((telemetryLength > 0)&&(telemetryLength == packet.readPacketLength()))
           {
-            if(TelemetryTimestamp > lastStoredTelemetryDownloadedTimestamp)
+            if(TelemetryTimestamp >= downloadStoredTelemetryFromTimestamp)
             {
-              lastStoredTelemetryDownloadedTimestamp.update(TelemetryTimestamp);
-              if(downloadStoredTelemetryToTimestamp > lastStoredTelemetryDownloadedTimestamp)
+              if(downloadStoredTelemetryToTimestamp >= TelemetryTimestamp)
               {
-                // Habria que resolver como mandar la fecha de la telemetria (guardada en cdate)
-                // packet.writeCharPacket(telemetry);
+                // Gestionar paquete
                 telemetryFound = true;
+                break;
               }
-              else
-              {
-                downloadStoredTelemetry = false;
-              }
-              break;
             }
           }
         }
-        // Storage.closeReadFile();
+        Storage.closeReadFile();
         if (telemetryFound)
         {
           break;
         }      
       }
-      lastStoredTelemetryDownloadedTimestamp.incrementDay();
+      downloadStoredTelemetryFromTimestamp.incrementDay();
       Storage.resetLinePosition();
     }
     else{
+      packet.clear();
       downloadStoredTelemetry = false;
     }
   }  
