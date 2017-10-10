@@ -35,8 +35,9 @@ class ESATEPSSubsystem: public ESATSubsystem
     void handleTelecommand(ESATCCSDSPacket& telecommand);
 
     // Fill a packet with the next telemetry packet available.
-    // Set the error flag on error.
-    void readTelemetry(ESATCCSDSPacket& telemetry);
+    // Return true if the operation was successful;
+    // otherwise return false.
+    boolean readTelemetry(ESATCCSDSPacket& telemetry);
 
     // Return true if a new telemetry packet is available.
     boolean telemetryAvailable();
@@ -45,16 +46,6 @@ class ESATEPSSubsystem: public ESATSubsystem
     void update();
 
   private:
-    // I2C register numbers of the EPS board.
-    enum RegisterNumbers
-    {
-      TELECOMMAND_CONTROL = 0,
-      TELECOMMAND_STATUS = 1,
-      TELEMETRY_CONTROL = 2,
-      TELEMETRY_STATUS = 3,
-      TELEMETRY_VECTOR = 4,
-    };
-
     // Identifier numbers of the telemetry packets.
     enum TelemetryPacketIdentifier
     {
@@ -66,6 +57,12 @@ class ESATEPSSubsystem: public ESATSubsystem
 
     // Unique identifier of the subsystem.
     static const word APPLICATION_PROCESS_IDENTIFIER = 1;
+
+    // Time between I2C telecommand and telemetry transfer retries.
+    static const word MILLISECONDS_BETWEEN_RETRIES = 10;
+
+    // Number of tries for I2C telecommand and telemetry transfers.
+    static const byte TRIES = 10;
 
     boolean newTelemetryPacket;
 };

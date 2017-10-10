@@ -30,58 +30,34 @@ word ESATCOMMSSubsystem::getApplicationProcessIdentifier()
 
 void ESATCOMMSSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
 {
-  writePacketTo(Serial, packet);
+  (void) packet.writeTo(Serial);
 }
 
-void ESATCOMMSSubsystem::readTelecommand(ESATCCSDSPacket& packet)
+boolean ESATCOMMSSubsystem::readTelecommand(ESATCCSDSPacket& packet)
 {
+  boolean gotPacket = false;
   if (Serial.available())
   {
-    readPacketFrom(Serial, packet);
+    gotPacket = packet.readFrom(Serial);
   }
   else if (USB.available())
   {
-    readPacketFrom(USB, packet);
+    gotPacket = packet.readFrom(USB);
   }
+  if (!gotPacket)
+  {
+    return false;
+  }
+  if (packet.readPacketType() != packet.TELECOMMAND)
+  {
+    return false;
+  }
+  return true;
 }
 
-void ESATCOMMSSubsystem::readPacketFrom(Stream& input,
-                                        ESATCCSDSPacket& packet)
+boolean ESATCOMMSSubsystem::readTelemetry(ESATCCSDSPacket& packet)
 {
-  packet.clear();
-  if (packet.bufferLength < packet.PRIMARY_HEADER_LENGTH)
-  {
-    return;
-  }
-  if (input.available() == 0)
-  {
-    return;
-  }
-  const byte headerBytesRead =
-    input.readBytes((char*) packet.buffer, packet.PRIMARY_HEADER_LENGTH);
-  if (headerBytesRead < packet.PRIMARY_HEADER_LENGTH)
-  {
-    packet.clear();
-    return;
-  }
-  const word packetDataLength = packet.readPacketDataLength();
-  const long packetLength = packetDataLength + packet.PRIMARY_HEADER_LENGTH;
-  if (packetLength > packet.bufferLength)
-  {
-    packet.clear();
-    return;
-  }
-  const word packetDataBytesRead =
-    input.readBytes((char*) packet.buffer, packetDataLength);
-  if (packetDataBytesRead != packetDataLength)
-  {
-    packet.clear();
-    return;
-  }
-}
-
-void ESATCOMMSSubsystem::readTelemetry(ESATCCSDSPacket& packet)
-{
+  return false;
 }
 
 boolean ESATCOMMSSubsystem::telemetryAvailable()
@@ -95,19 +71,8 @@ void ESATCOMMSSubsystem::update()
 
 void ESATCOMMSSubsystem::writePacket(ESATCCSDSPacket& packet)
 {
-  writePacketTo(Serial, packet);
-  writePacketTo(USB, packet);
-}
-
-void ESATCOMMSSubsystem::writePacketTo(Stream& output,
-                                       ESATCCSDSPacket& packet)
-{
-  const long packetLength =
-    packet.PRIMARY_HEADER_LENGTH + packet.readPacketDataLength();
-  for (long i = 0; i < packetLength; i++)
-  {
-    output.write(packet.buffer[i]);
-  }
+  (void) packet.writeTo(Serial);
+  (void) packet.writeTo(USB);
 }
 
 ESATCOMMSSubsystem COMMSSubsystem;

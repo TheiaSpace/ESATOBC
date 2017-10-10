@@ -127,18 +127,18 @@ void ESATOBCSubsystem::handleDownloadTelemetry(ESATCCSDSPacket& packet)
   downloadStoredTelemetryToTimestamp.minutes = packet.readByte();
   downloadStoredTelemetryToTimestamp.seconds = packet.readByte();
   
-  downloadStoredTelemetry = true;  
+  downloadStoredTelemetry = true;
   Storage.resetLinePosition();
 }
 
-void ESATOBCSubsystem::readTelemetry(ESATCCSDSPacket& packet)
+boolean ESATOBCSubsystem::readTelemetry(ESATCCSDSPacket& packet)
 {
+  boolean result;
   packet.clear();
   
   if(newHousekeepingTelemetryPacket)
   {
     newHousekeepingTelemetryPacket = false;
-    packet.clear();
     packet.writePacketVersionNumber(0);
     packet.writePacketType(packet.TELEMETRY);
     packet.writeSecondaryHeaderFlag(packet.SECONDARY_HEADER_IS_PRESENT);
@@ -156,20 +156,27 @@ void ESATOBCSubsystem::readTelemetry(ESATCCSDSPacket& packet)
     Storage.error = false;
     packet.writeBoolean(Clock.error);
     Clock.error = false;
-    telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
+    packet.updatePacketDataLength();
+    if (packet.readPacketDataLength() > packet.packetDataBufferLength)
+    {
+      result = false;
+    }
+    result = true;
   }
   else
   {
-    readStoredTelemetry(packet);    
-  }    
-  
-  
-  
+    result = readStoredTelemetry(packet);
+  }
+  if(result)
+  {
+    telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
+  }
+  return result;
 }
 
 
 
-void ESATOBCSubsystem::readStoredTelemetry(ESATCCSDSPacket& packet)
+boolean ESATOBCSubsystem::readStoredTelemetry(ESATCCSDSPacket& packet)
 {
   word telemetryLength;
   ESATTimestamp TelemetryTimestamp;
@@ -213,7 +220,15 @@ void ESATOBCSubsystem::readStoredTelemetry(ESATCCSDSPacket& packet)
       packet.clear();
       downloadStoredTelemetry = false;
     }
-  }  
+  }
+  if(telemetryFound)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
 }
 
 boolean ESATOBCSubsystem::telemetryAvailable()

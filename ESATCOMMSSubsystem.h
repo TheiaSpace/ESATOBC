@@ -36,10 +36,14 @@ class ESATCOMMSSubsystem: public ESATSubsystem
     void handleTelecommand(ESATCCSDSPacket& packet);
 
     // Fill a packet with the next available telecommand.
-    void readTelecommand(ESATCCSDSPacket& packet);
+    // Return true if there was a pending telecommand;
+    // otherwise return false.
+    boolean readTelecommand(ESATCCSDSPacket& packet);
 
     // Fill a packet with the next telemetry packet available.
-    void readTelemetry(ESATCCSDSPacket& packet);
+    // Return true if the operation was successful;
+    // otherwise return false.
+    boolean readTelemetry(ESATCCSDSPacket& packet);
 
     // Return true if there is new telemetry available;
     // Otherwise return false.
@@ -54,12 +58,6 @@ class ESATCOMMSSubsystem: public ESATSubsystem
   private:
     // Unique identifier of the subsystem.
     static const word APPLICATION_PROCESS_IDENTIFIER = 3;
-
-    // Read a packet from an input stream.
-    void readPacketFrom(Stream& input, ESATCCSDSPacket& packet);
-
-    // Write a telemetry packet to an output stream.
-    void writePacketTo(Stream& output, ESATCCSDSPacket& packet);
 };
 
 extern ESATCOMMSSubsystem COMMSSubsystem;

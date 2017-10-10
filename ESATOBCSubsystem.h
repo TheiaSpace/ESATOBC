@@ -38,7 +38,9 @@ class ESATOBCSubsystem: public ESATSubsystem
     void handleTelecommand(ESATCCSDSPacket& packet);
 
     // Fill a packet with the next telemetry packet available.
-    void readTelemetry(ESATCCSDSPacket& packet);
+    // Return true if the operation was successful;
+    // otherwise return false.
+    boolean readTelemetry(ESATCCSDSPacket& packet);
 
     // Return true if there is new telemetry available;
     // Otherwise return false.
@@ -70,13 +72,13 @@ class ESATOBCSubsystem: public ESATSubsystem
     ESATTimestamp downloadStoredTelemetryFromTimestamp;
     unsigned int fileCharPointer;
 
+    // Unique identifier of the subsystem.
+    static const word APPLICATION_PROCESS_IDENTIFIER = 0;
+
     // Version numbers.
     static const byte MAJOR_VERSION_NUMBER = 3;
     static const byte MINOR_VERSION_NUMBER = 0;
     static const byte PATCH_VERSION_NUMBER = 0;
-
-    // Unique identifier of the subsystem.
-    static const word APPLICATION_PROCESS_IDENTIFIER = 0;
 
     // True when a new telemetry packet is ready (after update()).
     // False otherwise (after readTelemetry()).

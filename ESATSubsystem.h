@@ -38,7 +38,9 @@ class ESATSubsystem
     virtual void handleTelecommand(ESATCCSDSPacket& telecommand) = 0;
 
     // Fill a packet with the next telemetry packet available.
-    virtual void readTelemetry(ESATCCSDSPacket& packet) = 0;
+    // Return true if the operation was successful;
+    // otherwise return false.
+    virtual boolean readTelemetry(ESATCCSDSPacket& packet) = 0;
 
     // Return true if there is new telemetry available;
     // Otherwise return false.

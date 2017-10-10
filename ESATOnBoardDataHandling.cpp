@@ -57,17 +57,7 @@ void ESATOnBoardDataHandling::dispatchTelecommand(ESATCCSDSPacket& packet)
 
 boolean ESATOnBoardDataHandling::readTelecommand(ESATCCSDSPacket& packet)
 {
-  packet.clear();
-  COMMSSubsystem.readTelecommand(packet);
-  if (packet.readPacketType() != packet.TELECOMMAND)
-  {
-    return false;
-  }
-  if (packet.readPacketDataLength() == 0)
-  {
-    return false;
-  }
-  return true;
+  return COMMSSubsystem.readTelecommand(packet);
 }
 
 boolean ESATOnBoardDataHandling::readSubsystemsTelemetry(ESATCCSDSPacket& packet)
@@ -77,9 +67,9 @@ boolean ESATOnBoardDataHandling::readSubsystemsTelemetry(ESATCCSDSPacket& packet
   {
     if (subsystems[telemetryIndex]->telemetryAvailable())
     {
-      subsystems[telemetryIndex]->readTelemetry(packet);
-      if ((packet.readPacketType() == packet.TELEMETRY)
-          && (packet.readPacketDataLength() > 0))
+      const boolean successfulRead =
+        subsystems[telemetryIndex]->readTelemetry(packet);
+      if (successfulRead && (packet.readPacketType() == packet.TELEMETRY))
       {
         return true;
       }
@@ -100,10 +90,7 @@ void ESATOnBoardDataHandling::registerSubsystem(ESATSubsystem& subsystem)
 
 void ESATOnBoardDataHandling::sendTelemetry(ESATCCSDSPacket& packet)
 {
-  if (packet.readPacketDataLength() > 0)
-  {
-    COMMSSubsystem.writePacket(packet);
-  }
+  COMMSSubsystem.writePacket(packet);
 }
 
 void ESATOnBoardDataHandling::storeTelemetry(ESATCCSDSPacket& packet)

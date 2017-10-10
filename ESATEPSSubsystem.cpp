@@ -17,6 +17,7 @@
  */
 
 #include "ESATEPSSubsystem.h"
+#include <ESATI2CMaster.h>
 #include <Wire.h>
 
 void ESATEPSSubsystem::begin()
@@ -29,99 +30,30 @@ word ESATEPSSubsystem::getApplicationProcessIdentifier()
   return APPLICATION_PROCESS_IDENTIFIER;
 }
 
-void ESATEPSSubsystem::handleTelecommand(ESATCCSDSPacket& telecommand)
+void ESATEPSSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
 {
-  const word packetDataLength = telecommand.readPacketDataLength();
-  const word packetLength =
-    packetDataLength + telecommand.PRIMARY_HEADER_LENGTH;
-  Wire.beginTransmission(ADDRESS);
-  Wire.write(TELECOMMAND_CONTROL);
-  for (int index = 0; index < packetLength; index++)
-  {
-    Wire.write(telecommand.buffer[index]);
-  }
-  (void) Wire.endTransmission();
+  (void) I2CMaster.writeTelecommand(Wire,
+                                    ADDRESS,
+                                    packet,
+                                    TRIES,
+                                    MILLISECONDS_BETWEEN_RETRIES);
 }
 
-void ESATEPSSubsystem::readTelemetry(ESATCCSDSPacket& packet)
+boolean ESATEPSSubsystem::readTelemetry(ESATCCSDSPacket& packet)
 {
+  if (!newTelemetryPacket)
+  {
+    return false;
+  }
   newTelemetryPacket = false;
-  packet.clear();
-  Wire.beginTransmission(ADDRESS);
-  (void) Wire.write(TELEMETRY_CONTROL);
-  (void) Wire.write(HOUSEKEEPING);
-  (void) Wire.write(true);
-  (void) Wire.write(0);
-  (void) Wire.write(0);
-  const byte headerTelemetryControlWriteStatus = Wire.endTransmission();
-  if (headerTelemetryControlWriteStatus != 0)
-  {
-    return;
-  }
-  Wire.beginTransmission(ADDRESS);
-  (void) Wire.write(TELEMETRY_VECTOR);
-  const byte headerTelemetryVectorWriteStatus = Wire.endTransmission();
-  if (headerTelemetryVectorWriteStatus != 0)
-  {
-    return;
-  }
-  const byte headerBytesRead =
-    Wire.requestFrom(ADDRESS, packet.PRIMARY_HEADER_LENGTH);
-  if (headerBytesRead != packet.PRIMARY_HEADER_LENGTH)
-  {
-    return;
-  }
-  for (int i = 0; i < packet.PRIMARY_HEADER_LENGTH; i++)
-  {
-    packet.buffer[i] = Wire.read();
-  }
-  const word packetDataLength = packet.readPacketDataLength();
-  const long packetLength = packet.PRIMARY_HEADER_LENGTH + packetDataLength;
-  if (packetLength > packet.bufferLength)
-  {
-    packet.clear();
-    return;
-  }
-  long readIndex = packet.PRIMARY_HEADER_LENGTH;
-  while(readIndex < packetLength)
-  {
-    Wire.beginTransmission(ADDRESS);
-    (void) Wire.write(TELEMETRY_CONTROL);
-    (void) Wire.write(HOUSEKEEPING);
-    (void) Wire.write(false);
-    (void) Wire.write(highByte(readIndex));
-    (void) Wire.write(lowByte(readIndex));
-    const byte telemetryControlWriteStatus = Wire.endTransmission();
-    if (telemetryControlWriteStatus != 0)
-    {
-      packet.clear();
-      return;
-    }
-    Wire.beginTransmission(ADDRESS);
-    (void) Wire.write(TELEMETRY_VECTOR);
-    const byte telemetryVectorWriteStatus = Wire.endTransmission();
-    if (telemetryVectorWriteStatus != 0)
-    {
-      packet.clear();
-      return;
-    }
-    byte bytesToRead = BUFFER_LENGTH;
-    if ((readIndex + bytesToRead) > packetLength)
-    {
-      bytesToRead = packetLength - readIndex;
-    }
-    const byte bytesRead = Wire.requestFrom(int(ADDRESS), int(bytesToRead));
-    if (bytesRead != bytesToRead)
-    {
-      packet.clear();
-      return;
-    }
-    for (int i = 0; i < bytesToRead; i++)
-    {
-      packet.buffer[readIndex + i] = Wire.read();
-    }
-    readIndex = readIndex + bytesRead;
-  }
+  const boolean gotTelemetry =
+    I2CMaster.readTelemetry(Wire,
+                            ADDRESS,
+                            HOUSEKEEPING,
+                            packet,
+                            TRIES,
+                            MILLISECONDS_BETWEEN_RETRIES);
+  return gotTelemetry;
 }
 
 boolean ESATEPSSubsystem::telemetryAvailable()
