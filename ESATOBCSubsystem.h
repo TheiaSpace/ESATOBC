@@ -48,8 +48,6 @@ class ESATOBCSubsystem: public ESATSubsystem
 
     // Update the subsystem.
     virtual void update();
-    
-    void handleDownloadTelemetry(ESATCCSDSPacket& packet);
 
   private:
     // Command codes.
@@ -65,13 +63,14 @@ class ESATOBCSubsystem: public ESATSubsystem
     {
       HOUSEKEEPING = 0,
     };
-    
+
     // Download stored telemetry 
     boolean downloadStoredTelemetry;
     ESATTimestamp downloadStoredTelemetryToTimestamp;
     ESATTimestamp downloadStoredTelemetryFromTimestamp;
     boolean downloadStoredTelemetryUpdated;
-    
+    boolean readStoredTelemetry(ESATCCSDSPacket& packet);
+
 
     // Unique identifier of the subsystem.
     static const word APPLICATION_PROCESS_IDENTIFIER = 0;
@@ -91,8 +90,16 @@ class ESATOBCSubsystem: public ESATSubsystem
 
     // Command handlers.
     void handleSetTimeCommand(ESATCCSDSPacket& packet);
+    void handleSetModeCommand(ESATCCSDSPacket& packet);
     void handleStoreTelemetry(ESATCCSDSPacket& packet);
-    boolean readStoredTelemetry(ESATCCSDSPacket& packet);
+    void handleDownloadTelemetry(ESATCCSDSPacket& packet);
+
+    // OBC packet handler
+    void prepareNewPacket(ESATTimestamp Timestamp,
+                          ESATCCSDSPacket& packet,
+                          byte packetType,
+                          byte packetID);
+    boolean closePacket(ESATCCSDSPacket& packet);
 };
 
 extern ESATOBCSubsystem OBCSubsystem;

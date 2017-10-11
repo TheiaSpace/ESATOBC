@@ -31,9 +31,9 @@
 void ESATOBCSubsystem::begin()
 {
   newHousekeepingTelemetryPacket = false;
-  telemetryPacketSequenceCount = 0;  
-  storeTelemetry = false;  
-  downloadStoredTelemetry = false;  
+  telemetryPacketSequenceCount = 0;
+  storeTelemetry = false;
+  downloadStoredTelemetry = false;
   USB.begin();
   Serial.begin(115200);
   Storage.begin();
@@ -49,6 +49,15 @@ word ESATOBCSubsystem::getApplicationProcessIdentifier()
 void ESATOBCSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
 {
   packet.rewind();
+  ESATTimestamp Timestamp;
+  Timestamp.year = packet.readWord() - 2000;
+  Timestamp.month = packet.readByte();
+  Timestamp.day = packet.readByte();
+  Timestamp.hours = packet.readByte();
+  Timestamp.minutes = packet.readByte();
+  Timestamp.seconds = packet.readByte();
+  // Nothing to do with this timestamp until the scheduled
+  // commands are implemented
   const byte majorVersionNumber = packet.readByte();
   const byte minorVersionNumber = packet.readByte();
   const byte patchVersionNumber = packet.readByte();
@@ -63,11 +72,11 @@ void ESATOBCSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
       handleSetTimeCommand(packet);
       break;
     case STORE_TELEMETRY:
-        handleStoreTelemetry(packet);
-        break;
+      handleStoreTelemetry(packet);
+      break;
     case DOWNLOAD_TELEMETRY:
-        handleDownloadTelemetry(packet);
-        break;
+      handleDownloadTelemetry(packet);
+      break;
     default:
       break;
   }
@@ -108,7 +117,7 @@ void ESATOBCSubsystem::handleStoreTelemetry(ESATCCSDSPacket& packet)
 
 void ESATOBCSubsystem::handleDownloadTelemetry(ESATCCSDSPacket& packet)
 {
-  if(packet.availableBytesToRead() < 12)
+  if(packet.availableBytesToRead() < 14)
   {
     downloadStoredTelemetry = false;
     return;
@@ -119,39 +128,31 @@ void ESATOBCSubsystem::handleDownloadTelemetry(ESATCCSDSPacket& packet)
   downloadStoredTelemetryFromTimestamp.hours = packet.readByte();
   downloadStoredTelemetryFromTimestamp.minutes = packet.readByte();
   downloadStoredTelemetryFromTimestamp.seconds = packet.readByte();
-  
+
   downloadStoredTelemetryToTimestamp.year = packet.readWord() - 2000;
   downloadStoredTelemetryToTimestamp.month = packet.readByte();
   downloadStoredTelemetryToTimestamp.day = packet.readByte();
   downloadStoredTelemetryToTimestamp.hours = packet.readByte();
   downloadStoredTelemetryToTimestamp.minutes = packet.readByte();
   downloadStoredTelemetryToTimestamp.seconds = packet.readByte();
-  
+
   downloadStoredTelemetry = true;
   Storage.resetLinePosition();
   downloadStoredTelemetryUpdated = true;
-  
-  
 }
 
 boolean ESATOBCSubsystem::readTelemetry(ESATCCSDSPacket& packet)
 {
   boolean result;
-  packet.clear();
-  
+
   if(newHousekeepingTelemetryPacket)
   {
-    newHousekeepingTelemetryPacket = false;
-    packet.writePacketVersionNumber(0);
-    packet.writePacketType(packet.TELEMETRY);
-    packet.writeSecondaryHeaderFlag(packet.SECONDARY_HEADER_IS_PRESENT);
-    packet.writeApplicationProcessIdentifier(getApplicationProcessIdentifier());
-    packet.writeSequenceFlags(packet.UNSEGMENTED_USER_DATA);
-    packet.writePacketSequenceCount(telemetryPacketSequenceCount);
-    packet.writeByte(MAJOR_VERSION_NUMBER);
-    packet.writeByte(MINOR_VERSION_NUMBER);
-    packet.writeByte(PATCH_VERSION_NUMBER);
-    packet.writeByte(HOUSEKEEPING);
+    ESATTimestamp Timestamp = Clock.read();
+    if(Clock.error)
+    {
+      return false;
+    }
+    prepareNewPacket(Timestamp, packet, packet.TELEMETRY, HOUSEKEEPING);
     const unsigned int load = 100 * Timer.ellapsedMilliseconds() / Timer.period;
     packet.writeByte(load);
     packet.writeBoolean(storeTelemetry);
@@ -159,20 +160,11 @@ boolean ESATOBCSubsystem::readTelemetry(ESATCCSDSPacket& packet)
     Storage.error = false;
     packet.writeBoolean(Clock.error);
     Clock.error = false;
-    packet.updatePacketDataLength();
-    if (packet.readPacketDataLength() > packet.packetDataBufferLength)
-    {
-      result = false;
-    }
-    result = true;
+    result = closePacket(packet);
   }
   else
   {
     result = readStoredTelemetry(packet);
-  }
-  if(result)
-  {
-    telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
   }
   return result;
 }
@@ -185,12 +177,12 @@ boolean ESATOBCSubsystem::readStoredTelemetry(ESATCCSDSPacket& packet)
   ESATTimestamp TelemetryTimestamp;
   boolean telemetryFound = false;
   static boolean previousStoreTelemetryValue;
-  
+
   if(downloadStoredTelemetryUpdated)
   {
     previousStoreTelemetryValue = storeTelemetry;
     downloadStoredTelemetryUpdated = false;
-  }  
+  }
   while(downloadStoredTelemetry)
   {
     if(downloadStoredTelemetryToTimestamp >= downloadStoredTelemetryFromTimestamp)
@@ -223,7 +215,7 @@ boolean ESATOBCSubsystem::readStoredTelemetry(ESATCCSDSPacket& packet)
         if (telemetryFound)
         {
           break;
-        }      
+        }
       }
       downloadStoredTelemetryFromTimestamp.incrementDay();
       Storage.resetLinePosition();
@@ -235,7 +227,7 @@ boolean ESATOBCSubsystem::readStoredTelemetry(ESATCCSDSPacket& packet)
   }
   if(telemetryFound)
   {
-    storeTelemetry = false;  
+    storeTelemetry = false;
     return true;
   }
   else
@@ -254,5 +246,48 @@ void ESATOBCSubsystem::update()
 {
   newHousekeepingTelemetryPacket = true;
 }
+
+void ESATOBCSubsystem::prepareNewPacket(ESATTimestamp Timestamp, ESATCCSDSPacket& packet, byte packetType, byte packetID)
+{
+  packet.clear();
+  // Primary header
+  packet.writePacketVersionNumber(0);
+  switch(packetType)
+  {
+    case packet.TELEMETRY:
+      packet.writePacketType((ESATCCSDSPacket::PacketType)packetType);
+      packet.writePacketSequenceCount(telemetryPacketSequenceCount);
+      break;
+    case packet.TELECOMMAND:
+      packet.writePacketType((ESATCCSDSPacket::PacketType)packetType);
+      packet.writePacketSequenceCount(0);
+      break;
+  }
+  packet.writeSecondaryHeaderFlag(packet.SECONDARY_HEADER_IS_PRESENT);
+  packet.writeApplicationProcessIdentifier(getApplicationProcessIdentifier());
+  packet.writeSequenceFlags(packet.UNSEGMENTED_USER_DATA);
+  // Secondary header
+  packet.writeWord((word)Timestamp.year + 2000);
+  packet.writeByte(Timestamp.month);
+  packet.writeByte(Timestamp.day);
+  packet.writeByte(Timestamp.hours);
+  packet.writeByte(Timestamp.minutes);
+  packet.writeByte(Timestamp.seconds);
+  packet.writeByte(MAJOR_VERSION_NUMBER);
+  packet.writeByte(MINOR_VERSION_NUMBER);
+  packet.writeByte(PATCH_VERSION_NUMBER);
+  packet.writeByte(packetID);
+}
+boolean ESATOBCSubsystem::closePacket(ESATCCSDSPacket& packet)
+{
+  packet.updatePacketDataLength();
+  if (packet.readPacketDataLength() > packet.packetDataBufferLength)
+  {
+    return false;
+  }
+  telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
+  return true;
+}
+
 
 ESATOBCSubsystem OBCSubsystem;
