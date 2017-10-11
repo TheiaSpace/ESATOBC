@@ -160,6 +160,7 @@ boolean ESATOBCSubsystem::readTelemetry(ESATCCSDSPacket& packet)
 
   if(newHousekeepingTelemetryPacket)
   {
+    newHousekeepingTelemetryPacket = false;
     ESATTimestamp Timestamp = Clock.read();
     if(Clock.error)
     {
