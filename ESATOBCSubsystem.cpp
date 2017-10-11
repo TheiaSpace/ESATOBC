@@ -97,12 +97,12 @@ void ESATOBCSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
 
 void ESATOBCSubsystem::handleSetTimeCommand(ESATCCSDSPacket& packet)
 {
-  if(packet.availableBytesToRead() < 6)
+  if(packet.availableBytesToRead() < 7)
   {
     return;
   }
   ESATTimestamp Timestamp;
-  Timestamp.year = packet.readByte();
+  Timestamp.year = packet.readWord() - 2000;
   Timestamp.month = packet.readByte();
   Timestamp.day = packet.readByte();
   Timestamp.hours = packet.readByte();
@@ -165,14 +165,18 @@ boolean ESATOBCSubsystem::readTelemetry(ESATCCSDSPacket& packet)
     {
       return false;
     }
+    // Primary and secondary header
     prepareNewPacket(Timestamp, packet, packet.TELEMETRY, HOUSEKEEPING);
+    // Application data
     const unsigned int load = 100 * Timer.ellapsedMilliseconds() / Timer.period;
     packet.writeByte(load);
+    packet.writeWord(telemetryPacketSequenceCount - 1);
     packet.writeBoolean(storeTelemetry);
     packet.writeBoolean(Storage.error);
     Storage.error = false;
     packet.writeBoolean(Clock.error);
     Clock.error = false;
+    // End of application data
     result = closePacket(packet);
   }
   else
