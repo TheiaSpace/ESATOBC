@@ -34,10 +34,7 @@ void ESATOBCSubsystem::begin()
   telemetryPacketSequenceCount = 0;
   storeTelemetry = false;
   downloadStoredTelemetry = false;
-  USB.begin();
-  Serial.begin(115200);
   Storage.begin();
-  Wire.begin();
   Clock.begin();
 }
 
