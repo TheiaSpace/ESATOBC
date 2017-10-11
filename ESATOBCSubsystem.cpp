@@ -167,7 +167,7 @@ boolean ESATOBCSubsystem::readTelemetry(ESATCCSDSPacket& packet)
     }
     // Primary and secondary header
     prepareNewPacket(Timestamp, packet, packet.TELEMETRY, HOUSEKEEPING);
-    // Application data
+    // User data
     const unsigned int load = 100 * Timer.ellapsedMilliseconds() / Timer.period;
     packet.writeByte(load);
     packet.writeWord(telemetryPacketSequenceCount - 1);
@@ -176,7 +176,7 @@ boolean ESATOBCSubsystem::readTelemetry(ESATCCSDSPacket& packet)
     Storage.error = false;
     packet.writeBoolean(Clock.error);
     Clock.error = false;
-    // End of application data
+    // End of user data
     result = closePacket(packet);
   }
   else
