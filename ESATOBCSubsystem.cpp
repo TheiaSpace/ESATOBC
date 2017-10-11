@@ -49,6 +49,19 @@ word ESATOBCSubsystem::getApplicationProcessIdentifier()
 void ESATOBCSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
 {
   packet.rewind();
+  if (packet.readApplicationProcessIdentifier()
+      != APPLICATION_PROCESS_IDENTIFIER)
+  {
+    return;
+  }
+  if (packet.readPacketType() != packet.TELECOMMAND)
+  {
+    return;
+  }
+  if (packet.readPacketDataLength() < MINIMUM_COMMAND_PAYLOAD_DATA_LENGTH)
+  {
+    return;
+  }
   ESATTimestamp Timestamp;
   Timestamp.year = packet.readWord() - 2000;
   Timestamp.month = packet.readByte();
