@@ -17,16 +17,10 @@
  */
 
 #include "ESATOBCSubsystem.h"
-#include <Wire.h>
-#include "ESATADCSSubsystem.h"
 #include "ESATTimestamp.h"
 #include "ESATClock.h"
-#include "ESATCOMMSSubsystem.h"
-#include "ESATEPSSubsystem.h"
 #include <ESATTimer.h>
 #include "ESATStorage.h"
-#include <ESATUtil.h>
-#include <USBSerial.h>
 
 void ESATOBCSubsystem::begin()
 {
@@ -59,24 +53,12 @@ void ESATOBCSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
   {
     return;
   }
-  ESATTimestamp Timestamp;
-  Timestamp.year = packet.readWord() - 2000;
-  Timestamp.month = packet.readByte();
-  Timestamp.day = packet.readByte();
-  Timestamp.hours = packet.readByte();
-  Timestamp.minutes = packet.readByte();
-  Timestamp.seconds = packet.readByte();
-  // Nothing to do with this timestamp until the scheduled
-  // commands are implemented
-  const byte majorVersionNumber = packet.readByte();
-  const byte minorVersionNumber = packet.readByte();
-  const byte patchVersionNumber = packet.readByte();
-  if (majorVersionNumber < MAJOR_VERSION_NUMBER)
+  const ESATCCSDSSecondaryHeader secondaryHeader = packet.readSecondaryHeader();
+  if (secondaryHeader.majorVersionNumber < MAJOR_VERSION_NUMBER)
   {
     return;
   }
-  const byte commandCode = packet.readByte();
-  switch (commandCode)
+  switch (secondaryHeader.packetIdentifier)
   {
     case SET_TIME:
       handleSetTimeCommand(packet);
@@ -149,6 +131,11 @@ void ESATOBCSubsystem::handleDownloadTelemetry(ESATCCSDSPacket& packet)
   downloadStoredTelemetry = true;
   Storage.resetLinePosition();
   downloadStoredTelemetryUpdated = true;
+}
+
+boolean ESATOBCSubsystem::readTelecommand(ESATCCSDSPacket& packet)
+{
+  return false;
 }
 
 boolean ESATOBCSubsystem::readTelemetry(ESATCCSDSPacket& packet)
@@ -262,6 +249,14 @@ void ESATOBCSubsystem::update()
   newHousekeepingTelemetryPacket = true;
 }
 
+void ESATOBCSubsystem::writeTelemetry(ESATCCSDSPacket& packet)
+{
+  if (storeTelemetry)
+  {
+    Storage.write(Clock.read(), packet);
+  }
+}
+
 void ESATOBCSubsystem::prepareNewPacket(ESATTimestamp Timestamp, ESATCCSDSPacket& packet, byte packetType, byte packetID)
 {
   packet.clear();
@@ -282,16 +277,15 @@ void ESATOBCSubsystem::prepareNewPacket(ESATTimestamp Timestamp, ESATCCSDSPacket
   packet.writeApplicationProcessIdentifier(getApplicationProcessIdentifier());
   packet.writeSequenceFlags(packet.UNSEGMENTED_USER_DATA);
   // Secondary header
-  packet.writeWord((word)Timestamp.year + 2000);
-  packet.writeByte(Timestamp.month);
-  packet.writeByte(Timestamp.day);
-  packet.writeByte(Timestamp.hours);
-  packet.writeByte(Timestamp.minutes);
-  packet.writeByte(Timestamp.seconds);
-  packet.writeByte(MAJOR_VERSION_NUMBER);
-  packet.writeByte(MINOR_VERSION_NUMBER);
-  packet.writeByte(PATCH_VERSION_NUMBER);
-  packet.writeByte(packetID);
+  ESATCCSDSSecondaryHeader secondaryHeader;
+  secondaryHeader.preamble =
+    secondaryHeader.CALENDAR_SEGMENTED_TIME_CODE_MONTH_DAY_VARIANT_1_SECOND_RESOLUTION;
+  secondaryHeader.timestamp = Timestamp;
+  secondaryHeader.majorVersionNumber = MAJOR_VERSION_NUMBER;
+  secondaryHeader.minorVersionNumber = MINOR_VERSION_NUMBER;
+  secondaryHeader.patchVersionNumber = PATCH_VERSION_NUMBER;
+  secondaryHeader.packetIdentifier = packetID;
+  packet.writeSecondaryHeader(secondaryHeader);
 }
 boolean ESATOBCSubsystem::closePacket(ESATCCSDSPacket& packet)
 {

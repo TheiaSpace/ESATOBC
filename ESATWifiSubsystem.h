@@ -20,10 +20,9 @@
 #define ESATCOMMSSubsystem_h
 
 #include <Energia.h>
-#include "ESATCommand.h"
 #include "ESATSubsystem.h"
 
-class ESATCOMMSSubsystem: public ESATSubsystem
+class ESATWifiSubsystem: public ESATSubsystem
 {
   public:
     // Start the communications subsystem.
@@ -52,14 +51,23 @@ class ESATCOMMSSubsystem: public ESATSubsystem
     // Update the subsystem.
     void update();
 
-    // Write a telemetry packet.
-    void writePacket(ESATCCSDSPacket& packet);
+   // Send a telemetry packet to this subsystem.
+    void writeTelemetry(ESATCCSDSPacket& packet);
 
   private:
     // Unique identifier of the subsystem.
     static const word APPLICATION_PROCESS_IDENTIFIER = 3;
+
+    // Version number of the subsystem's interface.
+    static const byte MAJOR_VERSION_NUMBER = 2;
+    static const byte MINOR_VERSION_NUMBER = 0;
+    static const byte PATCH_VERSION_NUMBER = 0;
+
+    // Command code sent for connecting to the wireless network and
+    // ground segment server.
+    static const byte CONNECT = 0x00;
 };
 
-extern ESATCOMMSSubsystem COMMSSubsystem;
+extern ESATWifiSubsystem WifiSubsystem;
 
 #endif

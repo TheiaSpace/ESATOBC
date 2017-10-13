@@ -17,15 +17,11 @@
  */
 
 #include "ESATOnBoardDataHandling.h"
-#include "ESATADCSSubsystem.h"
-#include "ESATClock.h"
-#include "ESATCOMMSSubsystem.h"
-#include "ESATEPSSubsystem.h"
-#include "ESATOBCSubsystem.h"
-#include "ESATStorage.h"
+#include <USBSerial.h>
 
 ESATOnBoardDataHandling::ESATOnBoardDataHandling():
   numberOfSubsystems(0),
+  telecommandIndex(0),
   telemetryIndex(0)
 {
 }
@@ -57,7 +53,38 @@ void ESATOnBoardDataHandling::dispatchTelecommand(ESATCCSDSPacket& packet)
 
 boolean ESATOnBoardDataHandling::readTelecommand(ESATCCSDSPacket& packet)
 {
-  return COMMSSubsystem.readTelecommand(packet);
+  while (telecommandIndex < numberOfSubsystems)
+  {
+    const bool successfulRead =
+      subsystems[telecommandIndex]->readTelecommand(packet);
+    if (successfulRead)
+    {
+      return true;
+    }
+    else
+    {
+      telecommandIndex = telecommandIndex + 1;
+    }
+  }
+  return readTelecommandFromUSB(packet);
+}
+
+boolean ESATOnBoardDataHandling::readTelecommandFromUSB(ESATCCSDSPacket& packet)
+{
+  if (USB.available() < 1)
+  {
+    return false;
+  }
+  const boolean gotPacket = packet.readFrom(USB);
+  if (!gotPacket)
+  {
+    return false;
+  }
+  if (packet.readPacketType() != packet.TELECOMMAND)
+  {
+    return false;
+  }
+  return true;
 }
 
 boolean ESATOnBoardDataHandling::readSubsystemsTelemetry(ESATCCSDSPacket& packet)
@@ -88,29 +115,23 @@ void ESATOnBoardDataHandling::registerSubsystem(ESATSubsystem& subsystem)
   numberOfSubsystems = numberOfSubsystems + 1;
 }
 
-void ESATOnBoardDataHandling::sendTelemetry(ESATCCSDSPacket& packet)
-{
-  COMMSSubsystem.writePacket(packet);
-}
-
-void ESATOnBoardDataHandling::storeTelemetry(ESATCCSDSPacket& packet)
-{
-  ESATTimestamp Timestamp = Clock.read();
-  if(Clock.error)
-  {
-    return;
-  }
-    
-  Storage.write(Timestamp, packet);
-}
-
 void ESATOnBoardDataHandling::updateSubsystems()
 {
   for (int i = 0; i < numberOfSubsystems; ++i)
   {
     subsystems[i]->update();
   }
+  telecommandIndex = 0;
   telemetryIndex = 0;
+}
+
+void ESATOnBoardDataHandling::writeTelemetry(ESATCCSDSPacket& packet)
+{
+  for (unsigned int i = 0; i < numberOfSubsystems; i++)
+  {
+    subsystems[i]->writeTelemetry(packet);
+  }
+  (void) packet.writeTo(USB);
 }
 
 ESATOnBoardDataHandling OnBoardDataHandling;

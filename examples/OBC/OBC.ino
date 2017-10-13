@@ -14,9 +14,9 @@
  */
 
 #include <ESATADCSSubsystem.h>
-#include <ESATCOMMSSubsystem.h>
 #include <ESATEPSSubsystem.h>
 #include <ESATOBCSubsystem.h>
+#include <ESATWifiSubsystem.h>
 #include <ESATOnBoardDataHandling.h>
 #include <ESATTimer.h>
 #include <USBSerial.h>
@@ -38,6 +38,11 @@ class ESATExampleSubsystem: public ESATSubsystem
     {
     }
 
+    boolean readTelecommand(ESATCCSDSPacket& packet)
+    {
+      return false;
+    }
+
     boolean readTelemetry(ESATCCSDSPacket& packet)
     {
       return false;
@@ -49,6 +54,10 @@ class ESATExampleSubsystem: public ESATSubsystem
     }
 
     void update()
+    {
+    }
+
+    void writeTelemetry(ESATCCSDSPacket& packet)
     {
     }
 };
@@ -63,7 +72,7 @@ void setup()
   OnBoardDataHandling.registerSubsystem(OBCSubsystem);
   OnBoardDataHandling.registerSubsystem(EPSSubsystem);
   OnBoardDataHandling.registerSubsystem(ADCSSubsystem);
-  OnBoardDataHandling.registerSubsystem(COMMSSubsystem);
+  OnBoardDataHandling.registerSubsystem(WifiSubsystem);
   OnBoardDataHandling.registerSubsystem(ExampleSubsystem);
   OnBoardDataHandling.beginSubsystems();
   Timer.begin(1000);
@@ -82,10 +91,6 @@ void loop()
   OnBoardDataHandling.updateSubsystems();
   while (OnBoardDataHandling.readSubsystemsTelemetry(packet))
   {
-    OnBoardDataHandling.sendTelemetry(packet);
-    if (OBCSubsystem.storeTelemetry)
-    {
-      OnBoardDataHandling.storeTelemetry(packet);
-    }
+    OnBoardDataHandling.writeTelemetry(packet);
   }
 }

@@ -39,6 +39,11 @@ void ESATEPSSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
                                     MILLISECONDS_BETWEEN_RETRIES);
 }
 
+boolean ESATEPSSubsystem::readTelecommand(ESATCCSDSPacket& packet)
+{
+  return false;
+}
+
 boolean ESATEPSSubsystem::readTelemetry(ESATCCSDSPacket& packet)
 {
   if (!newTelemetryPacket)
@@ -64,6 +69,10 @@ boolean ESATEPSSubsystem::telemetryAvailable()
 void ESATEPSSubsystem::update()
 {
   newTelemetryPacket = true;
+}
+
+void ESATEPSSubsystem::writeTelemetry(ESATCCSDSPacket& packet)
+{
 }
 
 ESATEPSSubsystem EPSSubsystem;
