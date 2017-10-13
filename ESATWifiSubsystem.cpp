@@ -35,15 +35,7 @@ void ESATWifiSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
 
 boolean ESATWifiSubsystem::readTelecommand(ESATCCSDSPacket& packet)
 {
-  boolean gotPacket = false;
-  if (Serial.available())
-  {
-    gotPacket = packet.readFrom(Serial);
-  }
-  else if (USB.available())
-  {
-    gotPacket = packet.readFrom(USB);
-  }
+  const boolean gotPacket = packet.readFrom(Serial);
   if (!gotPacket)
   {
     return false;
@@ -72,7 +64,6 @@ void ESATWifiSubsystem::update()
 void ESATWifiSubsystem::writeTelemetry(ESATCCSDSPacket& packet)
 {
   (void) packet.writeTo(Serial);
-  (void) packet.writeTo(USB);
 }
 
 ESATWifiSubsystem WifiSubsystem;
