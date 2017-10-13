@@ -41,6 +41,7 @@ class ESATStorage
     unsigned long read(ESATTimestamp* Timestamp, ESATCCSDSPacket& packet);
 
   private:
+    // The chip select line of the SD card reader is connected to this pin.
     static const byte PIN = SS1;
 
     // Store telemetry in this file.
