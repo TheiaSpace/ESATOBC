@@ -139,6 +139,11 @@ void ESATOBCSubsystem::handleDownloadTelemetry(ESATCCSDSPacket& packet)
   downloadStoredTelemetryUpdated = true;
 }
 
+boolean ESATOBCSubsystem::readTelecommand(ESATCCSDSPacket& packet)
+{
+  return false;
+}
+
 boolean ESATOBCSubsystem::readTelemetry(ESATCCSDSPacket& packet)
 {
   boolean result;
@@ -248,6 +253,14 @@ boolean ESATOBCSubsystem::telemetryAvailable()
 void ESATOBCSubsystem::update()
 {
   newHousekeepingTelemetryPacket = true;
+}
+
+void ESATOBCSubsystem::writeTelemetry(ESATCCSDSPacket& packet)
+{
+  if (storeTelemetry)
+  {
+    Storage.write(Clock.read(), packet);
+  }
 }
 
 void ESATOBCSubsystem::prepareNewPacket(ESATTimestamp Timestamp, ESATCCSDSPacket& packet, byte packetType, byte packetID)

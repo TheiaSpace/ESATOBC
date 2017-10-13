@@ -26,6 +26,7 @@
 
 ESATOnBoardDataHandling::ESATOnBoardDataHandling():
   numberOfSubsystems(0),
+  telecommandIndex(0),
   telemetryIndex(0)
 {
 }
@@ -57,7 +58,20 @@ void ESATOnBoardDataHandling::dispatchTelecommand(ESATCCSDSPacket& packet)
 
 boolean ESATOnBoardDataHandling::readTelecommand(ESATCCSDSPacket& packet)
 {
-  return COMMSSubsystem.readTelecommand(packet);
+  while (telecommandIndex < numberOfSubsystems)
+  {
+    const bool successfulRead =
+      subsystems[telecommandIndex]->readTelecommand(packet);
+    if (successfulRead)
+    {
+      return true;
+    }
+    else
+    {
+      telecommandIndex = telecommandIndex + 1;
+    }
+  }
+  return false;
 }
 
 boolean ESATOnBoardDataHandling::readSubsystemsTelemetry(ESATCCSDSPacket& packet)
@@ -88,29 +102,22 @@ void ESATOnBoardDataHandling::registerSubsystem(ESATSubsystem& subsystem)
   numberOfSubsystems = numberOfSubsystems + 1;
 }
 
-void ESATOnBoardDataHandling::sendTelemetry(ESATCCSDSPacket& packet)
-{
-  COMMSSubsystem.writePacket(packet);
-}
-
-void ESATOnBoardDataHandling::storeTelemetry(ESATCCSDSPacket& packet)
-{
-  ESATTimestamp Timestamp = Clock.read();
-  if(Clock.error)
-  {
-    return;
-  }
-    
-  Storage.write(Timestamp, packet);
-}
-
 void ESATOnBoardDataHandling::updateSubsystems()
 {
   for (int i = 0; i < numberOfSubsystems; ++i)
   {
     subsystems[i]->update();
   }
+  telecommandIndex = 0;
   telemetryIndex = 0;
+}
+
+void ESATOnBoardDataHandling::writeTelemetry(ESATCCSDSPacket& packet)
+{
+  for (unsigned int i = 0; i < numberOfSubsystems; i++)
+  {
+    subsystems[i]->writeTelemetry(packet);
+  }
 }
 
 ESATOnBoardDataHandling OnBoardDataHandling;

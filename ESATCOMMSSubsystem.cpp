@@ -69,7 +69,7 @@ void ESATCOMMSSubsystem::update()
 {
 }
 
-void ESATCOMMSSubsystem::writePacket(ESATCCSDSPacket& packet)
+void ESATCOMMSSubsystem::writeTelemetry(ESATCCSDSPacket& packet)
 {
   (void) packet.writeTo(Serial);
   (void) packet.writeTo(USB);

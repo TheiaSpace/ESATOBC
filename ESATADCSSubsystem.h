@@ -34,6 +34,11 @@ class ESATADCSSubsystem: public ESATSubsystem
     // Handle a telecommand.
     void handleTelecommand(ESATCCSDSPacket& packet);
 
+    // Fill a packet with the next telecommand packet available.
+    // Return true if the operation was successful;
+    // otherwise return false.
+    boolean readTelecommand(ESATCCSDSPacket& packet);
+
     // Fill a packet with the next telemetry packet available.
     // Return true if the operation was successful;
     // otherwise return false.
@@ -45,6 +50,9 @@ class ESATADCSSubsystem: public ESATSubsystem
 
     // Update the subsystem.
     void update();
+
+   // Send a telemetry packet to this subsystem.
+    void writeTelemetry(ESATCCSDSPacket& packet);
 };
 
 extern ESATADCSSubsystem ADCSSubsystem;

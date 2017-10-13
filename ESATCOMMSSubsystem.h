@@ -52,8 +52,8 @@ class ESATCOMMSSubsystem: public ESATSubsystem
     // Update the subsystem.
     void update();
 
-    // Write a telemetry packet.
-    void writePacket(ESATCCSDSPacket& packet);
+   // Send a telemetry packet to this subsystem.
+    void writeTelemetry(ESATCCSDSPacket& packet);
 
   private:
     // Unique identifier of the subsystem.

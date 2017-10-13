@@ -54,19 +54,19 @@ class ESATOnBoardDataHandling
     // otherwise return false.
     boolean readSubsystemsTelemetry(ESATCCSDSPacket& packet);
 
-    // Send a telemetry packet.
-    void sendTelemetry(ESATCCSDSPacket& packet);
-
-    // Store a telemetry packet.
-    void storeTelemetry(ESATCCSDSPacket& packet);
-
     // Update the registered subsystems.
     void updateSubsystems();
+
+    // Write a telemetry packet to the subsystems that handle
+    // telemetry.  For example, a communications subsystem may
+    // transmit the packet to the ground station.
+    void writeTelemetry(ESATCCSDSPacket& packet);
 
   private:
     static const byte MAXIMUM_NUMBER_OF_SUBSYSTEMS = 16;
     ESATSubsystem* subsystems[MAXIMUM_NUMBER_OF_SUBSYSTEMS];
     byte numberOfSubsystems;
+    byte telecommandIndex;
     byte telemetryIndex;
 };
 
