@@ -232,7 +232,7 @@ boolean ESATOBCSubsystem::readStoredTelemetry(ESATCCSDSPacket& packet)
           break;
         }
       }
-      downloadStoredTelemetryFromTimestamp.incrementDay();
+      downloadStoredTelemetryFromTimestamp.addDay();
       Storage.resetLinePosition();
     }
     else{
