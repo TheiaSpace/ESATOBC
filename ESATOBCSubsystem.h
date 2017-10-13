@@ -84,14 +84,6 @@ class ESATOBCSubsystem: public ESATSubsystem
     // - Command code (1 byte).
     static const byte MINIMUM_COMMAND_PAYLOAD_DATA_LENGTH = 11;
 
-    // Download stored telemetry 
-    boolean downloadStoredTelemetry;
-    ESATTimestamp downloadStoredTelemetryToTimestamp;
-    ESATTimestamp downloadStoredTelemetryFromTimestamp;
-    boolean downloadStoredTelemetryUpdated;
-    boolean readStoredTelemetry(ESATCCSDSPacket& packet);
-
-
     // Unique identifier of the subsystem.
     static const word APPLICATION_PROCESS_IDENTIFIER = 0;
 
@@ -114,12 +106,9 @@ class ESATOBCSubsystem: public ESATSubsystem
     void handleStoreTelemetry(ESATCCSDSPacket& packet);
     void handleDownloadTelemetry(ESATCCSDSPacket& packet);
 
-    // OBC packet handler
-    void prepareNewPacket(ESATTimestamp Timestamp,
-                          ESATCCSDSPacket& packet,
-                          byte packetType,
-                          byte packetID);
-    boolean closePacket(ESATCCSDSPacket& packet);
+    // Fill a new housekeeping telemetry packet.  Return true on
+    // success; otherwise return false.
+    boolean readHousekeepingTelemetry(ESATCCSDSPacket& packet);
 };
 
 extern ESATOBCSubsystem OBCSubsystem;
