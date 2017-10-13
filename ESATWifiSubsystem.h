@@ -23,7 +23,7 @@
 #include "ESATCommand.h"
 #include "ESATSubsystem.h"
 
-class ESATCOMMSSubsystem: public ESATSubsystem
+class ESATWifiSubsystem: public ESATSubsystem
 {
   public:
     // Start the communications subsystem.
@@ -60,6 +60,6 @@ class ESATCOMMSSubsystem: public ESATSubsystem
     static const word APPLICATION_PROCESS_IDENTIFIER = 3;
 };
 
-extern ESATCOMMSSubsystem COMMSSubsystem;
+extern ESATWifiSubsystem WifiSubsystem;
 
 #endif

@@ -16,24 +16,24 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESATCOMMSSubsystem.h"
+#include "ESATWifiSubsystem.h"
 #include <USBSerial.h>
 
-void ESATCOMMSSubsystem::begin()
+void ESATWifiSubsystem::begin()
 {
 }
 
-word ESATCOMMSSubsystem::getApplicationProcessIdentifier()
+word ESATWifiSubsystem::getApplicationProcessIdentifier()
 {
   return APPLICATION_PROCESS_IDENTIFIER;
 }
 
-void ESATCOMMSSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
+void ESATWifiSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
 {
   (void) packet.writeTo(Serial);
 }
 
-boolean ESATCOMMSSubsystem::readTelecommand(ESATCCSDSPacket& packet)
+boolean ESATWifiSubsystem::readTelecommand(ESATCCSDSPacket& packet)
 {
   boolean gotPacket = false;
   if (Serial.available())
@@ -55,24 +55,24 @@ boolean ESATCOMMSSubsystem::readTelecommand(ESATCCSDSPacket& packet)
   return true;
 }
 
-boolean ESATCOMMSSubsystem::readTelemetry(ESATCCSDSPacket& packet)
+boolean ESATWifiSubsystem::readTelemetry(ESATCCSDSPacket& packet)
 {
   return false;
 }
 
-boolean ESATCOMMSSubsystem::telemetryAvailable()
+boolean ESATWifiSubsystem::telemetryAvailable()
 {
   return false;
 }
 
-void ESATCOMMSSubsystem::update()
+void ESATWifiSubsystem::update()
 {
 }
 
-void ESATCOMMSSubsystem::writeTelemetry(ESATCCSDSPacket& packet)
+void ESATWifiSubsystem::writeTelemetry(ESATCCSDSPacket& packet)
 {
   (void) packet.writeTo(Serial);
   (void) packet.writeTo(USB);
 }
 
-ESATCOMMSSubsystem COMMSSubsystem;
+ESATWifiSubsystem WifiSubsystem;
