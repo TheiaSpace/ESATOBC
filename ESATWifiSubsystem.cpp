@@ -17,7 +17,6 @@
  */
 
 #include "ESATWifiSubsystem.h"
-#include <USBSerial.h>
 
 void ESATWifiSubsystem::begin()
 {

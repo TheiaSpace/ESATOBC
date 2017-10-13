@@ -17,15 +17,10 @@
  */
 
 #include "ESATOBCSubsystem.h"
-#include <Wire.h>
-#include "ESATADCSSubsystem.h"
 #include "ESATTimestamp.h"
 #include "ESATClock.h"
-#include "ESATEPSSubsystem.h"
 #include <ESATTimer.h>
 #include "ESATStorage.h"
-#include <ESATUtil.h>
-#include <USBSerial.h>
 
 void ESATOBCSubsystem::begin()
 {

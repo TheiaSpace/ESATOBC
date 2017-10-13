@@ -17,11 +17,6 @@
  */
 
 #include "ESATOnBoardDataHandling.h"
-#include "ESATADCSSubsystem.h"
-#include "ESATClock.h"
-#include "ESATEPSSubsystem.h"
-#include "ESATOBCSubsystem.h"
-#include "ESATStorage.h"
 #include <USBSerial.h>
 
 ESATOnBoardDataHandling::ESATOnBoardDataHandling():
