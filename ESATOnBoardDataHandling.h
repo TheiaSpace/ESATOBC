@@ -68,6 +68,9 @@ class ESATOnBoardDataHandling
     byte numberOfSubsystems;
     byte telecommandIndex;
     byte telemetryIndex;
+
+    // Read a telecommand from the USB interface.
+    boolean readTelecommandFromUSB(ESATCCSDSPacket& packet);
 };
 
 extern ESATOnBoardDataHandling OnBoardDataHandling;
