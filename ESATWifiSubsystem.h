@@ -20,7 +20,6 @@
 #define ESATCOMMSSubsystem_h
 
 #include <Energia.h>
-#include "ESATCommand.h"
 #include "ESATSubsystem.h"
 
 class ESATWifiSubsystem: public ESATSubsystem
