@@ -42,8 +42,6 @@ class ESATStorage
 
   private:
     static const byte PIN = 45;
-    File readFile;
-    unsigned long fileCharPointer;
 
     // Store telemetry in this file.
     static const char TELEMETRY_FILE[];
