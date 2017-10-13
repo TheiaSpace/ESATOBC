@@ -19,7 +19,6 @@
 #include "ESATOnBoardDataHandling.h"
 #include "ESATADCSSubsystem.h"
 #include "ESATClock.h"
-#include "ESATCOMMSSubsystem.h"
 #include "ESATEPSSubsystem.h"
 #include "ESATOBCSubsystem.h"
 #include "ESATStorage.h"
