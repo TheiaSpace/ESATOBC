@@ -41,7 +41,7 @@ class ESATStorage
     unsigned long read(ESATTimestamp* Timestamp, ESATCCSDSPacket& packet);
 
   private:
-    static const byte PIN = 45;
+    static const byte PIN = SS1;
 
     // Store telemetry in this file.
     static const char TELEMETRY_FILE[];
