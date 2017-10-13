@@ -38,6 +38,11 @@ class ESATExampleSubsystem: public ESATSubsystem
     {
     }
 
+    boolean readTelecommand(ESATCCSDSPacket& packet)
+    {
+      return false;
+    }
+
     boolean readTelemetry(ESATCCSDSPacket& packet)
     {
       return false;
@@ -49,6 +54,10 @@ class ESATExampleSubsystem: public ESATSubsystem
     }
 
     void update()
+    {
+    }
+
+    void writeTelemetry(ESATCCSDSPacket& packet)
     {
     }
 };
@@ -82,10 +91,6 @@ void loop()
   OnBoardDataHandling.updateSubsystems();
   while (OnBoardDataHandling.readSubsystemsTelemetry(packet))
   {
-    OnBoardDataHandling.sendTelemetry(packet);
-    if (OBCSubsystem.storeTelemetry)
-    {
-      OnBoardDataHandling.storeTelemetry(packet);
-    }
+    OnBoardDataHandling.writeTelemetry(packet);
   }
 }
