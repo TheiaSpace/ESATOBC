@@ -17,8 +17,6 @@
  */
 
 #include "ESATStorage.h"
-#include "ESATTimestamp.h"
-#include <SD.h>
 
 const char ESATStorage::TELEMETRY_FILE[] = "telemetry";
 
