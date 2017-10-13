@@ -31,10 +31,10 @@ void ESATStorage::begin()
 }
 void ESATStorage::write(ESATTimestamp Timestamp, ESATCCSDSPacket& packet)
 {
-  char cTimestamp[Timestamp.charTimestampLength];
+  char cTimestamp[Timestamp.CHAR_TIMESTAMP_LENGTH];
   Timestamp.toStringTimeStamp(cTimestamp);
   
-  char filename[Timestamp.charDateLength + 4] = "";
+  char filename[Timestamp.CHAR_DATE_LENGTH + 4] = "";
   Timestamp.getDateWithoutDashes(filename);
   strcat(filename, ".txt");
   
@@ -69,7 +69,7 @@ void ESATStorage::write(ESATTimestamp Timestamp, ESATCCSDSPacket& packet)
 
 void ESATStorage::openReadFile(ESATTimestamp Timestamp)
 {
-  char filename[Timestamp.charDateLength + 4] = "";
+  char filename[Timestamp.CHAR_DATE_LENGTH + 4] = "";
   Timestamp.getDateWithoutDashes(filename);
   strcat(filename, ".txt");
   
@@ -84,7 +84,7 @@ void ESATStorage::openReadFile(ESATTimestamp Timestamp)
 unsigned long ESATStorage::read(ESATTimestamp* Timestamp, ESATCCSDSPacket& packet)
 {
   Timestamp->update(0,0,0,0,0,0);
-  char cTimestamp[Timestamp->charTimestampLength];
+  char cTimestamp[Timestamp->CHAR_TIMESTAMP_LENGTH];
   unsigned int telemetryLength = 0;
   unsigned long filePosition;
   int Char;
@@ -95,9 +95,9 @@ unsigned long ESATStorage::read(ESATTimestamp* Timestamp, ESATCCSDSPacket& packe
   }
   else
   {
-    nBytes = readFile.read(cTimestamp, Timestamp->charTimestampLength - 1);
-    if(nBytes == Timestamp->charTimestampLength - 1){
-      cTimestamp[Timestamp->charTimestampLength - 1] = '\0';
+    nBytes = readFile.read(cTimestamp, Timestamp->CHAR_TIMESTAMP_LENGTH - 1);
+    if(nBytes == Timestamp->CHAR_TIMESTAMP_LENGTH - 1){
+      cTimestamp[Timestamp->CHAR_TIMESTAMP_LENGTH - 1] = '\0';
       if(Timestamp->update(cTimestamp) == Timestamp->VALID_TIMESTAMP)
       {
         Char = readFile.read();
@@ -214,7 +214,7 @@ void ESATStorage::resetLinePosition()
     
 boolean ESATStorage::fileExists(ESATTimestamp Timestamp)
 {
-  char filename[Timestamp.charDateLength + 4] = "";
+  char filename[Timestamp.CHAR_DATE_LENGTH + 4] = "";
   Timestamp.getDateWithoutDashes(filename);
   strcat(filename, ".txt");
   return SD.exists(filename);
