@@ -29,27 +29,61 @@ void ESATStorage::begin()
   }
 }
 
-void ESATStorage::write(ESATCCSDSPacket& packet)
+void ESATStorage::beginReading()
 {
-  File file = SD.open(TELEMETRY_FILE, FILE_WRITE);
+  if (file)
+  {
+    error = true;
+    return;
+  }
+  file = SD.open(TELEMETRY_FILE, FILE_READ);
   if (!file)
   {
     error = true;
-    return;
   }
-  const boolean correctSeek = file.seek(file.size());
-  if (!correctSeek)
+}
+
+void ESATStorage::beginWriting()
+{
+  if (file)
   {
-    file.close();
     error = true;
     return;
   }
+  file = SD.open(TELEMETRY_FILE, FILE_APPEND);
+  if (!file)
+  {
+    error = true;
+  }
+}
+
+void ESATStorage::endReading()
+{
+  file.close();
+}
+
+void ESATStorage::endWriting()
+{
+  file.close();
+}
+
+boolean ESATStorage::read(ESATCCSDSPacket& packet)
+{
+  const boolean correctRead = packet.readFrom(file);
+  if (!correctRead)
+  {
+    error = true;
+  }
+  return correctRead;
+}
+
+void ESATStorage::write(ESATCCSDSPacket& packet)
+{
   const boolean correctWrite = packet.writeTo(file);
   if (!correctWrite)
   {
     error = true;
   }
-  file.close();
 }
 
 ESATStorage Storage;

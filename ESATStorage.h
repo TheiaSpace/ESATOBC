@@ -34,15 +34,39 @@ class ESATStorage
     // This will set the error flag on input/output error.
     void begin();
 
-    // Write a packet to the packet store.
-    void write(ESATCCSDSPacket& packet);
+    // Start reading the packet store.
+    // Set the error flag on input/output error or if the packet store
+    // is already open.
+    void beginReading();
 
-    // Read the next text line from a file.
-    unsigned long read(ESATTimestamp* Timestamp, ESATCCSDSPacket& packet);
+    // Start writing to the packet store.
+    // Set the error flag on input/output error or if the packet store
+    // is already open.
+    void beginWriting();
+
+    // End reading the packet store.
+    void endReading();
+
+    // End writing to the packet store.
+    void endWriting();
+
+    // Read a packet from the packet store into the given packet buffer.
+    // Return true on success; otherwise return false.
+    // Set the error flag on failure.
+    // Must be called after beginReading() and before endReading().
+    boolean read(ESATCCSDSPacket& packet);
+
+    // Write a packet to the packet store.
+    // Set the error flag on failure.
+    // Must be called after beginWriting() and before endWriting().
+    void write(ESATCCSDSPacket& packet);
 
   private:
     // The chip select line of the SD card reader is connected to this pin.
     static const byte PIN = SS1;
+
+    // Store telemetry in this file.
+    File file;
 
     // Store telemetry in this file.
     static const char TELEMETRY_FILE[];
