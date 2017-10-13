@@ -34,41 +34,19 @@ class ESATStorage
     // This will set the error flag on input/output error.
     void begin();
 
-    // Write text to a file.
-    // This will set the error flag on input/output error.
-    void write(ESATTimestamp Timestamp, ESATCCSDSPacket& packet);
-    
-    // Open a file to read it
-    void openReadFile(ESATTimestamp Timestamp);
-    
+    // Write a packet to the packet store.
+    void write(ESATCCSDSPacket& packet);
+
     // Read the next text line from a file.
     unsigned long read(ESATTimestamp* Timestamp, ESATCCSDSPacket& packet);
-    
-    // Close the file opened to read it
-    void closeReadFile();
-    
-    // Save the current line position
-    void saveCurrentLinePosition();
-    
-    // Go to the last saved line position
-    void goToSavedPosition();
-    
-    // Reset the line position saved
-    void resetLinePosition();
-    
-    // Does the file exists?
-    boolean fileExists(ESATTimestamp Timestamp);
-    
-    // There are still more lines to read?
-    int available();
-    
-    
+
   private:
     static const byte PIN = 45;
     File readFile;
     unsigned long fileCharPointer;
-    boolean charIsHex(char theChar);
-    unsigned long readHexBytes(byte buf[], unsigned long bufSize);
+
+    // Store telemetry in this file.
+    static const char TELEMETRY_FILE[];
 };
 
 extern ESATStorage Storage;
