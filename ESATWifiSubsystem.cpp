@@ -17,9 +17,30 @@
  */
 
 #include "ESATWifiSubsystem.h"
+#include <ESATClock.h>
 
 void ESATWifiSubsystem::begin()
 {
+  const byte packetDataBufferLength = ESATCCSDSSecondaryHeader::LENGTH;
+  byte packetData[packetDataBufferLength];
+  ESATCCSDSPacket packet(packetData, packetDataBufferLength);
+  packet.writePacketVersionNumber(0);
+  packet.writePacketType(packet.TELECOMMAND);
+  packet.writeSecondaryHeaderFlag(packet.SECONDARY_HEADER_IS_PRESENT);
+  packet.writeApplicationProcessIdentifier(APPLICATION_PROCESS_IDENTIFIER);
+  packet.writeSequenceFlags(packet.UNSEGMENTED_USER_DATA);
+  packet.writePacketSequenceCount(0);
+  ESATCCSDSSecondaryHeader secondaryHeader;
+  secondaryHeader.preamble =
+    secondaryHeader.CALENDAR_SEGMENTED_TIME_CODE_MONTH_DAY_VARIANT_1_SECOND_RESOLUTION;
+  secondaryHeader.timestamp = Clock.read();
+  secondaryHeader.majorVersionNumber = MAJOR_VERSION_NUMBER;
+  secondaryHeader.minorVersionNumber = MINOR_VERSION_NUMBER;
+  secondaryHeader.patchVersionNumber = PATCH_VERSION_NUMBER;
+  secondaryHeader.packetIdentifier = CONNECT;
+  packet.writeSecondaryHeader(secondaryHeader);
+  packet.updatePacketDataLength();
+  (void) packet.writeTo(Serial);
 }
 
 word ESATWifiSubsystem::getApplicationProcessIdentifier()

@@ -57,6 +57,15 @@ class ESATWifiSubsystem: public ESATSubsystem
   private:
     // Unique identifier of the subsystem.
     static const word APPLICATION_PROCESS_IDENTIFIER = 3;
+
+    // Version number of the subsystem's interface.
+    static const byte MAJOR_VERSION_NUMBER = 2;
+    static const byte MINOR_VERSION_NUMBER = 0;
+    static const byte PATCH_VERSION_NUMBER = 0;
+
+    // Command code sent for connecting to the wireless network and
+    // ground segment server.
+    static const byte CONNECT = 0x00;
 };
 
 extern ESATWifiSubsystem WifiSubsystem;
