@@ -19,10 +19,10 @@
 #include "ESATOnBoardDataHandling.h"
 #include "ESATADCSSubsystem.h"
 #include "ESATClock.h"
-#include "ESATCOMMSSubsystem.h"
 #include "ESATEPSSubsystem.h"
 #include "ESATOBCSubsystem.h"
 #include "ESATStorage.h"
+#include <USBSerial.h>
 
 ESATOnBoardDataHandling::ESATOnBoardDataHandling():
   numberOfSubsystems(0),
@@ -71,7 +71,25 @@ boolean ESATOnBoardDataHandling::readTelecommand(ESATCCSDSPacket& packet)
       telecommandIndex = telecommandIndex + 1;
     }
   }
-  return false;
+  return readTelecommandFromUSB(packet);
+}
+
+boolean ESATOnBoardDataHandling::readTelecommandFromUSB(ESATCCSDSPacket& packet)
+{
+  if (USB.available() < 1)
+  {
+    return false;
+  }
+  const boolean gotPacket = packet.readFrom(USB);
+  if (!gotPacket)
+  {
+    return false;
+  }
+  if (packet.readPacketType() != packet.TELECOMMAND)
+  {
+    return false;
+  }
+  return true;
 }
 
 boolean ESATOnBoardDataHandling::readSubsystemsTelemetry(ESATCCSDSPacket& packet)
@@ -118,6 +136,7 @@ void ESATOnBoardDataHandling::writeTelemetry(ESATCCSDSPacket& packet)
   {
     subsystems[i]->writeTelemetry(packet);
   }
+  (void) packet.writeTo(USB);
 }
 
 ESATOnBoardDataHandling OnBoardDataHandling;

@@ -21,7 +21,6 @@
 #include "ESATADCSSubsystem.h"
 #include "ESATTimestamp.h"
 #include "ESATClock.h"
-#include "ESATCOMMSSubsystem.h"
 #include "ESATEPSSubsystem.h"
 #include <ESATTimer.h>
 #include "ESATStorage.h"

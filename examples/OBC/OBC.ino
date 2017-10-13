@@ -14,9 +14,9 @@
  */
 
 #include <ESATADCSSubsystem.h>
-#include <ESATCOMMSSubsystem.h>
 #include <ESATEPSSubsystem.h>
 #include <ESATOBCSubsystem.h>
+#include <ESATWifiSubsystem.h>
 #include <ESATOnBoardDataHandling.h>
 #include <ESATTimer.h>
 #include <USBSerial.h>
@@ -72,7 +72,7 @@ void setup()
   OnBoardDataHandling.registerSubsystem(OBCSubsystem);
   OnBoardDataHandling.registerSubsystem(EPSSubsystem);
   OnBoardDataHandling.registerSubsystem(ADCSSubsystem);
-  OnBoardDataHandling.registerSubsystem(COMMSSubsystem);
+  OnBoardDataHandling.registerSubsystem(WifiSubsystem);
   OnBoardDataHandling.registerSubsystem(ExampleSubsystem);
   OnBoardDataHandling.beginSubsystems();
   Timer.begin(1000);
