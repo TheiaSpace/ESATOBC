@@ -21,7 +21,6 @@
 
 #include <Arduino.h>
 #include "ESATSubsystem.h"
-#include "ESATClock.h"
 
 class ESATOBCSubsystem: public ESATSubsystem
 {
