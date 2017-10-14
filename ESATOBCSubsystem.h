@@ -63,6 +63,7 @@ class ESATOBCSubsystem: public ESATSubsystem
       SET_TIME = 0x00,
       STORE_TELEMETRY = 0x01,
       DOWNLOAD_TELEMETRY = 0x02,
+      ERASE_STORED_TELEMETRY = 0x03,
     };
 
     // Telemetry packet identifiers.
@@ -84,14 +85,6 @@ class ESATOBCSubsystem: public ESATSubsystem
     // - Command code (1 byte).
     static const byte MINIMUM_COMMAND_PAYLOAD_DATA_LENGTH = 11;
 
-    // Download stored telemetry 
-    boolean downloadStoredTelemetry;
-    ESATTimestamp downloadStoredTelemetryToTimestamp;
-    ESATTimestamp downloadStoredTelemetryFromTimestamp;
-    boolean downloadStoredTelemetryUpdated;
-    boolean readStoredTelemetry(ESATCCSDSPacket& packet);
-
-
     // Unique identifier of the subsystem.
     static const word APPLICATION_PROCESS_IDENTIFIER = 0;
 
@@ -99,6 +92,10 @@ class ESATOBCSubsystem: public ESATSubsystem
     static const byte MAJOR_VERSION_NUMBER = 3;
     static const byte MINOR_VERSION_NUMBER = 0;
     static const byte PATCH_VERSION_NUMBER = 0;
+
+    // True if we were commanded to download telemetry; false
+    // otherwise.
+    boolean downloadTelemetry;
 
     // True when a new telemetry packet is ready (after update()).
     // False otherwise (after readTelemetry()).
@@ -113,13 +110,17 @@ class ESATOBCSubsystem: public ESATSubsystem
     void handleSetModeCommand(ESATCCSDSPacket& packet);
     void handleStoreTelemetry(ESATCCSDSPacket& packet);
     void handleDownloadTelemetry(ESATCCSDSPacket& packet);
+    void handleEraseStoredTelemetry(ESATCCSDSPacket& packet);
 
-    // OBC packet handler
-    void prepareNewPacket(ESATTimestamp Timestamp,
-                          ESATCCSDSPacket& packet,
-                          byte packetType,
-                          byte packetID);
-    boolean closePacket(ESATCCSDSPacket& packet);
+    // Fill a new housekeeping telemetry packet.  Return true on
+    // success; otherwise return false.
+    // Set newHousekeepingTelemetryPacket to false.
+    boolean readHousekeepingTelemetry(ESATCCSDSPacket& packet);
+
+    // Read the next stored telemetry packet and fill the given packet buffer.
+    // Return true on success; otherwise return false.
+    // Set downloadTelemetry to false on unsuccessful read.
+    boolean readStoredTelemetry(ESATCCSDSPacket& packet);
 };
 
 extern ESATOBCSubsystem OBCSubsystem;
