@@ -30,10 +30,6 @@ class ESATTelemetryStorage
     // True on input/output error.  Must be reset manually.
     boolean error;
 
-    // Begin the SD card subsystem.
-    // This will set the error flag on input/output error.
-    void begin();
-
     // Start reading the packet store.
     // Set the error flag on input/output error or if the packet store
     // is already open.
@@ -62,9 +58,6 @@ class ESATTelemetryStorage
     void write(ESATCCSDSPacket& packet);
 
   private:
-    // The chip select line of the SD card reader is connected to this pin.
-    static const byte PIN = SS1;
-
     // Store telemetry in this file.
     File file;
 

@@ -20,15 +20,6 @@
 
 const char ESATTelemetryStorage::TELEMETRY_FILE[] = "telemetry";
 
-void ESATTelemetryStorage::begin()
-{
-  const boolean correctBegin = SD.begin(PIN);
-  if (!correctBegin)
-  {
-    error = true;
-  }
-}
-
 void ESATTelemetryStorage::beginReading()
 {
   if (file)

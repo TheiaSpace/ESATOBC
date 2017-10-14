@@ -27,7 +27,6 @@ void ESATOBCSubsystem::begin()
   newHousekeepingTelemetryPacket = false;
   telemetryPacketSequenceCount = 0;
   storeTelemetry = false;
-  TelemetryStorage.begin();
   Clock.begin();
 }
 

@@ -20,6 +20,7 @@
 #include <ESATOnBoardDataHandling.h>
 #include <ESATTimer.h>
 #include <USBSerial.h>
+#include <SD.h>
 #include <Wire.h>
 
 class ESATExampleSubsystem: public ESATSubsystem
@@ -69,6 +70,7 @@ void setup()
   Serial.begin(115200);
   USB.begin();
   Wire.begin();
+  SD.begin(SS1);
   OnBoardDataHandling.registerSubsystem(OBCSubsystem);
   OnBoardDataHandling.registerSubsystem(EPSSubsystem);
   OnBoardDataHandling.registerSubsystem(ADCSSubsystem);
