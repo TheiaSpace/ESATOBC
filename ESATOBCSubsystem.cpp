@@ -110,7 +110,7 @@ void ESATOBCSubsystem::handleDownloadTelemetry(ESATCCSDSPacket& packet)
 {
   const ESATTimestamp beginTimestamp = packet.readTimestamp();
   const ESATTimestamp endTimestamp = packet.readTimestamp();
-  ESATTelemetryStorage.beginReading(beginTimestamp, endTimestamp);
+  TelemetryStorage.beginReading(beginTimestamp, endTimestamp);
   downloadTelemetry = true;
 }
 
