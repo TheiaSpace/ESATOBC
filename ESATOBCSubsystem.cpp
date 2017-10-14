@@ -116,6 +116,7 @@ void ESATOBCSubsystem::handleDownloadTelemetry(ESATCCSDSPacket& packet)
 
 boolean ESATOBCSubsystem::readHousekeepingTelemetry(ESATCCSDSPacket& packet)
 {
+  newHousekeepingTelemetryPacket = false;
   packet.writePacketVersionNumber(0);
   packet.writePacketType(packet.TELEMETRY);
   packet.writeSecondaryHeaderFlag(packet.SECONDARY_HEADER_IS_PRESENT);
@@ -152,7 +153,6 @@ boolean ESATOBCSubsystem::readTelemetry(ESATCCSDSPacket& packet)
 {
   if (newHousekeepingTelemetryPacket)
   {
-    newHousekeepingTelemetryPacket = false;
     return readHousekeepingTelemetry(packet);
   }
   if (downloadTelemetry)
