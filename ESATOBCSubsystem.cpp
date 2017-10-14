@@ -78,7 +78,7 @@ void ESATOBCSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
 
 void ESATOBCSubsystem::handleSetTimeCommand(ESATCCSDSPacket& packet)
 {
-  if(packet.availableBytesToRead() < 7)
+  if (packet.availableBytesToRead() < 7)
   {
     return;
   }
@@ -94,7 +94,7 @@ void ESATOBCSubsystem::handleSetTimeCommand(ESATCCSDSPacket& packet)
 
 void ESATOBCSubsystem::handleStoreTelemetry(ESATCCSDSPacket& packet)
 {
-  if(packet.availableBytesToRead() < 1)
+  if (packet.availableBytesToRead() < 1)
   {
     return;
   }
