@@ -16,15 +16,15 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESATStorage_h
-#define ESATStorage_h
+#ifndef ESATTelemetryStorage_h
+#define ESATTelemetryStorage_h
 
 #include <Energia.h>
 #include <SD.h>
 #include "ESATTimestamp.h"
 #include <ESATCCSDSPacket.h>
 
-class ESATStorage
+class ESATTelemetryStorage
 {
   public:
     // True on input/output error.  Must be reset manually.
@@ -72,6 +72,6 @@ class ESATStorage
     static const char TELEMETRY_FILE[];
 };
 
-extern ESATStorage Storage;
+extern ESATTelemetryStorage TelemetryStorage;
 
 #endif

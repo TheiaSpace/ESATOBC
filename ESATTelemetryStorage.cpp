@@ -16,11 +16,11 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESATStorage.h"
+#include "ESATTelemetryStorage.h"
 
-const char ESATStorage::TELEMETRY_FILE[] = "telemetry";
+const char ESATTelemetryStorage::TELEMETRY_FILE[] = "telemetry";
 
-void ESATStorage::begin()
+void ESATTelemetryStorage::begin()
 {
   const boolean correctBegin = SD.begin(PIN);
   if (!correctBegin)
@@ -29,7 +29,7 @@ void ESATStorage::begin()
   }
 }
 
-void ESATStorage::beginReading()
+void ESATTelemetryStorage::beginReading()
 {
   if (file)
   {
@@ -43,7 +43,7 @@ void ESATStorage::beginReading()
   }
 }
 
-void ESATStorage::beginWriting()
+void ESATTelemetryStorage::beginWriting()
 {
   if (file)
   {
@@ -57,17 +57,17 @@ void ESATStorage::beginWriting()
   }
 }
 
-void ESATStorage::endReading()
+void ESATTelemetryStorage::endReading()
 {
   file.close();
 }
 
-void ESATStorage::endWriting()
+void ESATTelemetryStorage::endWriting()
 {
   file.close();
 }
 
-boolean ESATStorage::read(ESATCCSDSPacket& packet)
+boolean ESATTelemetryStorage::read(ESATCCSDSPacket& packet)
 {
   const boolean correctRead = packet.readFrom(file);
   if (!correctRead)
@@ -77,7 +77,7 @@ boolean ESATStorage::read(ESATCCSDSPacket& packet)
   return correctRead;
 }
 
-void ESATStorage::write(ESATCCSDSPacket& packet)
+void ESATTelemetryStorage::write(ESATCCSDSPacket& packet)
 {
   const boolean correctWrite = packet.writeTo(file);
   if (!correctWrite)
@@ -86,4 +86,4 @@ void ESATStorage::write(ESATCCSDSPacket& packet)
   }
 }
 
-ESATStorage Storage;
+ESATTelemetryStorage TelemetryStorage;

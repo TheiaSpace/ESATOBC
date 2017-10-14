@@ -20,14 +20,14 @@
 #include "ESATTimestamp.h"
 #include "ESATClock.h"
 #include <ESATTimer.h>
-#include "ESATStorage.h"
+#include <ESATTelemetryStorage.h>
 
 void ESATOBCSubsystem::begin()
 {
   newHousekeepingTelemetryPacket = false;
   telemetryPacketSequenceCount = 0;
   storeTelemetry = false;
-  Storage.begin();
+  TelemetryStorage.begin();
   Clock.begin();
 }
 
@@ -100,7 +100,7 @@ void ESATOBCSubsystem::handleStoreTelemetry(ESATCCSDSPacket& packet)
   {
     if (!storeTelemetry)
     {
-      Storage.beginWriting();
+      TelemetryStorage.beginWriting();
     }
     storeTelemetry = true;
   }
@@ -108,7 +108,7 @@ void ESATOBCSubsystem::handleStoreTelemetry(ESATCCSDSPacket& packet)
   {
     if (storeTelemetry)
     {
-      Storage.endWriting();
+      TelemetryStorage.endWriting();
     }
     storeTelemetry = false;
   }
@@ -138,8 +138,8 @@ boolean ESATOBCSubsystem::readHousekeepingTelemetry(ESATCCSDSPacket& packet)
   packet.writeByte(load);
   packet.writeWord(telemetryPacketSequenceCount - 1);
   packet.writeBoolean(storeTelemetry);
-  packet.writeBoolean(Storage.error);
-  Storage.error = false;
+  packet.writeBoolean(TelemetryStorage.error);
+  TelemetryStorage.error = false;
   packet.writeBoolean(Clock.error);
   Clock.error = false;
   packet.updatePacketDataLength();
@@ -179,7 +179,7 @@ void ESATOBCSubsystem::writeTelemetry(ESATCCSDSPacket& packet)
 {
   if (storeTelemetry)
   {
-    Storage.write(packet);
+    TelemetryStorage.write(packet);
   }
 }
 
