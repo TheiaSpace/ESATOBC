@@ -92,6 +92,10 @@ class ESATOBCSubsystem: public ESATSubsystem
     static const byte MINOR_VERSION_NUMBER = 0;
     static const byte PATCH_VERSION_NUMBER = 0;
 
+    // True if we were commanded to download telemetry; false
+    // otherwise.
+    boolean downloadTelemetry;
+
     // True when a new telemetry packet is ready (after update()).
     // False otherwise (after readTelemetry()).
     boolean newHousekeepingTelemetryPacket;
@@ -109,6 +113,11 @@ class ESATOBCSubsystem: public ESATSubsystem
     // Fill a new housekeeping telemetry packet.  Return true on
     // success; otherwise return false.
     boolean readHousekeepingTelemetry(ESATCCSDSPacket& packet);
+
+    // Read the next stored telemetry packet and fill the given packet buffer.
+    // Return true on success; otherwise return false.
+    // Set downloadTelemetry to false on unsuccessful read.
+    boolean readStoredTelemetry(ESATCCSDSPacket& packet);
 };
 
 extern ESATOBCSubsystem OBCSubsystem;

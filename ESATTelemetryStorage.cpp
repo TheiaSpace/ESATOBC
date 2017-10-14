@@ -20,18 +20,11 @@
 
 const char ESATTelemetryStorage::TELEMETRY_FILE[] = "telemetry";
 
-void ESATTelemetryStorage::beginReading()
+void ESATTelemetryStorage::beginReading(const ESATTimestamp begin,
+                                        const ESATTimestamp end)
 {
-  if (file)
-  {
-    error = true;
-    return;
-  }
-  file = SD.open(TELEMETRY_FILE, FILE_READ);
-  if (!file)
-  {
-    error = true;
-  }
+  beginTimestamp = begin;
+  endTimestamp = end;
 }
 
 void ESATTelemetryStorage::endReading()
@@ -41,12 +34,34 @@ void ESATTelemetryStorage::endReading()
 
 boolean ESATTelemetryStorage::read(ESATCCSDSPacket& packet)
 {
-  const boolean correctRead = packet.readFrom(file);
-  if (!correctRead)
+  if (!file)
   {
-    error = true;
+    file = SD.open(TELEMETRY_FILE, FILE_READ);
+    if (!file)
+    {
+      error = true;
+      return false;
+    }
   }
-  return correctRead;
+  while (file.available() > 0)
+  {
+    const boolean correctRead = packet.readFrom(file);
+    if (!correctRead)
+    {
+      error = true;
+      return false;
+    }
+    packet.rewind();
+    const ESATCCSDSSecondaryHeader secondaryHeader =
+      packet.readSecondaryHeader();
+    packet.rewind();
+    if ((beginTimestamp <= secondaryHeader.timestamp)
+        && (secondaryHeader.timestamp <= endTimestamp))
+    {
+      return true;
+    }
+  }
+  return false;
 }
 
 void ESATTelemetryStorage::write(ESATCCSDSPacket& packet)

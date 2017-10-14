@@ -26,6 +26,7 @@ void ESATOBCSubsystem::begin()
 {
   newHousekeepingTelemetryPacket = false;
   telemetryPacketSequenceCount = 0;
+  downloadTelemetry = false;
   storeTelemetry = false;
   Clock.begin();
 }
@@ -107,6 +108,10 @@ void ESATOBCSubsystem::handleStoreTelemetry(ESATCCSDSPacket& packet)
 
 void ESATOBCSubsystem::handleDownloadTelemetry(ESATCCSDSPacket& packet)
 {
+  const ESATTimestamp beginTimestamp = packet.readTimestamp();
+  const ESATTimestamp endTimestamp = packet.readTimestamp();
+  ESATTelemetryStorage.beginReading(beginTimestamp, endTimestamp);
+  downloadTelemetry = true;
 }
 
 boolean ESATOBCSubsystem::readHousekeepingTelemetry(ESATCCSDSPacket& packet)
@@ -150,15 +155,34 @@ boolean ESATOBCSubsystem::readTelemetry(ESATCCSDSPacket& packet)
     newHousekeepingTelemetryPacket = false;
     return readHousekeepingTelemetry(packet);
   }
-  else
+  if (downloadTelemetry)
   {
-    return false;
+    return readStoredTelemetry(packet);
   }
+}
+
+boolean ESATOBCSubsystem::readStoredTelemetry(ESATCCSDSPacket& packet)
+{
+  const boolean correctRead = TelemetryStorage.read(packet);
+  if (!correctRead)
+  {
+    TelemetryStorage.endReading();
+    downloadTelemetry = false;
+  }
+  return correctRead;
 }
 
 boolean ESATOBCSubsystem::telemetryAvailable()
 {
-  return newHousekeepingTelemetryPacket;
+  if (newHousekeepingTelemetryPacket)
+  {
+    return true;
+  }
+  if (downloadTelemetry)
+  {
+    return true;
+  }
+  return false;
 }
 
 void ESATOBCSubsystem::update()

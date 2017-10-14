@@ -30,15 +30,19 @@ class ESATTelemetryStorage
     // True on input/output error.  Must be reset manually.
     boolean error;
 
-    // Start reading the packet store.
-    // Set the error flag on input/output error or if the packet store
-    // is already open.
-    void beginReading();
+    // Start reading the packet store between the given timestamps:
+    // - telemetry generated at begin or after begin;
+    // - telemetry generated at end or before end.
+    // Set the error flag on input/output error.
+    void beginReading(ESATTimestamp begin,
+                      ESATTimestamp end);
 
     // End reading the packet store.
     void endReading();
 
-    // Read a packet from the packet store into the given packet buffer.
+    // Read the next packet from the packet store with timestamp
+    // coincident with or after begin and coincident with or before
+    // end, and write it into the given packet buffer.
     // Return true on success; otherwise return false.
     // Set the error flag on failure.
     // Must be called after beginReading() and before endReading().
@@ -46,15 +50,24 @@ class ESATTelemetryStorage
 
     // Write a packet to the packet store.
     // Set the error flag on failure.
-    // The packet store must not be open for reading.
+    // The packet store must not be open for reading, which happens at
+    // the first read() call after beginReading().
     void write(ESATCCSDSPacket& packet);
 
   private:
     // Store telemetry in this file.
-    File file;
+    static const char TELEMETRY_FILE[];
+
+    // Read telemetry generated at this timestamp or after this
+    // timestamp.
+    ESATTimestamp beginTimestamp;
+
+    // Read telemetry generated at this timestamp or before this
+    // timestamp.
+    ESATTimestamp endTimestamp;
 
     // Store telemetry in this file.
-    static const char TELEMETRY_FILE[];
+    File file;
 };
 
 extern ESATTelemetryStorage TelemetryStorage;
