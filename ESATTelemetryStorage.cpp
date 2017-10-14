@@ -34,26 +34,7 @@ void ESATTelemetryStorage::beginReading()
   }
 }
 
-void ESATTelemetryStorage::beginWriting()
-{
-  if (file)
-  {
-    error = true;
-    return;
-  }
-  file = SD.open(TELEMETRY_FILE, FILE_APPEND);
-  if (!file)
-  {
-    error = true;
-  }
-}
-
 void ESATTelemetryStorage::endReading()
-{
-  file.close();
-}
-
-void ESATTelemetryStorage::endWriting()
 {
   file.close();
 }
@@ -70,11 +51,23 @@ boolean ESATTelemetryStorage::read(ESATCCSDSPacket& packet)
 
 void ESATTelemetryStorage::write(ESATCCSDSPacket& packet)
 {
+  if (file)
+  {
+    error = true;
+    return;
+  }
+  file = SD.open(TELEMETRY_FILE, FILE_APPEND);
+  if (!file)
+  {
+    error = true;
+    return;
+  }
   const boolean correctWrite = packet.writeTo(file);
   if (!correctWrite)
   {
     error = true;
   }
+  file.close();
 }
 
 ESATTelemetryStorage TelemetryStorage;

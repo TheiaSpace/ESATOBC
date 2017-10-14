@@ -97,18 +97,10 @@ void ESATOBCSubsystem::handleStoreTelemetry(ESATCCSDSPacket& packet)
   const byte parameter = packet.readByte();
   if (parameter > 0)
   {
-    if (!storeTelemetry)
-    {
-      TelemetryStorage.beginWriting();
-    }
     storeTelemetry = true;
   }
   else
   {
-    if (storeTelemetry)
-    {
-      TelemetryStorage.endWriting();
-    }
     storeTelemetry = false;
   }
 }

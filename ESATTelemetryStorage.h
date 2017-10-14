@@ -35,16 +35,8 @@ class ESATTelemetryStorage
     // is already open.
     void beginReading();
 
-    // Start writing to the packet store.
-    // Set the error flag on input/output error or if the packet store
-    // is already open.
-    void beginWriting();
-
     // End reading the packet store.
     void endReading();
-
-    // End writing to the packet store.
-    void endWriting();
 
     // Read a packet from the packet store into the given packet buffer.
     // Return true on success; otherwise return false.
@@ -54,7 +46,7 @@ class ESATTelemetryStorage
 
     // Write a packet to the packet store.
     // Set the error flag on failure.
-    // Must be called after beginWriting() and before endWriting().
+    // The packet store must not be open for reading.
     void write(ESATCCSDSPacket& packet);
 
   private:
