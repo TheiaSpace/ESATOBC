@@ -32,6 +32,15 @@ void ESATTelemetryStorage::endReading()
   file.close();
 }
 
+void ESATTelemetryStorage::erase()
+{
+  const boolean correctRemoval = SD.remove((char*) TELEMETRY_FILE);
+  if (!correctRemoval)
+  {
+    error = true;
+  }
+}
+
 boolean ESATTelemetryStorage::read(ESATCCSDSPacket& packet)
 {
   if (!file)

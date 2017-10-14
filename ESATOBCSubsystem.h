@@ -63,6 +63,7 @@ class ESATOBCSubsystem: public ESATSubsystem
       SET_TIME = 0x00,
       STORE_TELEMETRY = 0x01,
       DOWNLOAD_TELEMETRY = 0x02,
+      ERASE_STORED_TELEMETRY = 0x03,
     };
 
     // Telemetry packet identifiers.
@@ -109,9 +110,11 @@ class ESATOBCSubsystem: public ESATSubsystem
     void handleSetModeCommand(ESATCCSDSPacket& packet);
     void handleStoreTelemetry(ESATCCSDSPacket& packet);
     void handleDownloadTelemetry(ESATCCSDSPacket& packet);
+    void handleEraseStoredTelemetry(ESATCCSDSPacket& packet);
 
     // Fill a new housekeeping telemetry packet.  Return true on
     // success; otherwise return false.
+    // Set newHousekeepingTelemetryPacket to false.
     boolean readHousekeepingTelemetry(ESATCCSDSPacket& packet);
 
     // Read the next stored telemetry packet and fill the given packet buffer.

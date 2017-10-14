@@ -68,6 +68,9 @@ void ESATOBCSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
     case DOWNLOAD_TELEMETRY:
       handleDownloadTelemetry(packet);
       break;
+    case ERASE_STORED_TELEMETRY:
+      handleEraseStoredTelemetry(packet);
+      break;
     default:
       break;
   }
@@ -112,6 +115,11 @@ void ESATOBCSubsystem::handleDownloadTelemetry(ESATCCSDSPacket& packet)
   const ESATTimestamp endTimestamp = packet.readTimestamp();
   TelemetryStorage.beginReading(beginTimestamp, endTimestamp);
   downloadTelemetry = true;
+}
+
+void ESATOBCSubsystem::handleEraseStoredTelemetry(ESATCCSDSPacket& packet)
+{
+  TelemetryStorage.erase();
 }
 
 boolean ESATOBCSubsystem::readHousekeepingTelemetry(ESATCCSDSPacket& packet)

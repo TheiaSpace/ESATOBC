@@ -40,6 +40,10 @@ class ESATTelemetryStorage
     // End reading the packet store.
     void endReading();
 
+    // Erase the contents of the telemetry store.
+    // Set the error flag on input/output error.
+    void erase();
+
     // Read the next packet from the packet store with timestamp
     // coincident with or after begin and coincident with or before
     // end, and write it into the given packet buffer.
