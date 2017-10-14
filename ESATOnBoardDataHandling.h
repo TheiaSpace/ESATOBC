@@ -19,7 +19,7 @@
 #ifndef ESATOnBoardDataHandling_h
 #define ESATOnBoardDataHandling_h
 
-#include <Energia.h>
+#include <Arduino.h>
 #include <ESATCCSDSPacket.h>
 #include "ESATSubsystem.h"
 
