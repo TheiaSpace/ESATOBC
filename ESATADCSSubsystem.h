@@ -19,7 +19,7 @@
 #ifndef ESATADCSSubsystem_h
 #define ESATADCSSubsystem_h
 
-#include <Energia.h>
+#include <Arduino.h>
 #include "ESATSubsystem.h"
 
 class ESATADCSSubsystem: public ESATSubsystem

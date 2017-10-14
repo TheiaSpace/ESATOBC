@@ -19,7 +19,7 @@
 #ifndef ESATTelemetryStorage_h
 #define ESATTelemetryStorage_h
 
-#include <Energia.h>
+#include <Arduino.h>
 #include <SD.h>
 #include "ESATTimestamp.h"
 #include <ESATCCSDSPacket.h>

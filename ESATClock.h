@@ -19,7 +19,7 @@
 #ifndef ESATClock_h
 #define ESATClock_h
 
-#include <Energia.h>
+#include <Arduino.h>
 #include "ESATTimestamp.h"
 
 

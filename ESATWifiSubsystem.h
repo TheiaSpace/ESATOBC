@@ -19,7 +19,7 @@
 #ifndef ESATCOMMSSubsystem_h
 #define ESATCOMMSSubsystem_h
 
-#include <Energia.h>
+#include <Arduino.h>
 #include "ESATSubsystem.h"
 
 class ESATWifiSubsystem: public ESATSubsystem
