@@ -30,6 +30,8 @@
 class ESATOBCSubsystem: public ESATSubsystem
 {
   public:
+    // True when commanded to store telemetry.  False when commanded
+    // not to store telemetry.
     boolean storeTelemetry;
 
     // Start the OBC.
