@@ -66,6 +66,11 @@ class ESATEPSSubsystem: public ESATSubsystem
     // Unique identifier of the subsystem.
     static const word APPLICATION_PROCESS_IDENTIFIER = 1;
 
+    // Version numbers of the subsystem interface.
+    static const byte MAJOR_VERSION_NUMBER = 2;
+    static const byte MINOR_VERSION_NUMBER = 0;
+    static const byte PATCH_VERSION_NUMBER = 0;
+
     // Time between I2C telecommand and telemetry transfer retries.
     static const word MILLISECONDS_BETWEEN_RETRIES = 10;
 
@@ -73,6 +78,9 @@ class ESATEPSSubsystem: public ESATSubsystem
     static const byte TRIES = 10;
 
     boolean newTelemetryPacket;
+
+    // Set the time of the EPS board.
+    void setTime();
 };
 
 extern ESATEPSSubsystem EPSSubsystem;
