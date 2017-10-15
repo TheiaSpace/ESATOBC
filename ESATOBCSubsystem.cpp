@@ -28,7 +28,6 @@ void ESATOBCSubsystem::begin()
   telemetryPacketSequenceCount = 0;
   downloadTelemetry = false;
   storeTelemetry = false;
-  OBCClock.begin();
 }
 
 word ESATOBCSubsystem::getApplicationProcessIdentifier()

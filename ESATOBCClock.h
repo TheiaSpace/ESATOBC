@@ -32,9 +32,6 @@ class ESATOBCClock
     // True on communication error.  Must be reset manually.
     boolean error;
 
-    // Start the clock.
-    void begin();
-
     // Read the current time.
     // Return the date and time in ISO 8601 format.
     // Set the error flag on error.

@@ -20,11 +20,6 @@
 #include <ESATUtil.h>
 #include <Wire.h>
 
-void ESATOBCClock::begin()
-{
-  (void) read();
-}
-
 ESATTimestamp ESATOBCClock::read()
 {
   Wire.beginTransmission(ADDRESS);
