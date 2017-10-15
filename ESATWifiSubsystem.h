@@ -22,6 +22,12 @@
 #include <Arduino.h>
 #include "ESATSubsystem.h"
 
+// Interface to the Wifi subsystem from the point of view of the
+// on-board data handling subsystem.  There is a global instance:
+// WifiSubsystem.  This should be the only instance of
+// ESATWifiSubsystem.  Register the Wifi subsystem on the on-board
+// data handling with
+// OnBoardDataHandling.registerSubsystem(WifiSubsystem).
 class ESATWifiSubsystem: public ESATSubsystem
 {
   public:
@@ -68,6 +74,9 @@ class ESATWifiSubsystem: public ESATSubsystem
     static const byte CONNECT = 0x00;
 };
 
+// Global instance of ESATWifiSubsystem.  Register WifiSubsystem on the
+// on-board data handling module with
+// OnBoardDataHandling.registerSubsystem(WifiSubsystem).
 extern ESATWifiSubsystem WifiSubsystem;
 
 #endif

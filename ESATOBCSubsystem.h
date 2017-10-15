@@ -22,9 +22,16 @@
 #include <Arduino.h>
 #include "ESATSubsystem.h"
 
+// Interface to the OBC (on-board computer subsystem) from the point
+// of view of the on-board data handling subsystem.  There is a global
+// instance: OBCSubsystem.  This should be the only instance of
+// ESATOBCSubsystem.  Register the OBC subsystem on the on-board data
+// handling with OnBoardDataHandling.registerSubsystem(OBCSubsystem).
 class ESATOBCSubsystem: public ESATSubsystem
 {
   public:
+    // True when commanded to store telemetry.  False when commanded
+    // not to store telemetry.
     boolean storeTelemetry;
 
     // Start the OBC.
@@ -123,5 +130,9 @@ class ESATOBCSubsystem: public ESATSubsystem
     boolean readStoredTelemetry(ESATCCSDSPacket& packet);
 };
 
+// Global instance of ESATOBCSubsystem.  Register OBCSubsystem on the
+// on-board data handling module with
+// OnBoardDataHandling.registerSubsystem(OBCSubsystem).
 extern ESATOBCSubsystem OBCSubsystem;
+
 #endif

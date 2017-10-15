@@ -22,6 +22,11 @@
 #include <Arduino.h>
 #include "ESATSubsystem.h"
 
+// Interface to the EPS (electrical power subsystem) from the point of
+// view of the on-board data handling subsystem.  There is a global
+// instance: EPSSubsystem.  This should be the only instance of
+// ESATEPSSubsystem.  Register the EPS subsystem on the on-board data
+// handling with OnBoardDataHandling.registerSubsystem(EPSSubsystem).
 class ESATEPSSubsystem: public ESATSubsystem
 {
   public:
@@ -77,12 +82,17 @@ class ESATEPSSubsystem: public ESATSubsystem
     // Number of tries for I2C telecommand and telemetry transfers.
     static const byte TRIES = 10;
 
+    // True when there is a new telemetry packet available
+    // (after update()); false otherwise (after readTelemetry()).
     boolean newTelemetryPacket;
 
     // Set the time of the EPS board.
     void setTime();
 };
 
+// Global instance of ESATEPSSubsystem.  Register EPSSubsystem on the
+// on-board data handling module with
+// OnBoardDataHandling.registerSubsystem(EPSSubsystem).
 extern ESATEPSSubsystem EPSSubsystem;
 
 #endif
