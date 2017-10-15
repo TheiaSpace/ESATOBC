@@ -22,6 +22,11 @@
 #include <Arduino.h>
 #include "ESATSubsystem.h"
 
+// Interface to the EPS (electrical power subsystem) from the point of
+// view of the on-board data handling subsystem.  There is a global
+// instance: EPSSubsystem.  This should be the only instance of
+// ESATEPSSubsystem.  Register the EPS subsystem on the on-board data
+// handling with OnBoardDataHandling.registerSubsystem(EPSSubsystem).
 class ESATEPSSubsystem: public ESATSubsystem
 {
   public:
@@ -85,6 +90,9 @@ class ESATEPSSubsystem: public ESATSubsystem
     void setTime();
 };
 
+// Global instance of ESATEPSSubsystem.  Register EPSSubsystem on the
+// on-board data handling module with
+// OnBoardDataHandling.registerSubsystem(EPSSubsystem).
 extern ESATEPSSubsystem EPSSubsystem;
 
 #endif
