@@ -38,21 +38,20 @@ byte ESATClock::binaryToBCD(byte value)
 
 ESATTimestamp ESATClock::read()
 {
-  ESATTimestamp timestamp;
   Wire.beginTransmission(ADDRESS);
   Wire.write(TIME_REGISTER);
   const byte errorCode = Wire.endTransmission();
   if (errorCode != 0)
   {
     error = true;
-    return timestamp;
+    return ESATTimestamp();
   }
   const byte bytesToRead = 7;
   const byte bytesRead = Wire.requestFrom(ADDRESS, bytesToRead);
   if (bytesRead != bytesToRead)
   {
     error = true;
-    return timestamp;
+    return ESATTimestamp();
   }
   const byte seconds = Wire.read();
   const byte minutes = Wire.read();
@@ -61,9 +60,12 @@ ESATTimestamp ESATClock::read()
   const byte day = Wire.read();
   const byte month = Wire.read();
   const byte year = Wire.read();
-  timestamp.update(BCDToBinary(year),BCDToBinary(month),BCDToBinary(day),
-                   BCDToBinary(hours),BCDToBinary(minutes),BCDToBinary(seconds & 0x7F));
-  return timestamp;
+  return ESATTimestamp(2000 + BCDToBinary(year),
+                       BCDToBinary(month),
+                       BCDToBinary(day),
+                       BCDToBinary(hours),
+                       BCDToBinary(minutes),
+                       BCDToBinary(seconds & 0x7F));
 }
 
 void ESATClock::write(ESATTimestamp timestamp)
