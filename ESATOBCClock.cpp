@@ -74,7 +74,7 @@ void ESATOBCClock::write(ESATTimestamp timestamp)
   Wire.write(binaryToBCD(timestamp.seconds));
   Wire.write(binaryToBCD(timestamp.minutes));
   Wire.write(binaryToBCD(timestamp.hours));
-  // Day of the week not used
+  // Day of the week not used.
   Wire.write(binaryToBCD(2));
   Wire.write(binaryToBCD(timestamp.day));
   Wire.write(binaryToBCD(timestamp.month));
