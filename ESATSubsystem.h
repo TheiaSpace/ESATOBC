@@ -22,6 +22,19 @@
 #include <Arduino.h>
 #include <ESATCCSDSPacket.h>
 
+// Common subsystem interface from the point of view of the on-board
+// data handling function.
+// OnBoardDataHandling operates on the subsystems:
+// - just once during the setup stage, it calls begin() on all the
+//   subsystems.
+// - then, on a loop, it performs several actions:
+//   * first, it calls readTelecommand() on all the subsystems;
+//   * for each telecommand read, it calls handleTelecommand() on the
+//     telecommand target subsystem.
+//   * after that, it calls update() on all the subsystems;
+//   * then, it calls availableTelemetry() on each subsystem and,
+//     while there is telemetry available, it calls readTelemetry();
+//   * finally, it calls writeTelemetry() on all the subsystems.
 class ESATSubsystem
 {
   public:
