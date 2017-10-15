@@ -17,12 +17,14 @@
  */
 
 #include "ESATEPSSubsystem.h"
+#include "ESATOBCClock.h"
 #include <ESATI2CMaster.h>
 #include <Wire.h>
 
 void ESATEPSSubsystem::begin()
 {
   newTelemetryPacket = false;
+  setTime();
 }
 
 word ESATEPSSubsystem::getApplicationProcessIdentifier()
@@ -59,6 +61,35 @@ boolean ESATEPSSubsystem::readTelemetry(ESATCCSDSPacket& packet)
                             TRIES,
                             MILLISECONDS_BETWEEN_RETRIES);
   return gotTelemetry;
+}
+
+void ESATEPSSubsystem::setTime()
+{
+  const byte packetDataBufferLength =
+    ESATCCSDSSecondaryHeader::LENGTH + 7;
+  byte packetDataBuffer[packetDataBufferLength];
+  ESATCCSDSPacket packet(packetDataBuffer, packetDataBufferLength);
+  packet.writePacketVersionNumber(0);
+  packet.writePacketType(packet.TELECOMMAND);
+  packet.writeSecondaryHeaderFlag(packet.SECONDARY_HEADER_IS_PRESENT);
+  packet.writeApplicationProcessIdentifier(APPLICATION_PROCESS_IDENTIFIER);
+  packet.writeSequenceFlags(packet.UNSEGMENTED_USER_DATA);
+  packet.writePacketSequenceCount(0);
+  ESATCCSDSSecondaryHeader secondaryHeader;
+  secondaryHeader.preamble =
+    secondaryHeader.CALENDAR_SEGMENTED_TIME_CODE_MONTH_DAY_VARIANT_1_SECOND_RESOLUTION;
+  secondaryHeader.timestamp = OBCClock.read();
+  secondaryHeader.majorVersionNumber = MAJOR_VERSION_NUMBER;
+  secondaryHeader.minorVersionNumber = MINOR_VERSION_NUMBER;
+  secondaryHeader.patchVersionNumber = PATCH_VERSION_NUMBER;
+  secondaryHeader.packetIdentifier = 6;
+  packet.writeSecondaryHeader(secondaryHeader);
+  packet.writeTimestamp(secondaryHeader.timestamp);
+  (void) I2CMaster.writeTelecommand(Wire,
+                                    ADDRESS,
+                                    packet,
+                                    TRIES,
+                                    MILLISECONDS_BETWEEN_RETRIES);
 }
 
 boolean ESATEPSSubsystem::telemetryAvailable()
