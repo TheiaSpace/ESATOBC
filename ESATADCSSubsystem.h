@@ -22,6 +22,12 @@
 #include <Arduino.h>
 #include "ESATSubsystem.h"
 
+// Interface to the ADCS (attitude determination and control
+// subsystem) from the point of view of the on-board data handling
+// subsystem.  There is a global instance: ADCSSubsystem.  This should
+// be the only instance of ESATADCSSubsystem.  Register the EPS
+// subsystem on the on-board data handling with
+// OnBoardDataHandling.registerSubsystem(ADCSSubsystem).
 class ESATADCSSubsystem: public ESATSubsystem
 {
   public:
@@ -55,6 +61,9 @@ class ESATADCSSubsystem: public ESATSubsystem
     void writeTelemetry(ESATCCSDSPacket& packet);
 };
 
+// Global instance of ESATADCSSubsystem.  Register ADCSSubsystem on
+// the on-board data handling module with
+// OnBoardDataHandling.registerSubsystem(ADCSSubsystem).
 extern ESATADCSSubsystem ADCSSubsystem;
 
 #endif
