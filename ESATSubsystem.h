@@ -56,17 +56,17 @@ class ESATSubsystem
     // value returned by getApplicationProcessIdentifier().
     virtual void handleTelecommand(ESATCCSDSPacket& telecommand) = 0;
 
-    // Fill a packet with the next telemetry packet available.
-    // Return true if the operation was successful;
-    // otherwise return false.
-    // Called from OnBoardDataHandling.readSubsystemsTelemetry().
-    virtual boolean readTelemetry(ESATCCSDSPacket& packet) = 0;
-
     // Fill a packet with the next telecommand packet available.
     // Return true if the operation was successful;
     // otherwise return false.
     // Called from OnBoardDataHandling.readTelecommand().
     virtual boolean readTelecommand(ESATCCSDSPacket& packet) = 0;
+
+    // Fill a packet with the next telemetry packet available.
+    // Return true if the operation was successful;
+    // otherwise return false.
+    // Called from OnBoardDataHandling.readSubsystemsTelemetry().
+    virtual boolean readTelemetry(ESATCCSDSPacket& packet) = 0;
 
     // Return true if there is new telemetry available;
     // Otherwise return false.
