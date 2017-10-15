@@ -22,19 +22,15 @@
 #include <Arduino.h>
 #include "ESATTimestamp.h"
 
-
 // Real-time clock.
 // The underlying hardware is the DS1338 serial real-time clock
 // mounted on the ESATOBC board.
 // Communications are done through the OBC I2C bus.
-class ESATClock
+class ESATOBCClock
 {
   public:
     // True on communication error.  Must be reset manually.
     boolean error;
-
-    // Start the clock.
-    void begin();
 
     // Read the current time.
     // Return the date and time in ISO 8601 format.
@@ -45,7 +41,6 @@ class ESATClock
     // Pass the date and time in ISO 8601 format.
     // Set the error flag on error.
     void write(ESATTimestamp time);
-    
 
   private:
     static const byte ADDRESS = 0x68;
@@ -56,12 +51,8 @@ class ESATClock
 
     // Binary to BCD conversion.
     byte binaryToBCD(byte value);
-
 };
 
-extern ESATClock Clock;
-
-
-
+extern ESATOBCClock OBCClock;
 
 #endif

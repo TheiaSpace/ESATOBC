@@ -18,7 +18,7 @@
 
 #include "ESATOBCSubsystem.h"
 #include "ESATTimestamp.h"
-#include "ESATClock.h"
+#include "ESATOBCClock.h"
 #include <ESATTimer.h>
 #include <ESATTelemetryStorage.h>
 
@@ -28,7 +28,6 @@ void ESATOBCSubsystem::begin()
   telemetryPacketSequenceCount = 0;
   downloadTelemetry = false;
   storeTelemetry = false;
-  Clock.begin();
 }
 
 word ESATOBCSubsystem::getApplicationProcessIdentifier()
@@ -89,7 +88,7 @@ void ESATOBCSubsystem::handleSetTimeCommand(ESATCCSDSPacket& packet)
   timestamp.hours = packet.readByte();
   timestamp.minutes = packet.readByte();
   timestamp.seconds = packet.readByte();
-  Clock.write(timestamp);
+  OBCClock.write(timestamp);
 }
 
 void ESATOBCSubsystem::handleStoreTelemetry(ESATCCSDSPacket& packet)
@@ -133,7 +132,7 @@ boolean ESATOBCSubsystem::readHousekeepingTelemetry(ESATCCSDSPacket& packet)
   ESATCCSDSSecondaryHeader secondaryHeader;
   secondaryHeader.preamble =
     secondaryHeader.CALENDAR_SEGMENTED_TIME_CODE_MONTH_DAY_VARIANT_1_SECOND_RESOLUTION;
-  secondaryHeader.timestamp = Clock.read();
+  secondaryHeader.timestamp = OBCClock.read();
   secondaryHeader.majorVersionNumber = MAJOR_VERSION_NUMBER;
   secondaryHeader.minorVersionNumber = MINOR_VERSION_NUMBER;
   secondaryHeader.patchVersionNumber = PATCH_VERSION_NUMBER;
@@ -145,8 +144,8 @@ boolean ESATOBCSubsystem::readHousekeepingTelemetry(ESATCCSDSPacket& packet)
   packet.writeBoolean(storeTelemetry);
   packet.writeBoolean(TelemetryStorage.error);
   TelemetryStorage.error = false;
-  packet.writeBoolean(Clock.error);
-  Clock.error = false;
+  packet.writeBoolean(OBCClock.error);
+  OBCClock.error = false;
   packet.updatePacketDataLength();
   telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
   return true;
