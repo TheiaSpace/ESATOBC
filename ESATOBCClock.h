@@ -27,7 +27,7 @@
 // The underlying hardware is the DS1338 serial real-time clock
 // mounted on the ESATOBC board.
 // Communications are done through the OBC I2C bus.
-class ESATClock
+class ESATOBCClock
 {
   public:
     // True on communication error.  Must be reset manually.
@@ -59,7 +59,7 @@ class ESATClock
 
 };
 
-extern ESATClock Clock;
+extern ESATOBCClock OBCClock;
 
 
 

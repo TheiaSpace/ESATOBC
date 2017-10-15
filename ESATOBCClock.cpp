@@ -16,27 +16,27 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESATClock.h"
+#include "ESATOBCClock.h"
 #include <ESATUtil.h>
 #include <Wire.h>
 
 
-byte ESATClock::BCDToBinary(byte value)
+byte ESATOBCClock::BCDToBinary(byte value)
 {
   return value - 6 * (value >> 4);
 }
 
-void ESATClock::begin()
+void ESATOBCClock::begin()
 {
   (void) read();
 }
 
-byte ESATClock::binaryToBCD(byte value)
+byte ESATOBCClock::binaryToBCD(byte value)
 {
   return value + 6 * (value / 10);
 }
 
-ESATTimestamp ESATClock::read()
+ESATTimestamp ESATOBCClock::read()
 {
   Wire.beginTransmission(ADDRESS);
   Wire.write(TIME_REGISTER);
@@ -68,7 +68,7 @@ ESATTimestamp ESATClock::read()
                        BCDToBinary(seconds & 0x7F));
 }
 
-void ESATClock::write(ESATTimestamp timestamp)
+void ESATOBCClock::write(ESATTimestamp timestamp)
 {
   Wire.beginTransmission(ADDRESS);
   Wire.write(TIME_REGISTER);
@@ -90,7 +90,7 @@ void ESATClock::write(ESATTimestamp timestamp)
 
 
 
-ESATClock Clock;
+ESATOBCClock OBCClock;
 
 
 

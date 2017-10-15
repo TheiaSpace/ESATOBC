@@ -17,7 +17,7 @@
  */
 
 #include "ESATWifiSubsystem.h"
-#include <ESATClock.h>
+#include "ESATOBCClock.h"
 
 void ESATWifiSubsystem::begin()
 {
@@ -33,7 +33,7 @@ void ESATWifiSubsystem::begin()
   ESATCCSDSSecondaryHeader secondaryHeader;
   secondaryHeader.preamble =
     secondaryHeader.CALENDAR_SEGMENTED_TIME_CODE_MONTH_DAY_VARIANT_1_SECOND_RESOLUTION;
-  secondaryHeader.timestamp = Clock.read();
+  secondaryHeader.timestamp = OBCClock.read();
   secondaryHeader.majorVersionNumber = MAJOR_VERSION_NUMBER;
   secondaryHeader.minorVersionNumber = MINOR_VERSION_NUMBER;
   secondaryHeader.patchVersionNumber = PATCH_VERSION_NUMBER;
