@@ -20,7 +20,6 @@
 #include <ESATUtil.h>
 #include <Wire.h>
 
-
 byte ESATOBCClock::BCDToBinary(byte value)
 {
   return value - 6 * (value >> 4);
@@ -88,9 +87,4 @@ void ESATOBCClock::write(ESATTimestamp timestamp)
   }
 }
 
-
-
 ESATOBCClock OBCClock;
-
-
-
