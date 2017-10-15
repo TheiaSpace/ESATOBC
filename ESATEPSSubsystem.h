@@ -77,6 +77,8 @@ class ESATEPSSubsystem: public ESATSubsystem
     // Number of tries for I2C telecommand and telemetry transfers.
     static const byte TRIES = 10;
 
+    // True when there is a new telemetry packet available
+    // (after update()); false otherwise (after readTelemetry()).
     boolean newTelemetryPacket;
 
     // Set the time of the EPS board.
