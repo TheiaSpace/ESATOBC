@@ -102,6 +102,8 @@ class ESATExampleSubsystem: public ESATSubsystem
 ESATExampleSubsystem ExampleSubsystem;
 
 // Start peripherals and do the initial bookkeeping here:
+// - Activate the reception of telecommands from the USB interface.
+// - Activate the emission of telemetry through the USB interface.
 // - Register the available subsystems for use by the on-board data
 //   handling module.
 // - Begin the subsystems.
@@ -114,6 +116,8 @@ void setup()
   USB.begin();
   Wire.begin();
   SD.begin(SS1);
+  OnBoardDataHandling.enableUSBTelecommands();
+  OnBoardDataHandling.enableUSBTelemetry();
   OnBoardDataHandling.registerSubsystem(OBCSubsystem);
   OnBoardDataHandling.registerSubsystem(EPSSubsystem);
   OnBoardDataHandling.registerSubsystem(ADCSSubsystem);

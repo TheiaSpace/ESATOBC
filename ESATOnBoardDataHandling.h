@@ -37,8 +37,20 @@ class ESATOnBoardDataHandling
     // Begin the registered subsystems.
     void beginSubsystems();
 
+    // Disable reception of telecommands from the USB interface.
+    void disableUSBTelecommands();
+
+    // Disable emission of telecommands through the USB interface.
+    void disableUSBTelemetry();
+
     // Dispatch a command on the registered subsystems.
     void dispatchTelecommand(ESATCCSDSPacket& packet);
+
+    // Enable reception of telecommands from the USB interface.
+    void enableUSBTelecommands();
+
+    // Enable emission of telemetry through the USB interface.
+    void enableUSBTelemetry();
 
     // Read an incomming telecommand and write it into a packet.
     // Return true if there was a valid telecommand available;
@@ -68,6 +80,14 @@ class ESATOnBoardDataHandling
     byte numberOfSubsystems;
     byte telecommandIndex;
     byte telemetryIndex;
+
+    // True if the reception of telecommands from the USB interface is
+    // enabled; false otherwise.
+    boolean usbTelecommandsEnabled;
+
+    // True if the emission of telemetry through the USB interface is
+    // enabled; false otherwise.
+    boolean usbTelemetryEnabled;
 
     // Read a telecommand from the USB interface.
     boolean readTelecommandFromUSB(ESATCCSDSPacket& packet);
