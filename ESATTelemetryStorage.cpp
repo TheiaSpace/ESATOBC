@@ -17,6 +17,7 @@
  */
 
 #include "ESATTelemetryStorage.h"
+#include <ESATKISSStream.h>
 
 const char ESATTelemetryStorage::TELEMETRY_FILE[] = "telem_db";
 
@@ -52,9 +53,13 @@ boolean ESATTelemetryStorage::read(ESATCCSDSPacket& packet)
       return false;
     }
   }
+  const unsigned long bufferLength =
+    packet.PRIMARY_HEADER_LENGTH + packet.packetDataBufferLength;
+  byte buffer[bufferLength];
+  ESATKISSStream decoder(file, buffer, bufferLength);
   while (file.available() > 0)
   {
-    const boolean correctRead = packet.readFrom(file);
+    const boolean correctRead = packet.readFrom(decoder);
     if (!correctRead)
     {
       error = true;
@@ -86,8 +91,23 @@ void ESATTelemetryStorage::write(ESATCCSDSPacket& packet)
     error = true;
     return;
   }
-  const boolean correctWrite = packet.writeTo(file);
+  ESATKISSStream encoder(file, nullptr, 0);
+  const size_t beginBytesWritten = encoder.beginFrame();
+  if (beginBytesWritten < 2)
+  {
+    error = true;
+    file.close();
+    return;
+  }
+  const boolean correctWrite = packet.writeTo(encoder);
   if (!correctWrite)
+  {
+    error = true;
+    file.close();
+    return;
+  }
+  const size_t endBytesWritten = encoder.endFrame();
+  if (endBytesWritten < 1)
   {
     error = true;
   }
