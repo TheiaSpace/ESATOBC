@@ -36,6 +36,16 @@ void ESATOnBoardDataHandling::beginSubsystems()
   }
 }
 
+void ESATOnBoardDataHandling::disableUSBTelecommands()
+{
+  usbTelecommandsEnabled = false;
+}
+
+void ESATOnBoardDataHandling::disableUSBTelemetry()
+{
+  usbTelemetryEnabled = false;
+}
+
 void ESATOnBoardDataHandling::dispatchTelecommand(ESATCCSDSPacket& packet)
 {
   const word applicationProcessIdentifier =
@@ -50,6 +60,16 @@ void ESATOnBoardDataHandling::dispatchTelecommand(ESATCCSDSPacket& packet)
       return;
     }
   }
+}
+
+void ESATOnBoardDataHandling::enableUSBTelecommands()
+{
+  usbTelecommandsEnabled = true;
+}
+
+void ESATOnBoardDataHandling::enableUSBTelemetry()
+{
+  usbTelemetryEnabled = true;
 }
 
 boolean ESATOnBoardDataHandling::readTelecommand(ESATCCSDSPacket& packet)
@@ -67,7 +87,10 @@ boolean ESATOnBoardDataHandling::readTelecommand(ESATCCSDSPacket& packet)
       telecommandIndex = telecommandIndex + 1;
     }
   }
-  return readTelecommandFromUSB(packet);
+  if (usbTelecommandsEnabled)
+  {
+    return readTelecommandFromUSB(packet);
+  }
 }
 
 boolean ESATOnBoardDataHandling::readTelecommandFromUSB(ESATCCSDSPacket& packet)
@@ -136,7 +159,10 @@ void ESATOnBoardDataHandling::writeTelemetry(ESATCCSDSPacket& packet)
   {
     subsystems[i]->writeTelemetry(packet);
   }
-  writeTelemetryToUSB(packet);
+  if (usbTelemetryEnabled)
+  {
+    writeTelemetryToUSB(packet);
+  }
 }
 
 void ESATOnBoardDataHandling::writeTelemetryToUSB(ESATCCSDSPacket& packet)
