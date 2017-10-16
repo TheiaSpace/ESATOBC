@@ -18,7 +18,7 @@
 
 #include "ESATTelemetryStorage.h"
 
-const char ESATTelemetryStorage::TELEMETRY_FILE[] = "telemetry";
+const char ESATTelemetryStorage::TELEMETRY_FILE[] = "telem_db";
 
 void ESATTelemetryStorage::beginReading(const ESATTimestamp begin,
                                         const ESATTimestamp end)
