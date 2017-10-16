@@ -18,6 +18,7 @@
 
 #include "ESATWifiSubsystem.h"
 #include "ESATOBCClock.h"
+#include <ESATKISSStream.h>
 
 void ESATWifiSubsystem::begin()
 {
@@ -40,7 +41,10 @@ void ESATWifiSubsystem::begin()
   secondaryHeader.packetIdentifier = CONNECT;
   packet.writeSecondaryHeader(secondaryHeader);
   packet.updatePacketDataLength();
-  (void) packet.writeTo(Serial);
+  ESATKISSStream encoder(Serial, nullptr, 0);
+  (void) encoder.beginFrame();
+  (void) packet.writeTo(encoder);
+  (void) encoder.endFrame();
 }
 
 word ESATWifiSubsystem::getApplicationProcessIdentifier()
@@ -55,7 +59,15 @@ void ESATWifiSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
 
 boolean ESATWifiSubsystem::readTelecommand(ESATCCSDSPacket& packet)
 {
-  const boolean gotPacket = packet.readFrom(Serial);
+  if (Serial.available() == 0)
+  {
+    return false;
+  }
+  const unsigned long bufferLength =
+    packet.PRIMARY_HEADER_LENGTH + packet.packetDataBufferLength;
+  byte buffer[bufferLength];
+  ESATKISSStream decoder(Serial, buffer, bufferLength);
+  const boolean gotPacket = packet.readFrom(decoder);
   if (!gotPacket)
   {
     return false;
@@ -83,7 +95,10 @@ void ESATWifiSubsystem::update()
 
 void ESATWifiSubsystem::writeTelemetry(ESATCCSDSPacket& packet)
 {
-  (void) packet.writeTo(Serial);
+  ESATKISSStream encoder(Serial, nullptr, 0);
+  (void) encoder.beginFrame();
+  (void) packet.writeTo(encoder);
+  (void) encoder.endFrame();
 }
 
 ESATWifiSubsystem WifiSubsystem;
