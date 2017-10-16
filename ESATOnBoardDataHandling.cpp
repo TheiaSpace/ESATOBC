@@ -17,6 +17,7 @@
  */
 
 #include "ESATOnBoardDataHandling.h"
+#include <ESATKISSStream.h>
 #include <USBSerial.h>
 
 ESATOnBoardDataHandling::ESATOnBoardDataHandling():
@@ -75,7 +76,11 @@ boolean ESATOnBoardDataHandling::readTelecommandFromUSB(ESATCCSDSPacket& packet)
   {
     return false;
   }
-  const boolean gotPacket = packet.readFrom(USB);
+  const unsigned long bufferLength =
+    packet.PRIMARY_HEADER_LENGTH + packet.packetDataBufferLength;
+  byte buffer[bufferLength];
+  ESATKISSStream input(USB, buffer, bufferLength);
+  const boolean gotPacket = packet.readFrom(input);
   if (!gotPacket)
   {
     return false;
@@ -131,7 +136,15 @@ void ESATOnBoardDataHandling::writeTelemetry(ESATCCSDSPacket& packet)
   {
     subsystems[i]->writeTelemetry(packet);
   }
-  (void) packet.writeTo(USB);
+  writeTelemetryToUSB(packet);
+}
+
+void ESATOnBoardDataHandling::writeTelemetryToUSB(ESATCCSDSPacket& packet)
+{
+  ESATKISSStream output(USB, nullptr, 0);
+  (void) output.beginFrame();
+  (void) packet.writeTo(output);
+  (void) output.endFrame();
 }
 
 ESATOnBoardDataHandling OnBoardDataHandling;
