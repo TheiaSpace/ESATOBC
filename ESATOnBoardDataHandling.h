@@ -71,6 +71,9 @@ class ESATOnBoardDataHandling
 
     // Read a telecommand from the USB interface.
     boolean readTelecommandFromUSB(ESATCCSDSPacket& packet);
+
+    // Write a telemetry packet to the USB interface.
+    void writeTelemetryToUSB(ESATCCSDSPacket& packet);
 };
 
 extern ESATOnBoardDataHandling OnBoardDataHandling;
