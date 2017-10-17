@@ -81,14 +81,7 @@ void ESATOBCSubsystem::handleSetTimeCommand(ESATCCSDSPacket& packet)
   {
     return;
   }
-  ESATTimestamp timestamp;
-  timestamp.year = packet.readWord() - 2000;
-  timestamp.month = packet.readByte();
-  timestamp.day = packet.readByte();
-  timestamp.hours = packet.readByte();
-  timestamp.minutes = packet.readByte();
-  timestamp.seconds = packet.readByte();
-  OBCClock.write(timestamp);
+  OBCClock.write(packet.readTimestamp());
 }
 
 void ESATOBCSubsystem::handleStoreTelemetry(ESATCCSDSPacket& packet)
