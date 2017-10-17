@@ -133,7 +133,6 @@ boolean ESATOBCSubsystem::readHousekeepingTelemetry(ESATCCSDSPacket& packet)
   packet.writeSecondaryHeader(secondaryHeader);
   const unsigned int load = 100 * Timer.ellapsedMilliseconds() / Timer.period;
   packet.writeByte(load);
-  packet.writeWord(telemetryPacketSequenceCount - 1);
   packet.writeBoolean(storeTelemetry);
   packet.writeBoolean(TelemetryStorage.error);
   TelemetryStorage.error = false;
