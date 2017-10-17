@@ -66,7 +66,7 @@ class ESATEPSSubsystem: public ESATSubsystem
     };
 
     // I2C address of the EPS board.
-    static const byte ADDRESS = 2;
+    static const byte ADDRESS = 1;
 
     // Unique identifier of the subsystem.
     static const word APPLICATION_PROCESS_IDENTIFIER = 1;
