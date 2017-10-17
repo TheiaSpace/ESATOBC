@@ -192,7 +192,7 @@ void ESATOBCSubsystem::update()
 
 void ESATOBCSubsystem::writeTelemetry(ESATCCSDSPacket& packet)
 {
-  if (storeTelemetry)
+  if (storeTelemetry && !downloadTelemetry)
   {
     TelemetryStorage.write(packet);
   }
