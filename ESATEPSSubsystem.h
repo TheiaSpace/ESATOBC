@@ -76,6 +76,10 @@ class ESATEPSSubsystem: public ESATSubsystem
     static const byte MINOR_VERSION_NUMBER = 0;
     static const byte PATCH_VERSION_NUMBER = 0;
 
+    // Time after I2C write operations to let the EPS board process
+    // the requests.
+    static const byte MILLISECONDS_AFTER_WRITES = 1;
+
     // Time between I2C telecommand and telemetry transfer retries.
     static const word MILLISECONDS_BETWEEN_RETRIES = 10;
 

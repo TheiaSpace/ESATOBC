@@ -20,6 +20,7 @@
 #include "ESATOBCClock.h"
 #include <ESATI2CMaster.h>
 #include <Wire.h>
+#include <USBSerial.h>
 
 void ESATEPSSubsystem::begin()
 {
@@ -37,6 +38,7 @@ void ESATEPSSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
   (void) I2CMaster.writeTelecommand(Wire,
                                     ADDRESS,
                                     packet,
+                                    MILLISECONDS_AFTER_WRITES,
                                     TRIES,
                                     MILLISECONDS_BETWEEN_RETRIES);
 }
@@ -58,6 +60,7 @@ boolean ESATEPSSubsystem::readTelemetry(ESATCCSDSPacket& packet)
                             ADDRESS,
                             HOUSEKEEPING,
                             packet,
+                            MILLISECONDS_AFTER_WRITES,
                             TRIES,
                             MILLISECONDS_BETWEEN_RETRIES);
   return gotTelemetry;
@@ -88,6 +91,7 @@ void ESATEPSSubsystem::setTime()
   (void) I2CMaster.writeTelecommand(Wire,
                                     ADDRESS,
                                     packet,
+                                    MILLISECONDS_AFTER_WRITES,
                                     TRIES,
                                     MILLISECONDS_BETWEEN_RETRIES);
 }
