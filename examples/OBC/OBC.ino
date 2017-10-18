@@ -116,6 +116,7 @@ void setup()
   USB.begin();
   Wire.begin();
   SD.begin(SS1);
+  delay(1000);
   OnBoardDataHandling.enableUSBTelecommands();
   OnBoardDataHandling.enableUSBTelemetry();
   OnBoardDataHandling.registerSubsystem(OBCSubsystem);
