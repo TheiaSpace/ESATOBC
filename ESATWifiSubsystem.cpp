@@ -54,7 +54,10 @@ word ESATWifiSubsystem::getApplicationProcessIdentifier()
 
 void ESATWifiSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
 {
-  (void) packet.writeTo(Serial);
+  ESATKISSStream encoder(Serial, nullptr, 0);
+  (void) encoder.beginFrame();
+  (void) packet.writeTo(encoder);
+  (void) encoder.endFrame();
 }
 
 boolean ESATWifiSubsystem::readTelecommand(ESATCCSDSPacket& packet)
