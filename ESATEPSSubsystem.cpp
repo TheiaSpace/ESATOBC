@@ -85,7 +85,7 @@ void ESATEPSSubsystem::setTime()
   secondaryHeader.majorVersionNumber = MAJOR_VERSION_NUMBER;
   secondaryHeader.minorVersionNumber = MINOR_VERSION_NUMBER;
   secondaryHeader.patchVersionNumber = PATCH_VERSION_NUMBER;
-  secondaryHeader.packetIdentifier = 6;
+  secondaryHeader.packetIdentifier = SET_CURRENT_TIME;
   packet.writeSecondaryHeader(secondaryHeader);
   packet.writeTimestamp(secondaryHeader.timestamp);
   packet.updatePacketDataLength();
