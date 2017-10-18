@@ -92,6 +92,10 @@ class ESATEPSSubsystem: public ESATSubsystem
 
     // Set the time of the EPS board.
     void setTime();
+
+  private:
+    // Command code for setting the time of the EPS clock.
+    static const byte SET_CURRENT_TIME = 0x00;
 };
 
 // Global instance of ESATEPSSubsystem.  Register EPSSubsystem on the
