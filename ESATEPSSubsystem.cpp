@@ -88,6 +88,7 @@ void ESATEPSSubsystem::setTime()
   secondaryHeader.packetIdentifier = 6;
   packet.writeSecondaryHeader(secondaryHeader);
   packet.writeTimestamp(secondaryHeader.timestamp);
+  packet.updatePacketDataLength();
   (void) I2CMaster.writeTelecommand(Wire,
                                     ADDRESS,
                                     packet,
