@@ -18,7 +18,6 @@
 
 #include "ESATWifiSubsystem.h"
 #include "ESATOBCClock.h"
-#include <ESATKISSStream.h>
 
 void ESATWifiSubsystem::begin()
 {
@@ -41,7 +40,11 @@ void ESATWifiSubsystem::begin()
   secondaryHeader.packetIdentifier = CONNECT;
   packet.writeSecondaryHeader(secondaryHeader);
   packet.updatePacketDataLength();
-  ESATKISSStream encoder(Serial, nullptr, 0);
+  const unsigned long encoderBufferLength =
+    ESATKISSStream::frameLength(packet.PRIMARY_HEADER_LENGTH
+                                + packet.readPacketDataLength());
+  byte encoderBuffer[encoderBufferLength];
+  ESATKISSStream encoder(Serial, encoderBuffer, encoderBufferLength);
   (void) encoder.beginFrame();
   (void) packet.writeTo(encoder);
   (void) encoder.endFrame();
@@ -54,7 +57,11 @@ word ESATWifiSubsystem::getApplicationProcessIdentifier()
 
 void ESATWifiSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
 {
-  ESATKISSStream encoder(Serial, nullptr, 0);
+  const unsigned long encoderBufferLength =
+    ESATKISSStream::frameLength(packet.PRIMARY_HEADER_LENGTH
+                                + packet.readPacketDataLength());
+  byte encoderBuffer[encoderBufferLength];
+  ESATKISSStream encoder(Serial, encoderBuffer, encoderBufferLength);
   (void) encoder.beginFrame();
   (void) packet.writeTo(encoder);
   (void) encoder.endFrame();
@@ -62,15 +69,12 @@ void ESATWifiSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
 
 boolean ESATWifiSubsystem::readTelecommand(ESATCCSDSPacket& packet)
 {
-  if (Serial.available() == 0)
+  const boolean gotFrame = telecommandDecoder.receiveFrame();
+   if (!gotFrame)
   {
     return false;
   }
-  const unsigned long bufferLength =
-    packet.PRIMARY_HEADER_LENGTH + packet.packetDataBufferLength;
-  byte buffer[bufferLength];
-  ESATKISSStream decoder(Serial, buffer, bufferLength);
-  const boolean gotPacket = packet.readFrom(decoder);
+  const boolean gotPacket = packet.readFrom(telecommandDecoder);
   if (!gotPacket)
   {
     return false;
@@ -92,13 +96,23 @@ boolean ESATWifiSubsystem::telemetryAvailable()
   return false;
 }
 
+void ESATWifiSubsystem::setTelecommandBuffer(byte buffer[],
+                                             const unsigned long bufferLength)
+{
+  telecommandDecoder = ESATKISSStream(Serial, buffer, bufferLength);
+}
+
 void ESATWifiSubsystem::update()
 {
 }
 
 void ESATWifiSubsystem::writeTelemetry(ESATCCSDSPacket& packet)
 {
-  ESATKISSStream encoder(Serial, nullptr, 0);
+  const unsigned long encoderBufferLength =
+    ESATKISSStream::frameLength(packet.PRIMARY_HEADER_LENGTH
+                                + packet.readPacketDataLength());
+  byte encoderBuffer[encoderBufferLength];
+  ESATKISSStream encoder(Serial, encoderBuffer, encoderBufferLength);
   (void) encoder.beginFrame();
   (void) packet.writeTo(encoder);
   (void) encoder.endFrame();

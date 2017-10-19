@@ -21,6 +21,7 @@
 
 #include <Arduino.h>
 #include <ESATCCSDSPacket.h>
+#include <ESATKISSStream.h>
 #include "ESATSubsystem.h"
 
 class ESATOnBoardDataHandling
@@ -46,8 +47,10 @@ class ESATOnBoardDataHandling
     // Dispatch a command on the registered subsystems.
     void dispatchTelecommand(ESATCCSDSPacket& packet);
 
-    // Enable reception of telecommands from the USB interface.
-    void enableUSBTelecommands();
+    // Enable reception of telecommands from the USB interface.  Use
+    // the buffer for accumulating the partially-received telecommands
+    // from one call to readTelecommand() to the next.
+    void enableUSBTelecommands(byte buffer[], unsigned long bufferLength);
 
     // Enable emission of telemetry through the USB interface.
     void enableUSBTelemetry();
@@ -80,6 +83,15 @@ class ESATOnBoardDataHandling
     byte numberOfSubsystems;
     byte telecommandIndex;
     byte telemetryIndex;
+
+    // Store incoming USB telecommands in this buffer.
+    byte* usbTelecommandBuffer;
+
+    // Length of the USB telecommand buffer.
+    unsigned long usbTelecommandBufferLength;
+
+    // Decode USB KISS frames with telecommands with this stream.
+    ESATKISSStream usbTelecommandDecoder;
 
     // True if the reception of telecommands from the USB interface is
     // enabled; false otherwise.
