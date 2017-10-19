@@ -126,7 +126,7 @@ byte wifiTelecommandBuffer[WHOLE_PACKET_BUFFER_LENGTH];
 // once.
 void setup()
 {
-  Serial.begin(115200);
+  Serial.begin(9600);
   USB.begin();
   Wire.begin();
   SD.begin(SS1);
