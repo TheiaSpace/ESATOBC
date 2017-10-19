@@ -131,8 +131,7 @@ boolean ESATOBCSubsystem::readHousekeepingTelemetry(ESATCCSDSPacket& packet)
   secondaryHeader.patchVersionNumber = PATCH_VERSION_NUMBER;
   secondaryHeader.packetIdentifier = HOUSEKEEPING;
   packet.writeSecondaryHeader(secondaryHeader);
-  const unsigned int load = 100 * Timer.ellapsedMilliseconds() / Timer.period;
-  packet.writeByte(load);
+  packet.writeByte(Timer.load());
   packet.writeBoolean(storeTelemetry);
   packet.writeBoolean(TelemetryStorage.error);
   TelemetryStorage.error = false;
