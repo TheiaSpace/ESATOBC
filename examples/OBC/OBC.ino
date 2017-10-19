@@ -15,6 +15,7 @@
 
 #include <ESATADCSSubsystem.h>
 #include <ESATEPSSubsystem.h>
+#include <ESATKISSStream.h>
 #include <ESATOBCSubsystem.h>
 #include <ESATWifiSubsystem.h>
 #include <ESATOnBoardDataHandling.h>
@@ -101,6 +102,19 @@ class ESATExampleSubsystem: public ESATSubsystem
 // Unique global instance of ESATExampleSubsystem.
 ESATExampleSubsystem ExampleSubsystem;
 
+// Maximum packet data length we will handle.
+const word PACKET_DATA_BUFFER_LENGTH = 256;
+
+// Maximum whole packet length we will handle.
+const word WHOLE_PACKET_BUFFER_LENGTH =
+  ESATCCSDSPacket::PRIMARY_HEADER_LENGTH + PACKET_DATA_BUFFER_LENGTH;
+
+// Accumulate incoming USB telecommands in this buffer.
+byte usbTelecommandBuffer[WHOLE_PACKET_BUFFER_LENGTH];
+
+// Accumulate incoming Wifi telecommands in this buffer.
+byte wifiTelecommandBuffer[WHOLE_PACKET_BUFFER_LENGTH];
+
 // Start peripherals and do the initial bookkeeping here:
 // - Activate the reception of telecommands from the USB interface.
 // - Activate the emission of telemetry through the USB interface.
@@ -117,7 +131,10 @@ void setup()
   Wire.begin();
   SD.begin(SS1);
   delay(1000);
-  OnBoardDataHandling.enableUSBTelecommands();
+  WifiSubsystem.setTelecommandBuffer(wifiTelecommandBuffer,
+                                     WHOLE_PACKET_BUFFER_LENGTH);
+  OnBoardDataHandling.enableUSBTelecommands(usbTelecommandBuffer,
+                                            WHOLE_PACKET_BUFFER_LENGTH);
   OnBoardDataHandling.enableUSBTelemetry();
   OnBoardDataHandling.registerSubsystem(OBCSubsystem);
   OnBoardDataHandling.registerSubsystem(EPSSubsystem);
@@ -140,9 +157,8 @@ void setup()
 void loop()
 {
   Timer.waitUntilNextCycle();
-  const word bufferLength = 256;
-  byte buffer[bufferLength];
-  ESATCCSDSPacket packet(buffer, bufferLength);
+  byte buffer[PACKET_DATA_BUFFER_LENGTH];
+  ESATCCSDSPacket packet(buffer, PACKET_DATA_BUFFER_LENGTH);
   while (OnBoardDataHandling.readTelecommand(packet))
   {
     OnBoardDataHandling.dispatchTelecommand(packet);

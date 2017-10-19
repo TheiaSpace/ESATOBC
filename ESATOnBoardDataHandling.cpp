@@ -62,9 +62,15 @@ void ESATOnBoardDataHandling::dispatchTelecommand(ESATCCSDSPacket& packet)
   }
 }
 
-void ESATOnBoardDataHandling::enableUSBTelecommands()
+void ESATOnBoardDataHandling::enableUSBTelecommands(byte buffer[],
+                                                    const unsigned long bufferLength)
 {
   usbTelecommandsEnabled = true;
+  usbTelecommandBuffer = buffer;
+  usbTelecommandBufferLength = bufferLength;
+  usbTelecommandDecoder = ESATKISSStream(USB,
+                                         usbTelecommandBuffer,
+                                         usbTelecommandBufferLength);
 }
 
 void ESATOnBoardDataHandling::enableUSBTelemetry()
@@ -95,15 +101,12 @@ boolean ESATOnBoardDataHandling::readTelecommand(ESATCCSDSPacket& packet)
 
 boolean ESATOnBoardDataHandling::readTelecommandFromUSB(ESATCCSDSPacket& packet)
 {
-  if (USB.available() < 1)
+  const boolean gotFrame = usbTelecommandDecoder.receiveFrame();
+  if (!gotFrame)
   {
     return false;
   }
-  const unsigned long bufferLength =
-    packet.PRIMARY_HEADER_LENGTH + packet.packetDataBufferLength;
-  byte buffer[bufferLength];
-  ESATKISSStream input(USB, buffer, bufferLength);
-  const boolean gotPacket = packet.readFrom(input);
+  const boolean gotPacket = packet.readFrom(usbTelecommandDecoder);
   if (!gotPacket)
   {
     return false;
@@ -167,10 +170,14 @@ void ESATOnBoardDataHandling::writeTelemetry(ESATCCSDSPacket& packet)
 
 void ESATOnBoardDataHandling::writeTelemetryToUSB(ESATCCSDSPacket& packet)
 {
-  ESATKISSStream output(USB, nullptr, 0);
-  (void) output.beginFrame();
-  (void) packet.writeTo(output);
-  (void) output.endFrame();
+  const unsigned long encoderBufferLength =
+    ESATKISSStream::frameLength(packet.PRIMARY_HEADER_LENGTH
+                                + packet.readPacketDataLength());
+  byte encoderBuffer[encoderBufferLength];
+  ESATKISSStream encoder(USB, encoderBuffer, encoderBufferLength);
+  (void) encoder.beginFrame();
+  (void) packet.writeTo(encoder);
+  (void) encoder.endFrame();
 }
 
 ESATOnBoardDataHandling OnBoardDataHandling;

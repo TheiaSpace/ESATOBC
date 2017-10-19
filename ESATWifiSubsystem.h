@@ -20,6 +20,7 @@
 #define ESATCOMMSSubsystem_h
 
 #include <Arduino.h>
+#include <ESATKISSStream.h>
 #include "ESATSubsystem.h"
 
 // Interface to the Wifi subsystem from the point of view of the
@@ -50,6 +51,9 @@ class ESATWifiSubsystem: public ESATSubsystem
     // otherwise return false.
     boolean readTelemetry(ESATCCSDSPacket& packet);
 
+    // Specify a buffer to accumulate the incomming telecommands.
+    void setTelecommandBuffer(byte buffer[], unsigned long bufferLength);
+
     // Return true if there is new telemetry available;
     // Otherwise return false.
     boolean telemetryAvailable();
@@ -72,6 +76,9 @@ class ESATWifiSubsystem: public ESATSubsystem
     // Command code sent for connecting to the wireless network and
     // ground segment server.
     static const byte CONNECT = 0x00;
+
+    // Decode KISS frames with telecommands with this stream.
+    ESATKISSStream telecommandDecoder;
 };
 
 // Global instance of ESATWifiSubsystem.  Register WifiSubsystem on the
