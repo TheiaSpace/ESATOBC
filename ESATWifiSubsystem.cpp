@@ -21,6 +21,7 @@
 
 void ESATWifiSubsystem::begin()
 {
+  pinMode(NOT_CONNECTED_SIGNAL_PIN, INPUT_PULLUP);
   const byte packetDataBufferLength = ESATCCSDSSecondaryHeader::LENGTH;
   byte packetData[packetDataBufferLength];
   ESATCCSDSPacket packet(packetData, packetDataBufferLength);
@@ -67,6 +68,18 @@ void ESATWifiSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
   (void) encoder.endFrame();
 }
 
+boolean ESATWifiSubsystem::isConnected()
+{
+  if (digitalRead(NOT_CONNECTED_SIGNAL_PIN) == HIGH)
+  {
+    return false;
+  }
+  else
+  {
+    return true;
+  }
+}
+
 boolean ESATWifiSubsystem::readTelecommand(ESATCCSDSPacket& packet)
 {
   const boolean gotFrame = telecommandDecoder.receiveFrame();
@@ -108,6 +121,10 @@ void ESATWifiSubsystem::update()
 
 void ESATWifiSubsystem::writeTelemetry(ESATCCSDSPacket& packet)
 {
+  if (!isConnected())
+  {
+    return;
+  }
   const unsigned long encoderBufferLength =
     ESATKISSStream::frameLength(packet.PRIMARY_HEADER_LENGTH
                                 + packet.readPacketDataLength());
