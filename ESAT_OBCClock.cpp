@@ -16,11 +16,11 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESATOBCClock.h"
-#include <ESATUtil.h>
+#include "ESAT_OBCClock.h"
+#include <ESAT_Util.h>
 #include <Wire.h>
 
-ESATTimestamp ESATOBCClock::read()
+ESAT_Timestamp ESAT_OBCClockClass::read()
 {
   Wire.beginTransmission(ADDRESS);
   Wire.write(TIME_REGISTER);
@@ -28,14 +28,14 @@ ESATTimestamp ESATOBCClock::read()
   if (errorCode != 0)
   {
     error = true;
-    return ESATTimestamp();
+    return ESAT_Timestamp();
   }
   const byte bytesToRead = 7;
   const byte bytesRead = Wire.requestFrom(ADDRESS, bytesToRead);
   if (bytesRead != bytesToRead)
   {
     error = true;
-    return ESATTimestamp();
+    return ESAT_Timestamp();
   }
   const byte seconds = Wire.read();
   const byte minutes = Wire.read();
@@ -44,26 +44,26 @@ ESATTimestamp ESATOBCClock::read()
   const byte day = Wire.read();
   const byte month = Wire.read();
   const byte year = Wire.read();
-  return ESATTimestamp(2000 + Util.decodeBinaryCodedDecimalByte(year),
-                       Util.decodeBinaryCodedDecimalByte(month),
-                       Util.decodeBinaryCodedDecimalByte(day),
-                       Util.decodeBinaryCodedDecimalByte(hours),
-                       Util.decodeBinaryCodedDecimalByte(minutes),
-                       Util.decodeBinaryCodedDecimalByte(seconds & 0x7F));
+  return ESAT_Timestamp(2000 + ESAT_Util.decodeBinaryCodedDecimalByte(year),
+                        ESAT_Util.decodeBinaryCodedDecimalByte(month),
+                        ESAT_Util.decodeBinaryCodedDecimalByte(day),
+                        ESAT_Util.decodeBinaryCodedDecimalByte(hours),
+                        ESAT_Util.decodeBinaryCodedDecimalByte(minutes),
+                        ESAT_Util.decodeBinaryCodedDecimalByte(seconds & 0x7F));
 }
 
-void ESATOBCClock::write(ESATTimestamp timestamp)
+void ESAT_OBCClockClass::write(ESAT_Timestamp timestamp)
 {
   Wire.beginTransmission(ADDRESS);
   Wire.write(TIME_REGISTER);
-  Wire.write(Util.encodeBinaryCodedDecimalByte(timestamp.seconds));
-  Wire.write(Util.encodeBinaryCodedDecimalByte(timestamp.minutes));
-  Wire.write(Util.encodeBinaryCodedDecimalByte(timestamp.hours));
+  Wire.write(ESAT_Util.encodeBinaryCodedDecimalByte(timestamp.seconds));
+  Wire.write(ESAT_Util.encodeBinaryCodedDecimalByte(timestamp.minutes));
+  Wire.write(ESAT_Util.encodeBinaryCodedDecimalByte(timestamp.hours));
   // Day of the week not used.
-  Wire.write(Util.encodeBinaryCodedDecimalByte(2));
-  Wire.write(Util.encodeBinaryCodedDecimalByte(timestamp.day));
-  Wire.write(Util.encodeBinaryCodedDecimalByte(timestamp.month));
-  Wire.write(Util.encodeBinaryCodedDecimalByte(timestamp.year % 100));
+  Wire.write(ESAT_Util.encodeBinaryCodedDecimalByte(2));
+  Wire.write(ESAT_Util.encodeBinaryCodedDecimalByte(timestamp.day));
+  Wire.write(ESAT_Util.encodeBinaryCodedDecimalByte(timestamp.month));
+  Wire.write(ESAT_Util.encodeBinaryCodedDecimalByte(timestamp.year % 100));
   Wire.write(0);
   const byte errorCode = Wire.endTransmission();
   if (errorCode != 0)
@@ -72,4 +72,4 @@ void ESATOBCClock::write(ESATTimestamp timestamp)
   }
 }
 
-ESATOBCClock OBCClock;
+ESAT_OBCClockClass ESAT_OBCClock;

@@ -16,15 +16,17 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESATTelemetryStorage_h
-#define ESATTelemetryStorage_h
+#ifndef ESAT_TelemetryStorage_h
+#define ESAT_TelemetryStorage_h
 
 #include <Arduino.h>
 #include <SD.h>
-#include "ESATTimestamp.h"
-#include <ESATCCSDSPacket.h>
+#include <ESAT_CCSDSPacket.h>
+#include <ESAT_Timestamp.h>
 
-class ESATTelemetryStorage
+// Telemetry storage library.
+// Use the global instance ESAT_TelemetryStorage.
+class ESAT_TelemetryStorageClass
 {
   public:
     // True on input/output error.  Must be reset manually.
@@ -34,8 +36,8 @@ class ESATTelemetryStorage
     // - telemetry generated at begin or after begin;
     // - telemetry generated at end or before end.
     // Set the error flag on input/output error.
-    void beginReading(ESATTimestamp begin,
-                      ESATTimestamp end);
+    void beginReading(ESAT_Timestamp begin,
+                      ESAT_Timestamp end);
 
     // End reading the packet store.
     void endReading();
@@ -50,13 +52,13 @@ class ESATTelemetryStorage
     // Return true on success; otherwise return false.
     // Set the error flag on failure.
     // Must be called after beginReading() and before endReading().
-    boolean read(ESATCCSDSPacket& packet);
+    boolean read(ESAT_CCSDSPacket& packet);
 
     // Write a packet to the packet store.
     // Set the error flag on failure.
     // The packet store must not be open for reading, which happens at
     // the first read() call after beginReading().
-    void write(ESATCCSDSPacket& packet);
+    void write(ESAT_CCSDSPacket& packet);
 
   private:
     // Store telemetry in this file.
@@ -64,16 +66,17 @@ class ESATTelemetryStorage
 
     // Read telemetry generated at this timestamp or after this
     // timestamp.
-    ESATTimestamp beginTimestamp;
+    ESAT_Timestamp beginTimestamp;
 
     // Read telemetry generated at this timestamp or before this
     // timestamp.
-    ESATTimestamp endTimestamp;
+    ESAT_Timestamp endTimestamp;
 
     // Store telemetry in this file.
     File file;
 };
 
-extern ESATTelemetryStorage TelemetryStorage;
+// Global instance of the telemetry storage library.
+extern ESAT_TelemetryStorageClass ESAT_TelemetryStorage;
 
-#endif
+#endif /* ESAT_TelemetryStorage_h */

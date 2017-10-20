@@ -16,18 +16,19 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESATEPSSubsystem_h
-#define ESATEPSSubsystem_h
+#ifndef ESAT_EPSSubsystem_h
+#define ESAT_EPSSubsystem_h
 
 #include <Arduino.h>
-#include "ESATSubsystem.h"
+#include "ESAT_Subsystem.h"
 
 // Interface to the EPS (electrical power subsystem) from the point of
 // view of the on-board data handling subsystem.  There is a global
-// instance: EPSSubsystem.  This should be the only instance of
-// ESATEPSSubsystem.  Register the EPS subsystem on the on-board data
-// handling with OnBoardDataHandling.registerSubsystem(EPSSubsystem).
-class ESATEPSSubsystem: public ESATSubsystem
+// instance: EPS_Subsystem.  This should be the only instance of
+// ESAT_EPSSubsystemClass.  Register the EPS subsystem on the on-board
+// data handling with
+// ESAT_OnBoardDataHandling.registerSubsystem(ESAT_EPSSubsystem).
+class ESAT_EPSSubsystemClass: public ESAT_Subsystem
 {
   public:
     // Start this subsystem.
@@ -37,17 +38,17 @@ class ESATEPSSubsystem: public ESATSubsystem
     word getApplicationProcessIdentifier();
 
     // Handle a telecommand.
-    void handleTelecommand(ESATCCSDSPacket& telecommand);
+    void handleTelecommand(ESAT_CCSDSPacket& telecommand);
 
     // Fill a packet with the next telecommand packet available.
     // Return true if the operation was successful;
     // otherwise return false.
-    boolean readTelecommand(ESATCCSDSPacket& packet);
+    boolean readTelecommand(ESAT_CCSDSPacket& packet);
 
     // Fill a packet with the next telemetry packet available.
     // Return true if the operation was successful;
     // otherwise return false.
-    boolean readTelemetry(ESATCCSDSPacket& telemetry);
+    boolean readTelemetry(ESAT_CCSDSPacket& telemetry);
 
     // Return true if a new telemetry packet is available.
     boolean telemetryAvailable();
@@ -56,7 +57,7 @@ class ESATEPSSubsystem: public ESATSubsystem
     void update();
 
    // Send a telemetry packet to this subsystem.
-    void writeTelemetry(ESATCCSDSPacket& packet);
+    void writeTelemetry(ESAT_CCSDSPacket& packet);
 
   private:
     // Identifier numbers of the telemetry packets.
@@ -98,9 +99,9 @@ class ESATEPSSubsystem: public ESATSubsystem
     static const byte SET_CURRENT_TIME = 0x00;
 };
 
-// Global instance of ESATEPSSubsystem.  Register EPSSubsystem on the
-// on-board data handling module with
-// OnBoardDataHandling.registerSubsystem(EPSSubsystem).
-extern ESATEPSSubsystem EPSSubsystem;
+// Global instance of ESAT_EPSSubsystemClass.  Register
+// ESAT_EPSSubsystem on the on-board data handling module with
+// ESAT_OnBoardDataHandling.registerSubsystem(ESAT_EPSSubsystem).
+extern ESAT_EPSSubsystemClass ESAT_EPSSubsystem;
 
-#endif
+#endif /* ESAT_EPSSubsystem_h */
