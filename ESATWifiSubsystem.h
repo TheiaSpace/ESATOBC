@@ -77,8 +77,17 @@ class ESATWifiSubsystem: public ESATSubsystem
     // ground segment server.
     static const byte CONNECT = 0x00;
 
+    // This line is pulled up when the Wifi board is not connected
+    // to the server and it is pulled down when the Wifi board is
+    // connected to the server.
+    static const byte NOT_CONNECTED_SIGNAL_PIN = ESP0;
+
     // Decode KISS frames with telecommands with this stream.
     ESATKISSStream telecommandDecoder;
+
+    // Return true if the Wifi board is connected to the server;
+    // otherwise return false.
+    boolean isConnected();
 };
 
 // Global instance of ESATWifiSubsystem.  Register WifiSubsystem on the
