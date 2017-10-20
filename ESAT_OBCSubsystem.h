@@ -16,18 +16,19 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESATOBCSubsystem_h
-#define ESATOBCSubsystem_h
+#ifndef ESAT_OBCSubsystem_h
+#define ESAT_OBCSubsystem_h
 
 #include <Arduino.h>
-#include "ESATSubsystem.h"
+#include "ESAT_Subsystem.h"
 
 // Interface to the OBC (on-board computer subsystem) from the point
 // of view of the on-board data handling subsystem.  There is a global
-// instance: OBCSubsystem.  This should be the only instance of
-// ESATOBCSubsystem.  Register the OBC subsystem on the on-board data
-// handling with OnBoardDataHandling.registerSubsystem(OBCSubsystem).
-class ESATOBCSubsystem: public ESATSubsystem
+// instance: ESAT_OBCSubsystem.  This should be the only instance of
+// ESAT_OBCSubsystemClass.  Register the OBC subsystem on the on-board
+// data handling with
+// ESAT_OnBoardDataHandling.registerSubsystem(ESAT_OBCSubsystem).
+class ESAT_OBCSubsystemClass: public ESAT_Subsystem
 {
   public:
     // True when commanded to store telemetry.  False when commanded
@@ -41,17 +42,17 @@ class ESATOBCSubsystem: public ESATSubsystem
     word getApplicationProcessIdentifier();
 
     // Handle a telecommand.
-    void handleTelecommand(ESATCCSDSPacket& packet);
+    void handleTelecommand(ESAT_CCSDSPacket& packet);
 
     // Fill a packet with the next telecommand packet available.
     // Return true if the operation was successful;
     // otherwise return false.
-    boolean readTelecommand(ESATCCSDSPacket& packet);
+    boolean readTelecommand(ESAT_CCSDSPacket& packet);
 
     // Fill a packet with the next telemetry packet available.
     // Return true if the operation was successful;
     // otherwise return false.
-    boolean readTelemetry(ESATCCSDSPacket& packet);
+    boolean readTelemetry(ESAT_CCSDSPacket& packet);
 
     // Return true if there is new telemetry available;
     // Otherwise return false.
@@ -61,7 +62,7 @@ class ESATOBCSubsystem: public ESATSubsystem
     virtual void update();
 
    // Send a telemetry packet to this subsystem.
-    void writeTelemetry(ESATCCSDSPacket& packet);
+    void writeTelemetry(ESAT_CCSDSPacket& packet);
 
   private:
     // Command codes.
@@ -113,26 +114,26 @@ class ESATOBCSubsystem: public ESATSubsystem
     word telemetryPacketSequenceCount;
 
     // Command handlers.
-    void handleSetTimeCommand(ESATCCSDSPacket& packet);
-    void handleSetModeCommand(ESATCCSDSPacket& packet);
-    void handleStoreTelemetry(ESATCCSDSPacket& packet);
-    void handleDownloadTelemetry(ESATCCSDSPacket& packet);
-    void handleEraseStoredTelemetry(ESATCCSDSPacket& packet);
+    void handleSetTimeCommand(ESAT_CCSDSPacket& packet);
+    void handleSetModeCommand(ESAT_CCSDSPacket& packet);
+    void handleStoreTelemetry(ESAT_CCSDSPacket& packet);
+    void handleDownloadTelemetry(ESAT_CCSDSPacket& packet);
+    void handleEraseStoredTelemetry(ESAT_CCSDSPacket& packet);
 
     // Fill a new housekeeping telemetry packet.  Return true on
     // success; otherwise return false.
     // Set newHousekeepingTelemetryPacket to false.
-    boolean readHousekeepingTelemetry(ESATCCSDSPacket& packet);
+    boolean readHousekeepingTelemetry(ESAT_CCSDSPacket& packet);
 
     // Read the next stored telemetry packet and fill the given packet buffer.
     // Return true on success; otherwise return false.
     // Set downloadTelemetry to false on unsuccessful read.
-    boolean readStoredTelemetry(ESATCCSDSPacket& packet);
+    boolean readStoredTelemetry(ESAT_CCSDSPacket& packet);
 };
 
-// Global instance of ESATOBCSubsystem.  Register OBCSubsystem on the
-// on-board data handling module with
-// OnBoardDataHandling.registerSubsystem(OBCSubsystem).
-extern ESATOBCSubsystem OBCSubsystem;
+// Global instance of ESAT_OBCSubsystem.  Register the OBC subsystem
+// on the on-board data handling module with
+// ESAT_OnBoardDataHandling.registerSubsystem(ESAT_OBCSubsystem).
+extern ESAT_OBCSubsystemClass ESAT_OBCSubsystem;
 
-#endif
+#endif /* ESAT_OBCSubsystem_h */

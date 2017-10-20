@@ -16,20 +16,20 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESATCOMMSSubsystem_h
-#define ESATCOMMSSubsystem_h
+#ifndef ESAT_WifiSubsystem_h
+#define ESAT_WifiSubsystem_h
 
 #include <Arduino.h>
-#include <ESATKISSStream.h>
-#include "ESATSubsystem.h"
+#include <ESAT_KISSStream.h>
+#include "ESAT_Subsystem.h"
 
 // Interface to the Wifi subsystem from the point of view of the
 // on-board data handling subsystem.  There is a global instance:
-// WifiSubsystem.  This should be the only instance of
-// ESATWifiSubsystem.  Register the Wifi subsystem on the on-board
+// ESAT_WifiSubsystem.  This should be the only instance of
+// ESAT_WifiSubsystemClass.  Register the Wifi subsystem on the on-board
 // data handling with
-// OnBoardDataHandling.registerSubsystem(WifiSubsystem).
-class ESATWifiSubsystem: public ESATSubsystem
+// ESAT_OnBoardDataHandling.registerSubsystem(ESAT_WifiSubsystem).
+class ESAT_WifiSubsystemClass: public ESAT_Subsystem
 {
   public:
     // Start the communications subsystem.
@@ -39,17 +39,17 @@ class ESATWifiSubsystem: public ESATSubsystem
     word getApplicationProcessIdentifier();
 
     // Handle a telecommand.
-    void handleTelecommand(ESATCCSDSPacket& packet);
+    void handleTelecommand(ESAT_CCSDSPacket& packet);
 
     // Fill a packet with the next available telecommand.
     // Return true if there was a pending telecommand;
     // otherwise return false.
-    boolean readTelecommand(ESATCCSDSPacket& packet);
+    boolean readTelecommand(ESAT_CCSDSPacket& packet);
 
     // Fill a packet with the next telemetry packet available.
     // Return true if the operation was successful;
     // otherwise return false.
-    boolean readTelemetry(ESATCCSDSPacket& packet);
+    boolean readTelemetry(ESAT_CCSDSPacket& packet);
 
     // Specify a buffer to accumulate the incomming telecommands.
     void setTelecommandBuffer(byte buffer[], unsigned long bufferLength);
@@ -62,7 +62,7 @@ class ESATWifiSubsystem: public ESATSubsystem
     void update();
 
    // Send a telemetry packet to this subsystem.
-    void writeTelemetry(ESATCCSDSPacket& packet);
+    void writeTelemetry(ESAT_CCSDSPacket& packet);
 
   private:
     // Unique identifier of the subsystem.
@@ -83,16 +83,16 @@ class ESATWifiSubsystem: public ESATSubsystem
     static const byte NOT_CONNECTED_SIGNAL_PIN = ESP0;
 
     // Decode KISS frames with telecommands with this stream.
-    ESATKISSStream telecommandDecoder;
+    ESAT_KISSStream telecommandDecoder;
 
     // Return true if the Wifi board is connected to the server;
     // otherwise return false.
     boolean isConnected();
 };
 
-// Global instance of ESATWifiSubsystem.  Register WifiSubsystem on the
-// on-board data handling module with
-// OnBoardDataHandling.registerSubsystem(WifiSubsystem).
-extern ESATWifiSubsystem WifiSubsystem;
+// Global instance of ESAT_WifiSubsystemClass.  Register WifiSubsystem
+// on the on-board data handling module with
+// ESAT_OnBoardDataHandling.registerSubsystem(ESAT_WifiSubsystem).
+extern ESAT_WifiSubsystemClass ESAT_WifiSubsystem;
 
-#endif
+#endif /* ESAT_WifiSubsystem_h */

@@ -16,39 +16,39 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESATEPSSubsystem.h"
-#include "ESATOBCClock.h"
-#include <ESATI2CMaster.h>
+#include "ESAT_EPSSubsystem.h"
+#include "ESAT_OBCClock.h"
+#include <ESAT_I2CMaster.h>
 #include <Wire.h>
 #include <USBSerial.h>
 
-void ESATEPSSubsystem::begin()
+void ESAT_EPSSubsystemClass::begin()
 {
   newTelemetryPacket = false;
   setTime();
 }
 
-word ESATEPSSubsystem::getApplicationProcessIdentifier()
+word ESAT_EPSSubsystemClass::getApplicationProcessIdentifier()
 {
   return APPLICATION_PROCESS_IDENTIFIER;
 }
 
-void ESATEPSSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
+void ESAT_EPSSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& packet)
 {
-  (void) I2CMaster.writeTelecommand(Wire,
-                                    ADDRESS,
-                                    packet,
-                                    MILLISECONDS_AFTER_WRITES,
-                                    TRIES,
-                                    MILLISECONDS_BETWEEN_RETRIES);
+  (void) ESAT_I2CMaster.writeTelecommand(Wire,
+                                         ADDRESS,
+                                         packet,
+                                         MILLISECONDS_AFTER_WRITES,
+                                         TRIES,
+                                         MILLISECONDS_BETWEEN_RETRIES);
 }
 
-boolean ESATEPSSubsystem::readTelecommand(ESATCCSDSPacket& packet)
+boolean ESAT_EPSSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
 {
   return false;
 }
 
-boolean ESATEPSSubsystem::readTelemetry(ESATCCSDSPacket& packet)
+boolean ESAT_EPSSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
 {
   if (!newTelemetryPacket)
   {
@@ -56,32 +56,32 @@ boolean ESATEPSSubsystem::readTelemetry(ESATCCSDSPacket& packet)
   }
   newTelemetryPacket = false;
   const boolean gotTelemetry =
-    I2CMaster.readTelemetry(Wire,
-                            ADDRESS,
-                            HOUSEKEEPING,
-                            packet,
-                            MILLISECONDS_AFTER_WRITES,
-                            TRIES,
-                            MILLISECONDS_BETWEEN_RETRIES);
+    ESAT_I2CMaster.readTelemetry(Wire,
+                                 ADDRESS,
+                                 HOUSEKEEPING,
+                                 packet,
+                                 MILLISECONDS_AFTER_WRITES,
+                                 TRIES,
+                                 MILLISECONDS_BETWEEN_RETRIES);
   return gotTelemetry;
 }
 
-void ESATEPSSubsystem::setTime()
+void ESAT_EPSSubsystemClass::setTime()
 {
   const byte packetDataBufferLength =
-    ESATCCSDSSecondaryHeader::LENGTH + 7;
+    ESAT_CCSDSSecondaryHeader::LENGTH + 7;
   byte packetDataBuffer[packetDataBufferLength];
-  ESATCCSDSPacket packet(packetDataBuffer, packetDataBufferLength);
+  ESAT_CCSDSPacket packet(packetDataBuffer, packetDataBufferLength);
   packet.writePacketVersionNumber(0);
   packet.writePacketType(packet.TELECOMMAND);
   packet.writeSecondaryHeaderFlag(packet.SECONDARY_HEADER_IS_PRESENT);
   packet.writeApplicationProcessIdentifier(APPLICATION_PROCESS_IDENTIFIER);
   packet.writeSequenceFlags(packet.UNSEGMENTED_USER_DATA);
   packet.writePacketSequenceCount(0);
-  ESATCCSDSSecondaryHeader secondaryHeader;
+  ESAT_CCSDSSecondaryHeader secondaryHeader;
   secondaryHeader.preamble =
     secondaryHeader.CALENDAR_SEGMENTED_TIME_CODE_MONTH_DAY_VARIANT_1_SECOND_RESOLUTION;
-  secondaryHeader.timestamp = OBCClock.read();
+  secondaryHeader.timestamp = ESAT_OBCClock.read();
   secondaryHeader.majorVersionNumber = MAJOR_VERSION_NUMBER;
   secondaryHeader.minorVersionNumber = MINOR_VERSION_NUMBER;
   secondaryHeader.patchVersionNumber = PATCH_VERSION_NUMBER;
@@ -89,26 +89,26 @@ void ESATEPSSubsystem::setTime()
   packet.writeSecondaryHeader(secondaryHeader);
   packet.writeTimestamp(secondaryHeader.timestamp);
   packet.updatePacketDataLength();
-  (void) I2CMaster.writeTelecommand(Wire,
-                                    ADDRESS,
-                                    packet,
-                                    MILLISECONDS_AFTER_WRITES,
-                                    TRIES,
-                                    MILLISECONDS_BETWEEN_RETRIES);
+  (void) ESAT_I2CMaster.writeTelecommand(Wire,
+                                         ADDRESS,
+                                         packet,
+                                         MILLISECONDS_AFTER_WRITES,
+                                         TRIES,
+                                         MILLISECONDS_BETWEEN_RETRIES);
 }
 
-boolean ESATEPSSubsystem::telemetryAvailable()
+boolean ESAT_EPSSubsystemClass::telemetryAvailable()
 {
   return newTelemetryPacket;
 }
 
-void ESATEPSSubsystem::update()
+void ESAT_EPSSubsystemClass::update()
 {
   newTelemetryPacket = true;
 }
 
-void ESATEPSSubsystem::writeTelemetry(ESATCCSDSPacket& packet)
+void ESAT_EPSSubsystemClass::writeTelemetry(ESAT_CCSDSPacket& packet)
 {
 }
 
-ESATEPSSubsystem EPSSubsystem;
+ESAT_EPSSubsystemClass ESAT_EPSSubsystem;

@@ -16,17 +16,18 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESATClock_h
-#define ESATClock_h
+#ifndef ESAT_Clock_h
+#define ESAT_Clock_h
 
 #include <Arduino.h>
-#include "ESATTimestamp.h"
+#include <ESAT_Timestamp.h>
 
 // Real-time clock.
 // The underlying hardware is the DS1338 serial real-time clock
-// mounted on the ESATOBC board.
+// mounted on the ESAT OBC board.
 // Communications are done through the OBC I2C bus.
-class ESATOBCClock
+// Use the global instance ESAT_OBCClock.
+class ESAT_OBCClockClass
 {
   public:
     // True on communication error.  Must be reset manually.
@@ -35,12 +36,12 @@ class ESATOBCClock
     // Read the current time.
     // Return the date and time in ISO 8601 format.
     // Set the error flag on error.
-    ESATTimestamp read();
+    ESAT_Timestamp read();
 
     // Set the current time.
     // Pass the date and time in ISO 8601 format.
     // Set the error flag on error.
-    void write(ESATTimestamp time);
+    void write(ESAT_Timestamp time);
 
   private:
     static const byte ADDRESS = 0x68;
@@ -53,6 +54,7 @@ class ESATOBCClock
     byte binaryToBCD(byte value);
 };
 
-extern ESATOBCClock OBCClock;
+// Global instance of the OBC clock library.
+extern ESAT_OBCClockClass ESAT_OBCClock;
 
-#endif
+#endif /* ESAT_OBCClock_h */

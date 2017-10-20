@@ -16,15 +16,15 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESATSubsystem_h
-#define ESATSubsystem_h
+#ifndef ESAT_Subsystem_h
+#define ESAT_Subsystem_h
 
 #include <Arduino.h>
-#include <ESATCCSDSPacket.h>
+#include <ESAT_CCSDSPacket.h>
 
 // Common subsystem interface from the point of view of the on-board
 // data handling function.
-// OnBoardDataHandling operates on the subsystems:
+// ESAT_OnBoardDataHandling operates on the subsystems:
 // - just once during the setup stage, it calls begin() on all the
 //   subsystems.
 // - then, on a loop, it performs several actions:
@@ -35,51 +35,51 @@
 //   * then, it calls availableTelemetry() on each subsystem and,
 //     while there is telemetry available, it calls readTelemetry();
 //   * finally, it calls writeTelemetry() on all the subsystems.
-class ESATSubsystem
+class ESAT_Subsystem
 {
   public:
-    virtual ~ESATSubsystem() {};
+    virtual ~ESAT_Subsystem() {};
 
     // Start the subsystem.
-    // Called from OnBoardDataHandling.beginSubsystems().
+    // Called from ESAT_OnBoardDataHandling.beginSubsystems().
     virtual void begin() = 0;
 
     // Return the application process identifier of this subsystem.
     // Each subsystem must have a unique 11-bit application process
     // identifier.
-    // OnBoardDataHandling uses this to identify the subsystem.
+    // ESAT_OnBoardDataHandling uses this to identify the subsystem.
     virtual word getApplicationProcessIdentifier() = 0;
 
     // Handle a telecommand.
     // OnBoardDataHandling.dispatchTelecommand() forwards telecommands
-    // to their respective ESATSubsystem modules, identified by the
+    // to their respective ESAT_Subsystem modules, identified by the
     // value returned by getApplicationProcessIdentifier().
-    virtual void handleTelecommand(ESATCCSDSPacket& telecommand) = 0;
+    virtual void handleTelecommand(ESAT_CCSDSPacket& telecommand) = 0;
 
     // Fill a packet with the next telecommand packet available.
     // Return true if the operation was successful;
     // otherwise return false.
-    // Called from OnBoardDataHandling.readTelecommand().
-    virtual boolean readTelecommand(ESATCCSDSPacket& packet) = 0;
+    // Called from ESAT_OnBoardDataHandling.readTelecommand().
+    virtual boolean readTelecommand(ESAT_CCSDSPacket& packet) = 0;
 
     // Fill a packet with the next telemetry packet available.
     // Return true if the operation was successful;
     // otherwise return false.
-    // Called from OnBoardDataHandling.readSubsystemsTelemetry().
-    virtual boolean readTelemetry(ESATCCSDSPacket& packet) = 0;
+    // Called from ESAT_OnBoardDataHandling.readSubsystemsTelemetry().
+    virtual boolean readTelemetry(ESAT_CCSDSPacket& packet) = 0;
 
     // Return true if there is new telemetry available;
     // Otherwise return false.
-    // Called from OnBoardDataHandling.readSubsystemsTelemetry().
+    // Called from ESAT_OnBoardDataHandling.readSubsystemsTelemetry().
     virtual boolean telemetryAvailable() = 0;
 
     // Update the subsystem.
-    // Called from OnBoardDataHandling.updateSubsystems().
+    // Called from ESAT_OnBoardDataHandling.updateSubsystems().
     virtual void update() = 0;
 
     // Send a telemetry packet to this subsystem.
-    // Called from OnBoardDataHandling.writeTelemetry().
-    virtual void writeTelemetry(ESATCCSDSPacket& packet) = 0;
+    // Called from ESAT_OnBoardDataHandling.writeTelemetry().
+    virtual void writeTelemetry(ESAT_CCSDSPacket& packet) = 0;
 };
 
-#endif
+#endif /* ESAT_Subsystem_h */

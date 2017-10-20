@@ -16,19 +16,19 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESATADCSSubsystem_h
-#define ESATADCSSubsystem_h
+#ifndef ESAT_ADCSSubsystem_h
+#define ESAT_ADCSSubsystem_h
 
 #include <Arduino.h>
-#include "ESATSubsystem.h"
+#include "ESAT_Subsystem.h"
 
 // Interface to the ADCS (attitude determination and control
 // subsystem) from the point of view of the on-board data handling
-// subsystem.  There is a global instance: ADCSSubsystem.  This should
-// be the only instance of ESATADCSSubsystem.  Register the EPS
-// subsystem on the on-board data handling with
-// OnBoardDataHandling.registerSubsystem(ADCSSubsystem).
-class ESATADCSSubsystem: public ESATSubsystem
+// subsystem.  There is a global instance: ESAT_ADCSSubsystem.  This
+// should be the only instance of ESAT_ADCSSubsystemClass.  Register
+// the EPS subsystem on the on-board data handling with
+// ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ADCSSubsystem).
+class ESAT_ADCSSubsystemClass: public ESAT_Subsystem
 {
   public:
     // Start this subsystem.
@@ -38,17 +38,17 @@ class ESATADCSSubsystem: public ESATSubsystem
     word getApplicationProcessIdentifier();
 
     // Handle a telecommand.
-    void handleTelecommand(ESATCCSDSPacket& packet);
+    void handleTelecommand(ESAT_CCSDSPacket& packet);
 
     // Fill a packet with the next telecommand packet available.
     // Return true if the operation was successful;
     // otherwise return false.
-    boolean readTelecommand(ESATCCSDSPacket& packet);
+    boolean readTelecommand(ESAT_CCSDSPacket& packet);
 
     // Fill a packet with the next telemetry packet available.
     // Return true if the operation was successful;
     // otherwise return false.
-    boolean readTelemetry(ESATCCSDSPacket& packet);
+    boolean readTelemetry(ESAT_CCSDSPacket& packet);
 
     // Return true if there is new telemetry available;
     // Otherwise return false.
@@ -58,12 +58,12 @@ class ESATADCSSubsystem: public ESATSubsystem
     void update();
 
    // Send a telemetry packet to this subsystem.
-    void writeTelemetry(ESATCCSDSPacket& packet);
+    void writeTelemetry(ESAT_CCSDSPacket& packet);
 };
 
-// Global instance of ESATADCSSubsystem.  Register ADCSSubsystem on
-// the on-board data handling module with
-// OnBoardDataHandling.registerSubsystem(ADCSSubsystem).
-extern ESATADCSSubsystem ADCSSubsystem;
+// Global instance of ESAT_ADCSSubsystemClass.  Register
+// ESAT_ADCSSubsystem on the on-board data handling module with
+// ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ADCSSubsystem).
+extern ESAT_ADCSSubsystemClass ESAT_ADCSSubsystem;
 
-#endif
+#endif /* ESAT_ADCSSubsystem_h */

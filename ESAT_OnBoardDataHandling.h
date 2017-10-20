@@ -16,15 +16,29 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESATOnBoardDataHandling_h
-#define ESATOnBoardDataHandling_h
+#ifndef ESAT_OnBoardDataHandling_h
+#define ESAT_OnBoardDataHandling_h
 
 #include <Arduino.h>
-#include <ESATCCSDSPacket.h>
-#include <ESATKISSStream.h>
-#include "ESATSubsystem.h"
+#include <ESAT_CCSDSPacket.h>
+#include <ESAT_KISSStream.h>
+#include "ESAT_Subsystem.h"
 
-class ESATOnBoardDataHandling
+// On-board data handling library.
+// ESAT_OnBoardDataHandling operates on the subsystems (which
+// implement the ESAT_Subsystem interface):
+// - just once during the setup stage, it calls begin() on all the
+//   subsystems.
+// - then, on a loop, it performs several actions:
+//   * first, it calls readTelecommand() on all the subsystems;
+//   * for each telecommand read, it calls handleTelecommand() on the
+//     telecommand target subsystem.
+//   * after that, it calls update() on all the subsystems;
+//   * then, it calls availableTelemetry() on each subsystem and,
+//     while there is telemetry available, it calls readTelemetry();
+//   * finally, it calls writeTelemetry() on all the subsystems.
+// Use the global instance ESAT_OnBoardDataHandling.
+class ESAT_OnBoardDataHandlingClass
 {
   public:
     enum TelemetryType
@@ -33,7 +47,7 @@ class ESATOnBoardDataHandling
       EVENT_TELEMETRY = 2,
     };
 
-    ESATOnBoardDataHandling();
+    ESAT_OnBoardDataHandlingClass();
 
     // Begin the registered subsystems.
     void beginSubsystems();
@@ -45,7 +59,7 @@ class ESATOnBoardDataHandling
     void disableUSBTelemetry();
 
     // Dispatch a command on the registered subsystems.
-    void dispatchTelecommand(ESATCCSDSPacket& packet);
+    void dispatchTelecommand(ESAT_CCSDSPacket& packet);
 
     // Enable reception of telecommands from the USB interface.  Use
     // the buffer for accumulating the partially-received telecommands
@@ -58,16 +72,16 @@ class ESATOnBoardDataHandling
     // Read an incomming telecommand and write it into a packet.
     // Return true if there was a valid telecommand available;
     // otherwise return false.
-    boolean readTelecommand(ESATCCSDSPacket& packet);
+    boolean readTelecommand(ESAT_CCSDSPacket& packet);
 
     // Register a subsystem.
-    void registerSubsystem(ESATSubsystem& subsystem);
+    void registerSubsystem(ESAT_Subsystem& subsystem);
 
     // Read the next available telemetry packet and write it into the
     // provided packet object.
     // Return true if there was a valid telemetry packet available;
     // otherwise return false.
-    boolean readSubsystemsTelemetry(ESATCCSDSPacket& packet);
+    boolean readSubsystemsTelemetry(ESAT_CCSDSPacket& packet);
 
     // Update the registered subsystems.
     void updateSubsystems();
@@ -75,11 +89,11 @@ class ESATOnBoardDataHandling
     // Write a telemetry packet to the subsystems that handle
     // telemetry.  For example, a communications subsystem may
     // transmit the packet to the ground station.
-    void writeTelemetry(ESATCCSDSPacket& packet);
+    void writeTelemetry(ESAT_CCSDSPacket& packet);
 
   private:
     static const byte MAXIMUM_NUMBER_OF_SUBSYSTEMS = 16;
-    ESATSubsystem* subsystems[MAXIMUM_NUMBER_OF_SUBSYSTEMS];
+    ESAT_Subsystem* subsystems[MAXIMUM_NUMBER_OF_SUBSYSTEMS];
     byte numberOfSubsystems;
     byte telecommandIndex;
     byte telemetryIndex;
@@ -91,7 +105,7 @@ class ESATOnBoardDataHandling
     unsigned long usbTelecommandBufferLength;
 
     // Decode USB KISS frames with telecommands with this stream.
-    ESATKISSStream usbTelecommandDecoder;
+    ESAT_KISSStream usbTelecommandDecoder;
 
     // True if the reception of telecommands from the USB interface is
     // enabled; false otherwise.
@@ -102,12 +116,13 @@ class ESATOnBoardDataHandling
     boolean usbTelemetryEnabled;
 
     // Read a telecommand from the USB interface.
-    boolean readTelecommandFromUSB(ESATCCSDSPacket& packet);
+    boolean readTelecommandFromUSB(ESAT_CCSDSPacket& packet);
 
     // Write a telemetry packet to the USB interface.
-    void writeTelemetryToUSB(ESATCCSDSPacket& packet);
+    void writeTelemetryToUSB(ESAT_CCSDSPacket& packet);
 };
 
-extern ESATOnBoardDataHandling OnBoardDataHandling;
+// Global instance of the on-board data handling library.
+extern ESAT_OnBoardDataHandlingClass ESAT_OnBoardDataHandling;
 
-#endif
+#endif /* ESAT_OnBoardDataHandling_h */

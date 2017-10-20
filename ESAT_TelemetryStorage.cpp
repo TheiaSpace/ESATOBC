@@ -16,24 +16,24 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESATTelemetryStorage.h"
-#include <ESATKISSStream.h>
+#include "ESAT_TelemetryStorage.h"
+#include <ESAT_KISSStream.h>
 
-const char ESATTelemetryStorage::TELEMETRY_FILE[] = "telem_db";
+const char ESAT_TelemetryStorageClass::TELEMETRY_FILE[] = "telem_db";
 
-void ESATTelemetryStorage::beginReading(const ESATTimestamp begin,
-                                        const ESATTimestamp end)
+void ESAT_TelemetryStorageClass::beginReading(const ESAT_Timestamp begin,
+                                              const ESAT_Timestamp end)
 {
   beginTimestamp = begin;
   endTimestamp = end;
 }
 
-void ESATTelemetryStorage::endReading()
+void ESAT_TelemetryStorageClass::endReading()
 {
   file.close();
 }
 
-void ESATTelemetryStorage::erase()
+void ESAT_TelemetryStorageClass::erase()
 {
   const boolean correctRemoval = SD.remove((char*) TELEMETRY_FILE);
   if (!correctRemoval)
@@ -42,7 +42,7 @@ void ESATTelemetryStorage::erase()
   }
 }
 
-boolean ESATTelemetryStorage::read(ESATCCSDSPacket& packet)
+boolean ESAT_TelemetryStorageClass::read(ESAT_CCSDSPacket& packet)
 {
   if (!file)
   {
@@ -56,7 +56,7 @@ boolean ESATTelemetryStorage::read(ESATCCSDSPacket& packet)
   const unsigned long bufferLength =
     packet.PRIMARY_HEADER_LENGTH + packet.packetDataBufferLength;
   byte buffer[bufferLength];
-  ESATKISSStream decoder(file, buffer, bufferLength);
+  ESAT_KISSStream decoder(file, buffer, bufferLength);
   while (file.available() > 0)
   {
     const boolean correctRead = packet.readFrom(decoder);
@@ -66,7 +66,7 @@ boolean ESATTelemetryStorage::read(ESATCCSDSPacket& packet)
       return false;
     }
     packet.rewind();
-    const ESATCCSDSSecondaryHeader secondaryHeader =
+    const ESAT_CCSDSSecondaryHeader secondaryHeader =
       packet.readSecondaryHeader();
     packet.rewind();
     if ((beginTimestamp <= secondaryHeader.timestamp)
@@ -78,7 +78,7 @@ boolean ESATTelemetryStorage::read(ESATCCSDSPacket& packet)
   return false;
 }
 
-void ESATTelemetryStorage::write(ESATCCSDSPacket& packet)
+void ESAT_TelemetryStorageClass::write(ESAT_CCSDSPacket& packet)
 {
   if (file)
   {
@@ -91,7 +91,7 @@ void ESATTelemetryStorage::write(ESATCCSDSPacket& packet)
     error = true;
     return;
   }
-  ESATKISSStream encoder(file, nullptr, 0);
+  ESAT_KISSStream encoder(file, nullptr, 0);
   const size_t beginBytesWritten = encoder.beginFrame();
   if (beginBytesWritten < 2)
   {
@@ -114,4 +114,4 @@ void ESATTelemetryStorage::write(ESATCCSDSPacket& packet)
   file.close();
 }
 
-ESATTelemetryStorage TelemetryStorage;
+ESAT_TelemetryStorageClass ESAT_TelemetryStorage;

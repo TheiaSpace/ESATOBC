@@ -16,46 +16,46 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESATADCSSubsystem.h"
-#include <ESATADCS.h>
+#include "ESAT_ADCSSubsystem.h"
+#include <ESAT_ADCS.h>
 
-void ESATADCSSubsystem::begin()
+void ESAT_ADCSSubsystemClass::begin()
 {
-  ADCS.begin();
+  ESAT_ADCS.begin();
 }
 
-word ESATADCSSubsystem::getApplicationProcessIdentifier()
+word ESAT_ADCSSubsystemClass::getApplicationProcessIdentifier()
 {
-  return ADCS.getApplicationProcessIdentifier();
+  return ESAT_ADCS.getApplicationProcessIdentifier();
 }
 
-void ESATADCSSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
+void ESAT_ADCSSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& packet)
 {
-  ADCS.handleTelecommand(packet);
+  ESAT_ADCS.handleTelecommand(packet);
 }
 
-boolean ESATADCSSubsystem::readTelecommand(ESATCCSDSPacket& packet)
+boolean ESAT_ADCSSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
 {
   return false;
 }
 
-boolean ESATADCSSubsystem::readTelemetry(ESATCCSDSPacket& packet)
+boolean ESAT_ADCSSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
 {
-  return ADCS.readTelemetry(packet);
+  return ESAT_ADCS.readTelemetry(packet);
 }
 
-boolean ESATADCSSubsystem::telemetryAvailable()
+boolean ESAT_ADCSSubsystemClass::telemetryAvailable()
 {
-  return ADCS.telemetryAvailable();
+  return ESAT_ADCS.telemetryAvailable();
 }
 
-void ESATADCSSubsystem::update()
+void ESAT_ADCSSubsystemClass::update()
 {
-  ADCS.update();
+  ESAT_ADCS.update();
 }
 
-void ESATADCSSubsystem::writeTelemetry(ESATCCSDSPacket& packet)
+void ESAT_ADCSSubsystemClass::writeTelemetry(ESAT_CCSDSPacket& packet)
 {
 }
 
-ESATADCSSubsystem ADCSSubsystem;
+ESAT_ADCSSubsystemClass ESAT_ADCSSubsystem;

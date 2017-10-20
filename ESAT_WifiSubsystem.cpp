@@ -16,25 +16,25 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESATWifiSubsystem.h"
-#include "ESATOBCClock.h"
+#include "ESAT_WifiSubsystem.h"
+#include "ESAT_OBCClock.h"
 
-void ESATWifiSubsystem::begin()
+void ESAT_WifiSubsystemClass::begin()
 {
   pinMode(NOT_CONNECTED_SIGNAL_PIN, INPUT_PULLUP);
-  const byte packetDataBufferLength = ESATCCSDSSecondaryHeader::LENGTH;
+  const byte packetDataBufferLength = ESAT_CCSDSSecondaryHeader::LENGTH;
   byte packetData[packetDataBufferLength];
-  ESATCCSDSPacket packet(packetData, packetDataBufferLength);
+  ESAT_CCSDSPacket packet(packetData, packetDataBufferLength);
   packet.writePacketVersionNumber(0);
   packet.writePacketType(packet.TELECOMMAND);
   packet.writeSecondaryHeaderFlag(packet.SECONDARY_HEADER_IS_PRESENT);
   packet.writeApplicationProcessIdentifier(APPLICATION_PROCESS_IDENTIFIER);
   packet.writeSequenceFlags(packet.UNSEGMENTED_USER_DATA);
   packet.writePacketSequenceCount(0);
-  ESATCCSDSSecondaryHeader secondaryHeader;
+  ESAT_CCSDSSecondaryHeader secondaryHeader;
   secondaryHeader.preamble =
     secondaryHeader.CALENDAR_SEGMENTED_TIME_CODE_MONTH_DAY_VARIANT_1_SECOND_RESOLUTION;
-  secondaryHeader.timestamp = OBCClock.read();
+  secondaryHeader.timestamp = ESAT_OBCClock.read();
   secondaryHeader.majorVersionNumber = MAJOR_VERSION_NUMBER;
   secondaryHeader.minorVersionNumber = MINOR_VERSION_NUMBER;
   secondaryHeader.patchVersionNumber = PATCH_VERSION_NUMBER;
@@ -42,33 +42,33 @@ void ESATWifiSubsystem::begin()
   packet.writeSecondaryHeader(secondaryHeader);
   packet.updatePacketDataLength();
   const unsigned long encoderBufferLength =
-    ESATKISSStream::frameLength(packet.PRIMARY_HEADER_LENGTH
-                                + packet.readPacketDataLength());
+    ESAT_KISSStream::frameLength(packet.PRIMARY_HEADER_LENGTH
+                                 + packet.readPacketDataLength());
   byte encoderBuffer[encoderBufferLength];
-  ESATKISSStream encoder(Serial, encoderBuffer, encoderBufferLength);
+  ESAT_KISSStream encoder(Serial, encoderBuffer, encoderBufferLength);
   (void) encoder.beginFrame();
   (void) packet.writeTo(encoder);
   (void) encoder.endFrame();
 }
 
-word ESATWifiSubsystem::getApplicationProcessIdentifier()
+word ESAT_WifiSubsystemClass::getApplicationProcessIdentifier()
 {
   return APPLICATION_PROCESS_IDENTIFIER;
 }
 
-void ESATWifiSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
+void ESAT_WifiSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& packet)
 {
   const unsigned long encoderBufferLength =
-    ESATKISSStream::frameLength(packet.PRIMARY_HEADER_LENGTH
-                                + packet.readPacketDataLength());
+    ESAT_KISSStream::frameLength(packet.PRIMARY_HEADER_LENGTH
+                                 + packet.readPacketDataLength());
   byte encoderBuffer[encoderBufferLength];
-  ESATKISSStream encoder(Serial, encoderBuffer, encoderBufferLength);
+  ESAT_KISSStream encoder(Serial, encoderBuffer, encoderBufferLength);
   (void) encoder.beginFrame();
   (void) packet.writeTo(encoder);
   (void) encoder.endFrame();
 }
 
-boolean ESATWifiSubsystem::isConnected()
+boolean ESAT_WifiSubsystemClass::isConnected()
 {
   if (digitalRead(NOT_CONNECTED_SIGNAL_PIN) == HIGH)
   {
@@ -80,10 +80,10 @@ boolean ESATWifiSubsystem::isConnected()
   }
 }
 
-boolean ESATWifiSubsystem::readTelecommand(ESATCCSDSPacket& packet)
+boolean ESAT_WifiSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
 {
   const boolean gotFrame = telecommandDecoder.receiveFrame();
-   if (!gotFrame)
+  if (!gotFrame)
   {
     return false;
   }
@@ -99,40 +99,40 @@ boolean ESATWifiSubsystem::readTelecommand(ESATCCSDSPacket& packet)
   return true;
 }
 
-boolean ESATWifiSubsystem::readTelemetry(ESATCCSDSPacket& packet)
+boolean ESAT_WifiSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
 {
   return false;
 }
 
-boolean ESATWifiSubsystem::telemetryAvailable()
+boolean ESAT_WifiSubsystemClass::telemetryAvailable()
 {
   return false;
 }
 
-void ESATWifiSubsystem::setTelecommandBuffer(byte buffer[],
-                                             const unsigned long bufferLength)
+void ESAT_WifiSubsystemClass::setTelecommandBuffer(byte buffer[],
+                                                   const unsigned long bufferLength)
 {
-  telecommandDecoder = ESATKISSStream(Serial, buffer, bufferLength);
+  telecommandDecoder = ESAT_KISSStream(Serial, buffer, bufferLength);
 }
 
-void ESATWifiSubsystem::update()
+void ESAT_WifiSubsystemClass::update()
 {
 }
 
-void ESATWifiSubsystem::writeTelemetry(ESATCCSDSPacket& packet)
+void ESAT_WifiSubsystemClass::writeTelemetry(ESAT_CCSDSPacket& packet)
 {
   if (!isConnected())
   {
     return;
   }
   const unsigned long encoderBufferLength =
-    ESATKISSStream::frameLength(packet.PRIMARY_HEADER_LENGTH
-                                + packet.readPacketDataLength());
+    ESAT_KISSStream::frameLength(packet.PRIMARY_HEADER_LENGTH
+                                 + packet.readPacketDataLength());
   byte encoderBuffer[encoderBufferLength];
-  ESATKISSStream encoder(Serial, encoderBuffer, encoderBufferLength);
+  ESAT_KISSStream encoder(Serial, encoderBuffer, encoderBufferLength);
   (void) encoder.beginFrame();
   (void) packet.writeTo(encoder);
   (void) encoder.endFrame();
 }
 
-ESATWifiSubsystem WifiSubsystem;
+ESAT_WifiSubsystemClass ESAT_WifiSubsystem;

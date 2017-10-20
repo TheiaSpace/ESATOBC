@@ -16,13 +16,13 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESATOBCSubsystem.h"
-#include "ESATTimestamp.h"
-#include "ESATOBCClock.h"
-#include <ESATTimer.h>
-#include <ESATTelemetryStorage.h>
+#include "ESAT_OBCSubsystem.h"
+#include "ESAT_OBCClock.h"
+#include "ESAT_TelemetryStorage.h"
+#include <ESAT_Timer.h>
+#include <ESAT_Timestamp.h>
 
-void ESATOBCSubsystem::begin()
+void ESAT_OBCSubsystemClass::begin()
 {
   newHousekeepingTelemetryPacket = false;
   telemetryPacketSequenceCount = 0;
@@ -30,12 +30,12 @@ void ESATOBCSubsystem::begin()
   storeTelemetry = false;
 }
 
-word ESATOBCSubsystem::getApplicationProcessIdentifier()
+word ESAT_OBCSubsystemClass::getApplicationProcessIdentifier()
 {
   return APPLICATION_PROCESS_IDENTIFIER;
 }
 
-void ESATOBCSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
+void ESAT_OBCSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& packet)
 {
   packet.rewind();
   if (packet.readApplicationProcessIdentifier()
@@ -51,7 +51,8 @@ void ESATOBCSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
   {
     return;
   }
-  const ESATCCSDSSecondaryHeader secondaryHeader = packet.readSecondaryHeader();
+  const ESAT_CCSDSSecondaryHeader secondaryHeader =
+    packet.readSecondaryHeader();
   if (secondaryHeader.majorVersionNumber < MAJOR_VERSION_NUMBER)
   {
     return;
@@ -75,16 +76,16 @@ void ESATOBCSubsystem::handleTelecommand(ESATCCSDSPacket& packet)
   }
 }
 
-void ESATOBCSubsystem::handleSetTimeCommand(ESATCCSDSPacket& packet)
+void ESAT_OBCSubsystemClass::handleSetTimeCommand(ESAT_CCSDSPacket& packet)
 {
   if (packet.availableBytesToRead() < 7)
   {
     return;
   }
-  OBCClock.write(packet.readTimestamp());
+  ESAT_OBCClock.write(packet.readTimestamp());
 }
 
-void ESATOBCSubsystem::handleStoreTelemetry(ESATCCSDSPacket& packet)
+void ESAT_OBCSubsystemClass::handleStoreTelemetry(ESAT_CCSDSPacket& packet)
 {
   if (packet.availableBytesToRead() < 1)
   {
@@ -101,20 +102,20 @@ void ESATOBCSubsystem::handleStoreTelemetry(ESATCCSDSPacket& packet)
   }
 }
 
-void ESATOBCSubsystem::handleDownloadTelemetry(ESATCCSDSPacket& packet)
+void ESAT_OBCSubsystemClass::handleDownloadTelemetry(ESAT_CCSDSPacket& packet)
 {
-  const ESATTimestamp beginTimestamp = packet.readTimestamp();
-  const ESATTimestamp endTimestamp = packet.readTimestamp();
-  TelemetryStorage.beginReading(beginTimestamp, endTimestamp);
+  const ESAT_Timestamp beginTimestamp = packet.readTimestamp();
+  const ESAT_Timestamp endTimestamp = packet.readTimestamp();
+  ESAT_TelemetryStorage.beginReading(beginTimestamp, endTimestamp);
   downloadTelemetry = true;
 }
 
-void ESATOBCSubsystem::handleEraseStoredTelemetry(ESATCCSDSPacket& packet)
+void ESAT_OBCSubsystemClass::handleEraseStoredTelemetry(ESAT_CCSDSPacket& packet)
 {
-  TelemetryStorage.erase();
+  ESAT_TelemetryStorage.erase();
 }
 
-boolean ESATOBCSubsystem::readHousekeepingTelemetry(ESATCCSDSPacket& packet)
+boolean ESAT_OBCSubsystemClass::readHousekeepingTelemetry(ESAT_CCSDSPacket& packet)
 {
   newHousekeepingTelemetryPacket = false;
   packet.writePacketVersionNumber(0);
@@ -122,32 +123,32 @@ boolean ESATOBCSubsystem::readHousekeepingTelemetry(ESATCCSDSPacket& packet)
   packet.writeSecondaryHeaderFlag(packet.SECONDARY_HEADER_IS_PRESENT);
   packet.writeSequenceFlags(packet.UNSEGMENTED_USER_DATA);
   packet.writePacketSequenceCount(telemetryPacketSequenceCount);
-  ESATCCSDSSecondaryHeader secondaryHeader;
+  ESAT_CCSDSSecondaryHeader secondaryHeader;
   secondaryHeader.preamble =
     secondaryHeader.CALENDAR_SEGMENTED_TIME_CODE_MONTH_DAY_VARIANT_1_SECOND_RESOLUTION;
-  secondaryHeader.timestamp = OBCClock.read();
+  secondaryHeader.timestamp = ESAT_OBCClock.read();
   secondaryHeader.majorVersionNumber = MAJOR_VERSION_NUMBER;
   secondaryHeader.minorVersionNumber = MINOR_VERSION_NUMBER;
   secondaryHeader.patchVersionNumber = PATCH_VERSION_NUMBER;
   secondaryHeader.packetIdentifier = HOUSEKEEPING;
   packet.writeSecondaryHeader(secondaryHeader);
-  packet.writeByte(Timer.load());
+  packet.writeByte(ESAT_Timer.load());
   packet.writeBoolean(storeTelemetry);
-  packet.writeBoolean(TelemetryStorage.error);
-  TelemetryStorage.error = false;
-  packet.writeBoolean(OBCClock.error);
-  OBCClock.error = false;
+  packet.writeBoolean(ESAT_TelemetryStorage.error);
+  ESAT_TelemetryStorage.error = false;
+  packet.writeBoolean(ESAT_OBCClock.error);
+  ESAT_OBCClock.error = false;
   packet.updatePacketDataLength();
   telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
   return true;
 }
 
-boolean ESATOBCSubsystem::readTelecommand(ESATCCSDSPacket& packet)
+boolean ESAT_OBCSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
 {
   return false;
 }
 
-boolean ESATOBCSubsystem::readTelemetry(ESATCCSDSPacket& packet)
+boolean ESAT_OBCSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
 {
   if (newHousekeepingTelemetryPacket)
   {
@@ -159,18 +160,18 @@ boolean ESATOBCSubsystem::readTelemetry(ESATCCSDSPacket& packet)
   }
 }
 
-boolean ESATOBCSubsystem::readStoredTelemetry(ESATCCSDSPacket& packet)
+boolean ESAT_OBCSubsystemClass::readStoredTelemetry(ESAT_CCSDSPacket& packet)
 {
-  const boolean correctRead = TelemetryStorage.read(packet);
+  const boolean correctRead = ESAT_TelemetryStorage.read(packet);
   if (!correctRead)
   {
-    TelemetryStorage.endReading();
+    ESAT_TelemetryStorage.endReading();
     downloadTelemetry = false;
   }
   return correctRead;
 }
 
-boolean ESATOBCSubsystem::telemetryAvailable()
+boolean ESAT_OBCSubsystemClass::telemetryAvailable()
 {
   if (newHousekeepingTelemetryPacket)
   {
@@ -183,17 +184,17 @@ boolean ESATOBCSubsystem::telemetryAvailable()
   return false;
 }
 
-void ESATOBCSubsystem::update()
+void ESAT_OBCSubsystemClass::update()
 {
   newHousekeepingTelemetryPacket = true;
 }
 
-void ESATOBCSubsystem::writeTelemetry(ESATCCSDSPacket& packet)
+void ESAT_OBCSubsystemClass::writeTelemetry(ESAT_CCSDSPacket& packet)
 {
   if (storeTelemetry && !downloadTelemetry)
   {
-    TelemetryStorage.write(packet);
+    ESAT_TelemetryStorage.write(packet);
   }
 }
 
-ESATOBCSubsystem OBCSubsystem;
+ESAT_OBCSubsystemClass ESAT_OBCSubsystem;

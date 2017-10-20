@@ -16,18 +16,18 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESATOnBoardDataHandling.h"
-#include <ESATKISSStream.h>
+#include "ESAT_OnBoardDataHandling.h"
+#include <ESAT_KISSStream.h>
 #include <USBSerial.h>
 
-ESATOnBoardDataHandling::ESATOnBoardDataHandling():
+ESAT_OnBoardDataHandlingClass::ESAT_OnBoardDataHandlingClass():
   numberOfSubsystems(0),
   telecommandIndex(0),
   telemetryIndex(0)
 {
 }
 
-void ESATOnBoardDataHandling::beginSubsystems()
+void ESAT_OnBoardDataHandlingClass::beginSubsystems()
 {
   telemetryIndex = 0;
   for (unsigned i = 0; i < numberOfSubsystems; ++i)
@@ -36,17 +36,17 @@ void ESATOnBoardDataHandling::beginSubsystems()
   }
 }
 
-void ESATOnBoardDataHandling::disableUSBTelecommands()
+void ESAT_OnBoardDataHandlingClass::disableUSBTelecommands()
 {
   usbTelecommandsEnabled = false;
 }
 
-void ESATOnBoardDataHandling::disableUSBTelemetry()
+void ESAT_OnBoardDataHandlingClass::disableUSBTelemetry()
 {
   usbTelemetryEnabled = false;
 }
 
-void ESATOnBoardDataHandling::dispatchTelecommand(ESATCCSDSPacket& packet)
+void ESAT_OnBoardDataHandlingClass::dispatchTelecommand(ESAT_CCSDSPacket& packet)
 {
   const word applicationProcessIdentifier =
     packet.readApplicationProcessIdentifier();
@@ -62,23 +62,23 @@ void ESATOnBoardDataHandling::dispatchTelecommand(ESATCCSDSPacket& packet)
   }
 }
 
-void ESATOnBoardDataHandling::enableUSBTelecommands(byte buffer[],
+void ESAT_OnBoardDataHandlingClass::enableUSBTelecommands(byte buffer[],
                                                     const unsigned long bufferLength)
 {
   usbTelecommandsEnabled = true;
   usbTelecommandBuffer = buffer;
   usbTelecommandBufferLength = bufferLength;
-  usbTelecommandDecoder = ESATKISSStream(USB,
-                                         usbTelecommandBuffer,
-                                         usbTelecommandBufferLength);
+  usbTelecommandDecoder = ESAT_KISSStream(USB,
+                                          usbTelecommandBuffer,
+                                          usbTelecommandBufferLength);
 }
 
-void ESATOnBoardDataHandling::enableUSBTelemetry()
+void ESAT_OnBoardDataHandlingClass::enableUSBTelemetry()
 {
   usbTelemetryEnabled = true;
 }
 
-boolean ESATOnBoardDataHandling::readTelecommand(ESATCCSDSPacket& packet)
+boolean ESAT_OnBoardDataHandlingClass::readTelecommand(ESAT_CCSDSPacket& packet)
 {
   while (telecommandIndex < numberOfSubsystems)
   {
@@ -99,7 +99,7 @@ boolean ESATOnBoardDataHandling::readTelecommand(ESATCCSDSPacket& packet)
   }
 }
 
-boolean ESATOnBoardDataHandling::readTelecommandFromUSB(ESATCCSDSPacket& packet)
+boolean ESAT_OnBoardDataHandlingClass::readTelecommandFromUSB(ESAT_CCSDSPacket& packet)
 {
   const boolean gotFrame = usbTelecommandDecoder.receiveFrame();
   if (!gotFrame)
@@ -118,7 +118,7 @@ boolean ESATOnBoardDataHandling::readTelecommandFromUSB(ESATCCSDSPacket& packet)
   return true;
 }
 
-boolean ESATOnBoardDataHandling::readSubsystemsTelemetry(ESATCCSDSPacket& packet)
+boolean ESAT_OnBoardDataHandlingClass::readSubsystemsTelemetry(ESAT_CCSDSPacket& packet)
 {
   packet.clear();
   while (telemetryIndex < numberOfSubsystems)
@@ -140,13 +140,13 @@ boolean ESATOnBoardDataHandling::readSubsystemsTelemetry(ESATCCSDSPacket& packet
   return false;
 }
 
-void ESATOnBoardDataHandling::registerSubsystem(ESATSubsystem& subsystem)
+void ESAT_OnBoardDataHandlingClass::registerSubsystem(ESAT_Subsystem& subsystem)
 {
   subsystems[numberOfSubsystems] = &subsystem;
   numberOfSubsystems = numberOfSubsystems + 1;
 }
 
-void ESATOnBoardDataHandling::updateSubsystems()
+void ESAT_OnBoardDataHandlingClass::updateSubsystems()
 {
   for (int i = 0; i < numberOfSubsystems; ++i)
   {
@@ -156,7 +156,7 @@ void ESATOnBoardDataHandling::updateSubsystems()
   telemetryIndex = 0;
 }
 
-void ESATOnBoardDataHandling::writeTelemetry(ESATCCSDSPacket& packet)
+void ESAT_OnBoardDataHandlingClass::writeTelemetry(ESAT_CCSDSPacket& packet)
 {
   for (unsigned int i = 0; i < numberOfSubsystems; i++)
   {
@@ -168,16 +168,16 @@ void ESATOnBoardDataHandling::writeTelemetry(ESATCCSDSPacket& packet)
   }
 }
 
-void ESATOnBoardDataHandling::writeTelemetryToUSB(ESATCCSDSPacket& packet)
+void ESAT_OnBoardDataHandlingClass::writeTelemetryToUSB(ESAT_CCSDSPacket& packet)
 {
   const unsigned long encoderBufferLength =
-    ESATKISSStream::frameLength(packet.PRIMARY_HEADER_LENGTH
-                                + packet.readPacketDataLength());
+    ESAT_KISSStream::frameLength(packet.PRIMARY_HEADER_LENGTH
+                                 + packet.readPacketDataLength());
   byte encoderBuffer[encoderBufferLength];
-  ESATKISSStream encoder(USB, encoderBuffer, encoderBufferLength);
+  ESAT_KISSStream encoder(USB, encoderBuffer, encoderBufferLength);
   (void) encoder.beginFrame();
   (void) packet.writeTo(encoder);
   (void) encoder.endFrame();
 }
 
-ESATOnBoardDataHandling OnBoardDataHandling;
+ESAT_OnBoardDataHandlingClass ESAT_OnBoardDataHandling;
