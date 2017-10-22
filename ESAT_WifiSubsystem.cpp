@@ -69,7 +69,7 @@ void ESAT_WifiSubsystemClass::connect()
   const unsigned long encoderBufferLength =
     ESAT_KISSStream::frameLength(packet.length());
   byte encoderBuffer[encoderBufferLength];
-  ESAT_KISSStream encoder(Serial, encoderBuffer, encoderBufferLength);
+  ESAT_KISSStream encoder(Serial, encoderBuffer, sizeof(encoderBuffer));
   (void) encoder.beginFrame();
   (void) packet.writeTo(encoder);
   (void) encoder.endFrame();
@@ -96,7 +96,7 @@ void ESAT_WifiSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& packet)
   const unsigned long encoderBufferLength =
     ESAT_KISSStream::frameLength(packet.length());
   byte encoderBuffer[encoderBufferLength];
-  ESAT_KISSStream encoder(Serial, encoderBuffer, encoderBufferLength);
+  ESAT_KISSStream encoder(Serial, encoderBuffer, sizeof(encoderBuffer));
   (void) encoder.beginFrame();
   (void) packet.writeTo(encoder);
   (void) encoder.endFrame();
@@ -166,7 +166,7 @@ void ESAT_WifiSubsystemClass::writeTelemetry(ESAT_CCSDSPacket& packet)
   const unsigned long encoderBufferLength =
     ESAT_KISSStream::frameLength(packet.length());
   byte encoderBuffer[encoderBufferLength];
-  ESAT_KISSStream encoder(Serial, encoderBuffer, encoderBufferLength);
+  ESAT_KISSStream encoder(Serial, encoderBuffer, sizeof(encoderBuffer));
   (void) encoder.beginFrame();
   (void) packet.writeTo(encoder);
   (void) encoder.endFrame();
