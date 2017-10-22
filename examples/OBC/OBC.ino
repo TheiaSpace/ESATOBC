@@ -141,7 +141,7 @@ void setup()
                            sizeof(wifiTelecommandBuffer));
   ESAT_ExampleSubsystem.begin();
   ESAT_OnBoardDataHandling.enableUSBTelecommands(usbTelecommandBuffer,
-                                                 WHOLE_PACKET_BUFFER_LENGTH);
+                                                 sizeof(usbTelecommandBuffer));
   ESAT_OnBoardDataHandling.enableUSBTelemetry();
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_OBCSubsystem);
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_EPSSubsystem);
