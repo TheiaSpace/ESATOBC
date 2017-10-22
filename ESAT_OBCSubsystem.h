@@ -80,19 +80,6 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
       HOUSEKEEPING = 0,
     };
 
-    // Minimum command payload data length in bytes:
-    // - Year (2 byte).
-    // - Month (1 byte).
-    // - Day (1 byte).
-    // - Hours (1 byte).
-    // - Minutes (1 byte).
-    // - Seconds (1 byte).
-    // - Major version number (1 byte).
-    // - Minor version number (1 byte).
-    // - Patch version number (1 byte).
-    // - Command code (1 byte).
-    static const byte MINIMUM_COMMAND_PAYLOAD_DATA_LENGTH = 11;
-
     // Unique identifier of the subsystem.
     static const word APPLICATION_PROCESS_IDENTIFIER = 0;
 

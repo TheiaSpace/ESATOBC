@@ -108,7 +108,7 @@ const word PACKET_DATA_BUFFER_LENGTH = 256;
 
 // Maximum whole packet length we will handle.
 const word WHOLE_PACKET_BUFFER_LENGTH =
-  ESAT_CCSDSPacket::PRIMARY_HEADER_LENGTH + PACKET_DATA_BUFFER_LENGTH;
+  ESAT_CCSDSPrimaryHeader::LENGTH + PACKET_DATA_BUFFER_LENGTH;
 
 // Accumulate incoming USB telecommands in this buffer.
 byte usbTelecommandBuffer[WHOLE_PACKET_BUFFER_LENGTH];

@@ -35,6 +35,17 @@ word ESAT_EPSSubsystemClass::getApplicationProcessIdentifier()
 
 void ESAT_EPSSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& packet)
 {
+  packet.rewind();
+  const ESAT_CCSDSPrimaryHeader primaryHeader = packet.readPrimaryHeader();
+  if (primaryHeader.packetType != primaryHeader.TELECOMMAND)
+  {
+    return;
+  }
+  if (primaryHeader.applicationProcessIdentifier
+      != getApplicationProcessIdentifier())
+  {
+    return;
+  }
   (void) ESAT_I2CMaster.writeTelecommand(Wire,
                                          ADDRESS,
                                          packet,
@@ -72,12 +83,15 @@ void ESAT_EPSSubsystemClass::setTime()
     ESAT_CCSDSSecondaryHeader::LENGTH + 7;
   byte packetDataBuffer[packetDataBufferLength];
   ESAT_CCSDSPacket packet(packetDataBuffer, packetDataBufferLength);
-  packet.writePacketVersionNumber(0);
-  packet.writePacketType(packet.TELECOMMAND);
-  packet.writeSecondaryHeaderFlag(packet.SECONDARY_HEADER_IS_PRESENT);
-  packet.writeApplicationProcessIdentifier(APPLICATION_PROCESS_IDENTIFIER);
-  packet.writeSequenceFlags(packet.UNSEGMENTED_USER_DATA);
-  packet.writePacketSequenceCount(0);
+  ESAT_CCSDSPrimaryHeader primaryHeader;
+  primaryHeader.packetVersionNumber = 0;
+  primaryHeader.packetType = primaryHeader.TELECOMMAND;
+  primaryHeader.secondaryHeaderFlag = primaryHeader.SECONDARY_HEADER_IS_PRESENT;
+  primaryHeader.applicationProcessIdentifier =
+    getApplicationProcessIdentifier();
+  primaryHeader.sequenceFlags = primaryHeader.UNSEGMENTED_USER_DATA;
+  primaryHeader.packetSequenceCount = 0;
+  packet.writePrimaryHeader(primaryHeader);
   ESAT_CCSDSSecondaryHeader secondaryHeader;
   secondaryHeader.preamble =
     secondaryHeader.CALENDAR_SEGMENTED_TIME_CODE_MONTH_DAY_VARIANT_1_SECOND_RESOLUTION;
@@ -88,7 +102,7 @@ void ESAT_EPSSubsystemClass::setTime()
   secondaryHeader.packetIdentifier = SET_CURRENT_TIME;
   packet.writeSecondaryHeader(secondaryHeader);
   packet.writeTimestamp(secondaryHeader.timestamp);
-  packet.updatePacketDataLength();
+  packet.flush();
   (void) ESAT_I2CMaster.writeTelecommand(Wire,
                                          ADDRESS,
                                          packet,

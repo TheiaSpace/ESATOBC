@@ -38,16 +38,17 @@ word ESAT_OBCSubsystemClass::getApplicationProcessIdentifier()
 void ESAT_OBCSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& packet)
 {
   packet.rewind();
-  if (packet.readApplicationProcessIdentifier()
-      != APPLICATION_PROCESS_IDENTIFIER)
+  const ESAT_CCSDSPrimaryHeader primaryHeader = packet.readPrimaryHeader();
+  if (primaryHeader.applicationProcessIdentifier
+      != getApplicationProcessIdentifier())
   {
     return;
   }
-  if (packet.readPacketType() != packet.TELECOMMAND)
+  if (primaryHeader.packetType != primaryHeader.TELECOMMAND)
   {
     return;
   }
-  if (packet.readPacketDataLength() < MINIMUM_COMMAND_PAYLOAD_DATA_LENGTH)
+  if (primaryHeader.packetDataLength < ESAT_CCSDSSecondaryHeader::LENGTH)
   {
     return;
   }
@@ -117,12 +118,21 @@ void ESAT_OBCSubsystemClass::handleEraseStoredTelemetry(ESAT_CCSDSPacket& packet
 
 boolean ESAT_OBCSubsystemClass::readHousekeepingTelemetry(ESAT_CCSDSPacket& packet)
 {
+  packet.clear();
   newHousekeepingTelemetryPacket = false;
-  packet.writePacketVersionNumber(0);
-  packet.writePacketType(packet.TELEMETRY);
-  packet.writeSecondaryHeaderFlag(packet.SECONDARY_HEADER_IS_PRESENT);
-  packet.writeSequenceFlags(packet.UNSEGMENTED_USER_DATA);
-  packet.writePacketSequenceCount(telemetryPacketSequenceCount);
+  ESAT_CCSDSPrimaryHeader primaryHeader;
+  primaryHeader.packetVersionNumber = 0;
+  primaryHeader.packetType =
+    primaryHeader.TELEMETRY;
+  primaryHeader.secondaryHeaderFlag =
+    primaryHeader.SECONDARY_HEADER_IS_PRESENT;
+  primaryHeader.applicationProcessIdentifier =
+    getApplicationProcessIdentifier();
+  primaryHeader.sequenceFlags =
+    primaryHeader.UNSEGMENTED_USER_DATA;
+  primaryHeader.packetSequenceCount =
+    telemetryPacketSequenceCount;
+  packet.writePrimaryHeader(primaryHeader);
   ESAT_CCSDSSecondaryHeader secondaryHeader;
   secondaryHeader.preamble =
     secondaryHeader.CALENDAR_SEGMENTED_TIME_CODE_MONTH_DAY_VARIANT_1_SECOND_RESOLUTION;
@@ -138,7 +148,7 @@ boolean ESAT_OBCSubsystemClass::readHousekeepingTelemetry(ESAT_CCSDSPacket& pack
   ESAT_TelemetryStorage.error = false;
   packet.writeBoolean(ESAT_OBCClock.error);
   ESAT_OBCClock.error = false;
-  packet.updatePacketDataLength();
+  packet.flush();
   telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
   return true;
 }
