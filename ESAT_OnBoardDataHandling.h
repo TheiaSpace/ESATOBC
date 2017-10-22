@@ -41,12 +41,6 @@
 class ESAT_OnBoardDataHandlingClass
 {
   public:
-    enum TelemetryType
-    {
-      HOUSEKEEPING_TELEMETRY = 1,
-      EVENT_TELEMETRY = 2,
-    };
-
     ESAT_OnBoardDataHandlingClass();
 
     // Disable reception of telecommands from the USB interface.
