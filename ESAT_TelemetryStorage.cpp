@@ -56,7 +56,7 @@ boolean ESAT_TelemetryStorageClass::read(ESAT_CCSDSPacket& packet)
   const unsigned long bufferLength =
     ESAT_CCSDSPrimaryHeader::LENGTH + packet.capacity();
   byte buffer[bufferLength];
-  ESAT_KISSStream decoder(file, buffer, bufferLength);
+  ESAT_KISSStream decoder(file, buffer, sizeof(buffer));
   while (file.available() > 0)
   {
     const boolean correctRead = packet.readFrom(decoder);

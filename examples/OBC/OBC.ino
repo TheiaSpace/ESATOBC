@@ -141,7 +141,7 @@ void setup()
                            sizeof(wifiTelecommandBuffer));
   ESAT_ExampleSubsystem.begin();
   ESAT_OnBoardDataHandling.enableUSBTelecommands(usbTelecommandBuffer,
-                                                 WHOLE_PACKET_BUFFER_LENGTH);
+                                                 sizeof(usbTelecommandBuffer));
   ESAT_OnBoardDataHandling.enableUSBTelemetry();
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_OBCSubsystem);
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_EPSSubsystem);
@@ -164,7 +164,7 @@ void loop()
 {
   ESAT_Timer.waitUntilNextCycle();
   byte buffer[PACKET_DATA_BUFFER_LENGTH];
-  ESAT_CCSDSPacket packet(buffer, PACKET_DATA_BUFFER_LENGTH);
+  ESAT_CCSDSPacket packet(buffer, sizeof(buffer));
   while (ESAT_OnBoardDataHandling.readTelecommand(packet))
   {
     ESAT_OnBoardDataHandling.dispatchTelecommand(packet);

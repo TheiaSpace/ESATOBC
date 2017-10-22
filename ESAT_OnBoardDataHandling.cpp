@@ -20,13 +20,6 @@
 #include <ESAT_KISSStream.h>
 #include <USBSerial.h>
 
-ESAT_OnBoardDataHandlingClass::ESAT_OnBoardDataHandlingClass():
-  numberOfSubsystems(0),
-  telecommandIndex(0),
-  telemetryIndex(0)
-{
-}
-
 void ESAT_OnBoardDataHandlingClass::disableUSBTelecommands()
 {
   usbTelecommandsEnabled = false;
@@ -55,7 +48,7 @@ void ESAT_OnBoardDataHandlingClass::dispatchTelecommand(ESAT_CCSDSPacket& packet
 }
 
 void ESAT_OnBoardDataHandlingClass::enableUSBTelecommands(byte buffer[],
-                                                    const unsigned long bufferLength)
+                                                          const unsigned long bufferLength)
 {
   usbTelecommandsEnabled = true;
   usbTelecommandBuffer = buffer;
