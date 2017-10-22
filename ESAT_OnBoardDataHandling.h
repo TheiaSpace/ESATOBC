@@ -49,9 +49,6 @@ class ESAT_OnBoardDataHandlingClass
 
     ESAT_OnBoardDataHandlingClass();
 
-    // Begin the registered subsystems.
-    void beginSubsystems();
-
     // Disable reception of telecommands from the USB interface.
     void disableUSBTelecommands();
 
