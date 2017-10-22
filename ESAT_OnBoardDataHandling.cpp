@@ -181,8 +181,7 @@ void ESAT_OnBoardDataHandlingClass::writeTelemetryToUSB(ESAT_CCSDSPacket& packet
   packet.rewind();
   const ESAT_CCSDSPrimaryHeader primaryHeader = packet.readPrimaryHeader();
   const unsigned long encoderBufferLength =
-    ESAT_KISSStream::frameLength(primaryHeader.LENGTH
-                                 + primaryHeader.packetDataLength);
+    ESAT_KISSStream::frameLength(packet.length());
   byte encoderBuffer[encoderBufferLength];
   ESAT_KISSStream encoder(USB, encoderBuffer, encoderBufferLength);
   (void) encoder.beginFrame();
