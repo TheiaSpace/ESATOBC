@@ -102,6 +102,9 @@ class ESAT_ExampleSubsystemClass: public ESAT_Subsystem
 // Unique global instance of ESAT_ExampleSubsystemClass.
 ESAT_ExampleSubsystemClass ESAT_ExampleSubsystem;
 
+// Cycle period in milliseconds.
+const word PERIOD = 1000;
+
 // Maximum packet data length we will handle.
 const word PACKET_DATA_BUFFER_LENGTH = 256;
 
@@ -133,7 +136,7 @@ void setup()
   delay(1000);
   ESAT_OBCSubsystem.begin();
   ESAT_EPSSubsystem.begin();
-  ESAT_ADCSSubsystem.begin();
+  ESAT_ADCSSubsystem.begin(PERIOD);
   ESAT_WifiSubsystem.begin(wifiTelecommandBuffer,
                            sizeof(wifiTelecommandBuffer));
   ESAT_ExampleSubsystem.begin();
@@ -145,7 +148,7 @@ void setup()
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ADCSSubsystem);
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_WifiSubsystem);
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ExampleSubsystem);
-  ESAT_Timer.begin(1000);
+  ESAT_Timer.begin(PERIOD);
 }
 
 // Body of the main loop of the program:
