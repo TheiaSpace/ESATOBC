@@ -164,7 +164,7 @@ void loop()
 {
   ESAT_Timer.waitUntilNextCycle();
   byte buffer[PACKET_DATA_BUFFER_LENGTH];
-  ESAT_CCSDSPacket packet(buffer, PACKET_DATA_BUFFER_LENGTH);
+  ESAT_CCSDSPacket packet(buffer, sizeof(buffer));
   while (ESAT_OnBoardDataHandling.readTelecommand(packet))
   {
     ESAT_OnBoardDataHandling.dispatchTelecommand(packet);
