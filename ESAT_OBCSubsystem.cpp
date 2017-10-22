@@ -79,7 +79,7 @@ void ESAT_OBCSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& packet)
 
 void ESAT_OBCSubsystemClass::handleSetTimeCommand(ESAT_CCSDSPacket& packet)
 {
-  if (packet.availableBytesToRead() < 7)
+  if (packet.available() < 7)
   {
     return;
   }
@@ -88,7 +88,7 @@ void ESAT_OBCSubsystemClass::handleSetTimeCommand(ESAT_CCSDSPacket& packet)
 
 void ESAT_OBCSubsystemClass::handleStoreTelemetry(ESAT_CCSDSPacket& packet)
 {
-  if (packet.availableBytesToRead() < 1)
+  if (packet.available() < 1)
   {
     return;
   }
