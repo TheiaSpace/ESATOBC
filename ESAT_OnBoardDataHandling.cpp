@@ -20,13 +20,6 @@
 #include <ESAT_KISSStream.h>
 #include <USBSerial.h>
 
-ESAT_OnBoardDataHandlingClass::ESAT_OnBoardDataHandlingClass():
-  numberOfSubsystems(0),
-  telecommandIndex(0),
-  telemetryIndex(0)
-{
-}
-
 void ESAT_OnBoardDataHandlingClass::disableUSBTelecommands()
 {
   usbTelecommandsEnabled = false;

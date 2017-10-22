@@ -41,8 +41,6 @@
 class ESAT_OnBoardDataHandlingClass
 {
   public:
-    ESAT_OnBoardDataHandlingClass();
-
     // Disable reception of telecommands from the USB interface.
     void disableUSBTelecommands();
 
