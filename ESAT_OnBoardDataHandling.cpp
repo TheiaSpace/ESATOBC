@@ -48,7 +48,7 @@ void ESAT_OnBoardDataHandlingClass::dispatchTelecommand(ESAT_CCSDSPacket& packet
 }
 
 void ESAT_OnBoardDataHandlingClass::enableUSBTelecommands(byte buffer[],
-                                                    const unsigned long bufferLength)
+                                                          const unsigned long bufferLength)
 {
   usbTelecommandsEnabled = true;
   usbTelecommandBuffer = buffer;
