@@ -38,7 +38,6 @@ class ESAT_ExampleSubsystemClass: public ESAT_Subsystem
 {
   public:
     // Start the subsystem.
-    // Called from ESAT_OnBoardDataHandling.beginSubsystems().
     void begin()
     {
     }
@@ -132,8 +131,12 @@ void setup()
   Wire.begin();
   SD.begin(SS1);
   delay(1000);
-  ESAT_WifiSubsystem.setTelecommandBuffer(wifiTelecommandBuffer,
-                                          WHOLE_PACKET_BUFFER_LENGTH);
+  ESAT_OBCSubsystem.begin();
+  ESAT_EPSSubsystem.begin();
+  ESAT_ADCSSubsystem.begin();
+  ESAT_WifiSubsystem.begin(wifiTelecommandBuffer,
+                           sizeof(wifiTelecommandBuffer));
+  ESAT_ExampleSubsystem.begin();
   ESAT_OnBoardDataHandling.enableUSBTelecommands(usbTelecommandBuffer,
                                                  WHOLE_PACKET_BUFFER_LENGTH);
   ESAT_OnBoardDataHandling.enableUSBTelemetry();
@@ -142,7 +145,6 @@ void setup()
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ADCSSubsystem);
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_WifiSubsystem);
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ExampleSubsystem);
-  ESAT_OnBoardDataHandling.beginSubsystems();
   ESAT_Timer.begin(1000);
 }
 

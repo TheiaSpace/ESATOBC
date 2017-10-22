@@ -33,7 +33,10 @@ class ESAT_WifiSubsystemClass: public ESAT_Subsystem
 {
   public:
     // Start the communications subsystem.
-    void begin();
+    // Connect to the network and ground segment server.
+    // Use the buffer to accumulate incoming telecommands from
+    // main loop cycle to main loop cycle.
+    void begin(byte buffer[], unsigned long bufferLength);
 
     // Return the identifier of this subsystem.
     word getApplicationProcessIdentifier();
@@ -50,9 +53,6 @@ class ESAT_WifiSubsystemClass: public ESAT_Subsystem
     // Return true if the operation was successful;
     // otherwise return false.
     boolean readTelemetry(ESAT_CCSDSPacket& packet);
-
-    // Specify a buffer to accumulate the incomming telecommands.
-    void setTelecommandBuffer(byte buffer[], unsigned long bufferLength);
 
     // Return true if there is new telemetry available;
     // Otherwise return false.
@@ -84,6 +84,16 @@ class ESAT_WifiSubsystemClass: public ESAT_Subsystem
 
     // Decode KISS frames with telecommands with this stream.
     ESAT_KISSStream telecommandDecoder;
+
+    // Set up the connection sensor line.
+    void beginConnectionSensor();
+
+    // Specify a buffer to accumulate the incomming telecommands.
+    void beginTelecommandDecoder(byte buffer[], unsigned long bufferLength);
+
+    // Command the Wifi module to connect to the network and ground
+    // segment server.
+    void connect();
 
     // Return true if the Wifi board is connected to the server;
     // otherwise return false.

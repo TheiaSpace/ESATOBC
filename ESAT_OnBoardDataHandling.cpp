@@ -27,15 +27,6 @@ ESAT_OnBoardDataHandlingClass::ESAT_OnBoardDataHandlingClass():
 {
 }
 
-void ESAT_OnBoardDataHandlingClass::beginSubsystems()
-{
-  telemetryIndex = 0;
-  for (unsigned i = 0; i < numberOfSubsystems; ++i)
-  {
-    subsystems[i]->begin();
-  }
-}
-
 void ESAT_OnBoardDataHandlingClass::disableUSBTelecommands()
 {
   usbTelecommandsEnabled = false;

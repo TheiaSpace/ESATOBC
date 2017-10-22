@@ -20,12 +20,30 @@
 #include "ESAT_OBCClock.h"
 #include <ESAT_CCSDSPrimaryHeader.h>
 
-void ESAT_WifiSubsystemClass::begin()
+void ESAT_WifiSubsystemClass::begin(byte buffer[],
+                                    const unsigned long bufferLength)
+{
+  beginConnectionSensor();
+  beginTelecommandDecoder(buffer, bufferLength);
+  connect();
+}
+
+void ESAT_WifiSubsystemClass::beginConnectionSensor()
 {
   pinMode(NOT_CONNECTED_SIGNAL_PIN, INPUT_PULLUP);
+}
+
+void ESAT_WifiSubsystemClass::beginTelecommandDecoder(byte buffer[],
+                                                      const unsigned long bufferLength)
+{
+  telecommandDecoder = ESAT_KISSStream(Serial, buffer, bufferLength);
+}
+
+void ESAT_WifiSubsystemClass::connect()
+{
   const byte packetDataBufferLength = ESAT_CCSDSSecondaryHeader::LENGTH;
   byte packetData[packetDataBufferLength];
-  ESAT_CCSDSPacket packet(packetData, packetDataBufferLength);
+  ESAT_CCSDSPacket packet(packetData, sizeof(packetData));
   ESAT_CCSDSPrimaryHeader primaryHeader;
   primaryHeader.packetVersionNumber = 0;
   primaryHeader.packetType =
@@ -127,12 +145,6 @@ boolean ESAT_WifiSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
 boolean ESAT_WifiSubsystemClass::telemetryAvailable()
 {
   return false;
-}
-
-void ESAT_WifiSubsystemClass::setTelecommandBuffer(byte buffer[],
-                                                   const unsigned long bufferLength)
-{
-  telecommandDecoder = ESAT_KISSStream(Serial, buffer, bufferLength);
 }
 
 void ESAT_WifiSubsystemClass::update()
