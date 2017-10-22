@@ -18,6 +18,7 @@
 
 #include "ESAT_WifiSubsystem.h"
 #include "ESAT_OBCClock.h"
+#include <ESAT_CCSDSPrimaryHeader.h>
 
 void ESAT_WifiSubsystemClass::begin()
 {
@@ -25,12 +26,18 @@ void ESAT_WifiSubsystemClass::begin()
   const byte packetDataBufferLength = ESAT_CCSDSSecondaryHeader::LENGTH;
   byte packetData[packetDataBufferLength];
   ESAT_CCSDSPacket packet(packetData, packetDataBufferLength);
-  packet.writePacketVersionNumber(0);
-  packet.writePacketType(packet.TELECOMMAND);
-  packet.writeSecondaryHeaderFlag(packet.SECONDARY_HEADER_IS_PRESENT);
-  packet.writeApplicationProcessIdentifier(APPLICATION_PROCESS_IDENTIFIER);
-  packet.writeSequenceFlags(packet.UNSEGMENTED_USER_DATA);
-  packet.writePacketSequenceCount(0);
+  ESAT_CCSDSPrimaryHeader primaryHeader;
+  primaryHeader.packetVersionNumber = 0;
+  primaryHeader.packetType =
+    primaryHeader.TELECOMMAND;
+  primaryHeader.secondaryHeaderFlag =
+    primaryHeader.SECONDARY_HEADER_IS_PRESENT;
+  primaryHeader.applicationProcessIdentifier =
+    getApplicationProcessIdentifier();
+  primaryHeader.sequenceFlags =
+    primaryHeader.UNSEGMENTED_USER_DATA;
+  primaryHeader.packetSequenceCount = 0;
+  packet.writePrimaryHeader(primaryHeader);
   ESAT_CCSDSSecondaryHeader secondaryHeader;
   secondaryHeader.preamble =
     secondaryHeader.CALENDAR_SEGMENTED_TIME_CODE_MONTH_DAY_VARIANT_1_SECOND_RESOLUTION;
@@ -40,10 +47,10 @@ void ESAT_WifiSubsystemClass::begin()
   secondaryHeader.patchVersionNumber = PATCH_VERSION_NUMBER;
   secondaryHeader.packetIdentifier = CONNECT;
   packet.writeSecondaryHeader(secondaryHeader);
-  packet.updatePacketDataLength();
+  packet.flush();
   const unsigned long encoderBufferLength =
-    ESAT_KISSStream::frameLength(packet.PRIMARY_HEADER_LENGTH
-                                 + packet.readPacketDataLength());
+    ESAT_KISSStream::frameLength(primaryHeader.LENGTH
+                                 + packet.available());
   byte encoderBuffer[encoderBufferLength];
   ESAT_KISSStream encoder(Serial, encoderBuffer, encoderBufferLength);
   (void) encoder.beginFrame();
@@ -58,9 +65,20 @@ word ESAT_WifiSubsystemClass::getApplicationProcessIdentifier()
 
 void ESAT_WifiSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& packet)
 {
+  packet.rewind();
+  const ESAT_CCSDSPrimaryHeader primaryHeader = packet.readPrimaryHeader();
+  if (primaryHeader.packetType != primaryHeader.TELECOMMAND)
+  {
+    return;
+  }
+  if (primaryHeader.applicationProcessIdentifier
+      != getApplicationProcessIdentifier())
+  {
+    return;
+  }
   const unsigned long encoderBufferLength =
-    ESAT_KISSStream::frameLength(packet.PRIMARY_HEADER_LENGTH
-                                 + packet.readPacketDataLength());
+    ESAT_KISSStream::frameLength(primaryHeader.LENGTH
+                                 + primaryHeader.packetDataLength);
   byte encoderBuffer[encoderBufferLength];
   ESAT_KISSStream encoder(Serial, encoderBuffer, encoderBufferLength);
   (void) encoder.beginFrame();
@@ -92,11 +110,15 @@ boolean ESAT_WifiSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
   {
     return false;
   }
-  if (packet.readPacketType() != packet.TELECOMMAND)
+  const ESAT_CCSDSPrimaryHeader primaryHeader = packet.readPrimaryHeader();
+  if (primaryHeader.packetType == primaryHeader.TELECOMMAND)
+  {
+    return true;
+  }
+  else
   {
     return false;
   }
-  return true;
 }
 
 boolean ESAT_WifiSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
@@ -125,9 +147,15 @@ void ESAT_WifiSubsystemClass::writeTelemetry(ESAT_CCSDSPacket& packet)
   {
     return;
   }
+  packet.rewind();
+  const ESAT_CCSDSPrimaryHeader primaryHeader = packet.readPrimaryHeader();
+  if (primaryHeader.packetType != primaryHeader.TELEMETRY)
+  {
+    return;
+  }
   const unsigned long encoderBufferLength =
-    ESAT_KISSStream::frameLength(packet.PRIMARY_HEADER_LENGTH
-                                 + packet.readPacketDataLength());
+    ESAT_KISSStream::frameLength(primaryHeader.LENGTH
+                                 + primaryHeader.packetDataLength);
   byte encoderBuffer[encoderBufferLength];
   ESAT_KISSStream encoder(Serial, encoderBuffer, encoderBufferLength);
   (void) encoder.beginFrame();

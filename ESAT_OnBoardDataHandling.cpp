@@ -48,13 +48,14 @@ void ESAT_OnBoardDataHandlingClass::disableUSBTelemetry()
 
 void ESAT_OnBoardDataHandlingClass::dispatchTelecommand(ESAT_CCSDSPacket& packet)
 {
-  const word applicationProcessIdentifier =
-    packet.readApplicationProcessIdentifier();
+  packet.rewind();
+  const ESAT_CCSDSPrimaryHeader primaryHeader = packet.readPrimaryHeader();
   for (unsigned int i = 0; i < numberOfSubsystems; ++i)
   {
     const word subsystemsApplicationProcessIdentifier =
-      subsystems[i]->getApplicationProcessIdentifier() & 0x07FF;
-    if (subsystemsApplicationProcessIdentifier == applicationProcessIdentifier)
+      subsystems[i]->getApplicationProcessIdentifier();
+    if (subsystemsApplicationProcessIdentifier
+        == primaryHeader.applicationProcessIdentifier)
     {
       subsystems[i]->handleTelecommand(packet);
       return;
@@ -111,7 +112,9 @@ boolean ESAT_OnBoardDataHandlingClass::readTelecommandFromUSB(ESAT_CCSDSPacket& 
   {
     return false;
   }
-  if (packet.readPacketType() != packet.TELECOMMAND)
+  packet.rewind();
+  const ESAT_CCSDSPrimaryHeader primaryHeader = packet.readPrimaryHeader();
+  if (primaryHeader.packetType != primaryHeader.TELECOMMAND)
   {
     return false;
   }
@@ -125,9 +128,14 @@ boolean ESAT_OnBoardDataHandlingClass::readSubsystemsTelemetry(ESAT_CCSDSPacket&
   {
     if (subsystems[telemetryIndex]->telemetryAvailable())
     {
+      packet.clear();
       const boolean successfulRead =
         subsystems[telemetryIndex]->readTelemetry(packet);
-      if (successfulRead && (packet.readPacketType() == packet.TELEMETRY))
+      packet.rewind();
+      const ESAT_CCSDSPrimaryHeader primaryHeader =
+        packet.readPrimaryHeader();
+      if (successfulRead
+          && (primaryHeader.packetType == primaryHeader.TELEMETRY))
       {
         return true;
       }
@@ -170,9 +178,11 @@ void ESAT_OnBoardDataHandlingClass::writeTelemetry(ESAT_CCSDSPacket& packet)
 
 void ESAT_OnBoardDataHandlingClass::writeTelemetryToUSB(ESAT_CCSDSPacket& packet)
 {
+  packet.rewind();
+  const ESAT_CCSDSPrimaryHeader primaryHeader = packet.readPrimaryHeader();
   const unsigned long encoderBufferLength =
-    ESAT_KISSStream::frameLength(packet.PRIMARY_HEADER_LENGTH
-                                 + packet.readPacketDataLength());
+    ESAT_KISSStream::frameLength(primaryHeader.LENGTH
+                                 + primaryHeader.packetDataLength);
   byte encoderBuffer[encoderBufferLength];
   ESAT_KISSStream encoder(USB, encoderBuffer, encoderBufferLength);
   (void) encoder.beginFrame();
