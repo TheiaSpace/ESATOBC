@@ -81,11 +81,11 @@ class ESAT_EPSSubsystemClass: public ESAT_Subsystem
     // the requests.
     static const byte MILLISECONDS_AFTER_WRITES = 1;
 
-    // Time between I2C telecommand and telemetry transfer retries.
-    static const word MILLISECONDS_BETWEEN_RETRIES = 10;
+    // Time between I2C telecommand and telemetry transfer attempts.
+    static const word MILLISECONDS_BETWEEN_ATTEMPTS = 10;
 
-    // Number of tries for I2C telecommand and telemetry transfers.
-    static const byte TRIES = 10;
+    // Number of attempts for I2C telecommand and telemetry transfers.
+    static const byte ATTEMPTS = 10;
 
     // True when there is a new telemetry packet available
     // (after update()); false otherwise (after readTelemetry()).

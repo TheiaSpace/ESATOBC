@@ -50,8 +50,8 @@ void ESAT_EPSSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& packet)
                                          ADDRESS,
                                          packet,
                                          MILLISECONDS_AFTER_WRITES,
-                                         TRIES,
-                                         MILLISECONDS_BETWEEN_RETRIES);
+                                         ATTEMPTS,
+                                         MILLISECONDS_BETWEEN_ATTEMPTS);
 }
 
 boolean ESAT_EPSSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
@@ -72,8 +72,8 @@ boolean ESAT_EPSSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
                                  HOUSEKEEPING,
                                  packet,
                                  MILLISECONDS_AFTER_WRITES,
-                                 TRIES,
-                                 MILLISECONDS_BETWEEN_RETRIES);
+                                 ATTEMPTS,
+                                 MILLISECONDS_BETWEEN_ATTEMPTS);
   return gotTelemetry;
 }
 
@@ -107,8 +107,8 @@ void ESAT_EPSSubsystemClass::setTime()
                                          ADDRESS,
                                          packet,
                                          MILLISECONDS_AFTER_WRITES,
-                                         TRIES,
-                                         MILLISECONDS_BETWEEN_RETRIES);
+                                         ATTEMPTS,
+                                         MILLISECONDS_BETWEEN_ATTEMPTS);
 }
 
 boolean ESAT_EPSSubsystemClass::telemetryAvailable()
