@@ -32,8 +32,7 @@ class ESAT_ADCSSubsystemClass: public ESAT_Subsystem
 {
   public:
     // Start this subsystem.
-    // Set the period of the attitude control cycle (in milliseconds).
-    void begin(word period);
+    void begin();
 
     // Return the identifier of this subsystem.
     word getApplicationProcessIdentifier();
