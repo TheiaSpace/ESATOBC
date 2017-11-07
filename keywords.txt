@@ -1,74 +1,15 @@
-ESATADCSSubsystem KEYWORD1
-inertialMeasurementUnitAlive KEYWORD2
-begin KEYWORD2
-getStartOrder KEYWORD2
-getSubsystemIdentifier KEYWORD2
-handleCommand KEYWORD2
-readTelemetry KEYWORD2
-update KEYWORD2
+ESAT_ADCSSubsystem	KEYWORD1
 
-ESATClock KEYWORD1
-alive KEYWORD2
-begin KEYWORD2
-read KEYWORD2
-write KEYWORD2
+ESAT_EPSSubsystem	KEYWORD1
 
-ESATCommand KEYWORD1
-valid KEYWORD2
-subsystemIdentifier KEYWORD2
-commandCode KEYWORD2
-parameters KEYWORD2
+ESAT_OBCClock	KEYWORD1
 
-ESATCOMMSSubsystem KEYWORD1
-status KEYWORD2
-begin KEYWORD2
-getStartOrder KEYWORD2
-getSubsystemIdentifier KEYWORD2
-handleCommand KEYWORD2
-readCommand KEYWORD2
-readTelemetry KEYWORD2
-update KEYWORD2
-writePacket KEYWORD2
+ESAT_OBCSubsystem	KEYWORD1
 
-ESATEPSSubsystem KEYWORD1
-alive KEYWORD2
-begin KEYWORD2
-getStartOrder KEYWORD2
-getSubsystemIdentifier KEYWORD2
-handleCommand KEYWORD2
-readTelemetry KEYWORD2
-update KEYWORD2
+ESAT_OnBoardDataHandling	KEYWORD1
 
-ESATOBCSubsystem KEYWORD1
-identifier KEYWORD2
-storeTelemetry KEYWORD2
-begin KEYWORD2
-getStartOrder KEYWORD2
-getSubsystemIdentifier KEYWORD2
-handleCommand KEYWORD2
-readTelemetry KEYWORD2
-update KEYWORD2
+ESAT_Subsystem	KEYWORD1
 
-ESATOnBoardDataHandling KEYWORD1
-beginSubsystems KEYWORD2
-dispatchCommand KEYWORD2
-readCommand KEYWORD2
-registerDefaultSubsystems KEYWORD2
-registerSubsystem KEYWORD2
-readSubsystemsTelemetry KEYWORD2
-sendTelemetry KEYWORD2
-storeTelemetry KEYWORD2
-updateSubsystems KEYWORD2
+ESAT_TelemetryStorage	KEYWORD1
 
-ESATStorage KEYWORD1
-alive KEYWORD2
-begin KEYWORD2
-write KEYWORD2
-
-ESATSubsystem KEYWORD1
-begin KEYWORD2
-getStartOrder KEYWORD2
-getSubsystemIdentifier KEYWORD2
-handleCommand KEYWORD2
-readTelemetry KEYWORD2
-update KEYWORD2
+ESAT_WifiSubsystem	KEYWORD1
