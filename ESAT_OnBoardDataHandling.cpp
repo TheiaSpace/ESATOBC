@@ -71,6 +71,7 @@ boolean ESAT_OnBoardDataHandlingClass::readTelecommand(ESAT_CCSDSPacket& packet)
       subsystems[telecommandIndex]->readTelecommand(packet);
     if (successfulRead)
     {
+      packet.rewind();
       return true;
     }
     else
@@ -152,10 +153,12 @@ void ESAT_OnBoardDataHandlingClass::writeTelemetry(ESAT_CCSDSPacket& packet)
 {
   for (unsigned int i = 0; i < numberOfSubsystems; i++)
   {
+    packet.rewind();
     subsystems[i]->writeTelemetry(packet);
   }
   if (usbTelemetryEnabled)
   {
+    packet.rewind();
     writeTelemetryToUSB(packet);
   }
 }
