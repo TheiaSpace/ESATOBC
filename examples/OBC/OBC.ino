@@ -136,7 +136,7 @@ void setup()
   delay(1000);
   ESAT_OBCSubsystem.begin();
   ESAT_EPSSubsystem.begin();
-  ESAT_ADCSSubsystem.begin(PERIOD);
+  ESAT_ADCSSubsystem.begin();
   ESAT_WifiSubsystem.begin(wifiTelecommandBuffer,
                            sizeof(wifiTelecommandBuffer));
   ESAT_ExampleSubsystem.begin();

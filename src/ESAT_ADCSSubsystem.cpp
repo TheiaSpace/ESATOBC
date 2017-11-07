@@ -19,9 +19,9 @@
 #include "ESAT_ADCSSubsystem.h"
 #include <ESAT_ADCS.h>
 
-void ESAT_ADCSSubsystemClass::begin(const word period)
+void ESAT_ADCSSubsystemClass::begin()
 {
-  ESAT_ADCS.begin(period);
+  ESAT_ADCS.begin();
 }
 
 word ESAT_ADCSSubsystemClass::getApplicationProcessIdentifier()
