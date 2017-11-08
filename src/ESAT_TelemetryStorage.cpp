@@ -59,6 +59,12 @@ boolean ESAT_TelemetryStorageClass::read(ESAT_CCSDSPacket& packet)
   ESAT_KISSStream decoder(file, buffer, sizeof(buffer));
   while (file.available() > 0)
   {
+    const boolean correctFrame = decoder.receiveFrame();
+    if (!correctFrame)
+    {
+      error = true;
+      return false;
+    }
     const boolean correctRead = packet.readFrom(decoder);
     if (!correctRead)
     {
