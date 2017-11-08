@@ -70,7 +70,7 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
     {
       SET_TIME = 0x00,
       STORE_TELEMETRY = 0x01,
-      DOWNLOAD_TELEMETRY = 0x02,
+      DOWNLOAD_STORED_TELEMETRY = 0x02,
       ERASE_STORED_TELEMETRY = 0x03,
     };
 
@@ -90,7 +90,7 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
 
     // True if we were commanded to download telemetry; false
     // otherwise.
-    boolean downloadTelemetry;
+    boolean downloadStoredTelemetry;
 
     // True when a new telemetry packet is ready (after update()).
     // False otherwise (after readTelemetry()).
@@ -104,7 +104,7 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
     void handleSetTimeCommand(ESAT_CCSDSPacket& packet);
     void handleSetModeCommand(ESAT_CCSDSPacket& packet);
     void handleStoreTelemetry(ESAT_CCSDSPacket& packet);
-    void handleDownloadTelemetry(ESAT_CCSDSPacket& packet);
+    void handleDownloadStoredTelemetry(ESAT_CCSDSPacket& packet);
     void handleEraseStoredTelemetry(ESAT_CCSDSPacket& packet);
 
     // Fill a new housekeeping telemetry packet.  Return true on

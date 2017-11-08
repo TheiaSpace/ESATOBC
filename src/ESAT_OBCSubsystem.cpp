@@ -26,7 +26,7 @@ void ESAT_OBCSubsystemClass::begin()
 {
   newHousekeepingTelemetryPacket = false;
   telemetryPacketSequenceCount = 0;
-  downloadTelemetry = false;
+  downloadStoredTelemetry = false;
   storeTelemetry = false;
 }
 
@@ -66,8 +66,8 @@ void ESAT_OBCSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& packet)
     case STORE_TELEMETRY:
       handleStoreTelemetry(packet);
       break;
-    case DOWNLOAD_TELEMETRY:
-      handleDownloadTelemetry(packet);
+    case DOWNLOAD_STORED_TELEMETRY:
+      handleDownloadStoredTelemetry(packet);
       break;
     case ERASE_STORED_TELEMETRY:
       handleEraseStoredTelemetry(packet);
@@ -103,12 +103,12 @@ void ESAT_OBCSubsystemClass::handleStoreTelemetry(ESAT_CCSDSPacket& packet)
   }
 }
 
-void ESAT_OBCSubsystemClass::handleDownloadTelemetry(ESAT_CCSDSPacket& packet)
+void ESAT_OBCSubsystemClass::handleDownloadStoredTelemetry(ESAT_CCSDSPacket& packet)
 {
   const ESAT_Timestamp beginTimestamp = packet.readTimestamp();
   const ESAT_Timestamp endTimestamp = packet.readTimestamp();
   ESAT_TelemetryStorage.beginReading(beginTimestamp, endTimestamp);
-  downloadTelemetry = true;
+  downloadStoredTelemetry = true;
 }
 
 void ESAT_OBCSubsystemClass::handleEraseStoredTelemetry(ESAT_CCSDSPacket& packet)
@@ -164,7 +164,7 @@ boolean ESAT_OBCSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
   {
     return readHousekeepingTelemetry(packet);
   }
-  if (downloadTelemetry)
+  if (downloadStoredTelemetry)
   {
     return readStoredTelemetry(packet);
   }
@@ -176,7 +176,7 @@ boolean ESAT_OBCSubsystemClass::readStoredTelemetry(ESAT_CCSDSPacket& packet)
   if (!correctRead)
   {
     ESAT_TelemetryStorage.endReading();
-    downloadTelemetry = false;
+    downloadStoredTelemetry = false;
   }
   return correctRead;
 }
@@ -187,7 +187,7 @@ boolean ESAT_OBCSubsystemClass::telemetryAvailable()
   {
     return true;
   }
-  if (downloadTelemetry)
+  if (downloadStoredTelemetry)
   {
     return true;
   }
@@ -201,7 +201,7 @@ void ESAT_OBCSubsystemClass::update()
 
 void ESAT_OBCSubsystemClass::writeTelemetry(ESAT_CCSDSPacket& packet)
 {
-  if (storeTelemetry && !downloadTelemetry)
+  if (storeTelemetry && !downloadStoredTelemetry)
   {
     ESAT_TelemetryStorage.write(packet);
   }
