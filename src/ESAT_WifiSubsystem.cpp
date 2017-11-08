@@ -65,7 +65,6 @@ void ESAT_WifiSubsystemClass::connect()
   secondaryHeader.patchVersionNumber = PATCH_VERSION_NUMBER;
   secondaryHeader.packetIdentifier = CONNECT;
   packet.writeSecondaryHeader(secondaryHeader);
-  packet.flush();
   const unsigned long encoderBufferLength =
     ESAT_KISSStream::frameLength(packet.length());
   byte encoderBuffer[encoderBufferLength];
