@@ -148,7 +148,6 @@ boolean ESAT_OBCSubsystemClass::readHousekeepingTelemetry(ESAT_CCSDSPacket& pack
   ESAT_TelemetryStorage.error = false;
   packet.writeBoolean(ESAT_OBCClock.error);
   ESAT_OBCClock.error = false;
-  packet.flush();
   telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
   return true;
 }
