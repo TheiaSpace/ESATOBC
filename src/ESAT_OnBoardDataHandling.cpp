@@ -108,12 +108,11 @@ boolean ESAT_OnBoardDataHandlingClass::readTelecommandFromUSB(ESAT_CCSDSPacket& 
 
 boolean ESAT_OnBoardDataHandlingClass::readSubsystemsTelemetry(ESAT_CCSDSPacket& packet)
 {
-  packet.clear();
   while (telemetryIndex < numberOfSubsystems)
   {
     if (subsystems[telemetryIndex]->telemetryAvailable())
     {
-      packet.clear();
+      packet.flush();
       const boolean successfulRead =
         subsystems[telemetryIndex]->readTelemetry(packet);
       packet.rewind();
