@@ -118,7 +118,7 @@ void ESAT_OBCSubsystemClass::handleEraseStoredTelemetry(ESAT_CCSDSPacket& packet
 
 boolean ESAT_OBCSubsystemClass::readHousekeepingTelemetry(ESAT_CCSDSPacket& packet)
 {
-  packet.clear();
+  packet.flush();
   newHousekeepingTelemetryPacket = false;
   ESAT_CCSDSPrimaryHeader primaryHeader;
   primaryHeader.packetVersionNumber = 0;
@@ -148,7 +148,6 @@ boolean ESAT_OBCSubsystemClass::readHousekeepingTelemetry(ESAT_CCSDSPacket& pack
   ESAT_TelemetryStorage.error = false;
   packet.writeBoolean(ESAT_OBCClock.error);
   ESAT_OBCClock.error = false;
-  packet.flush();
   telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
   return true;
 }

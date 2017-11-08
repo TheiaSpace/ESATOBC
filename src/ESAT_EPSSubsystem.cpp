@@ -102,7 +102,6 @@ void ESAT_EPSSubsystemClass::setTime()
   secondaryHeader.packetIdentifier = SET_CURRENT_TIME;
   packet.writeSecondaryHeader(secondaryHeader);
   packet.writeTimestamp(secondaryHeader.timestamp);
-  packet.flush();
   (void) ESAT_I2CMaster.writeTelecommand(Wire,
                                          ADDRESS,
                                          packet,
