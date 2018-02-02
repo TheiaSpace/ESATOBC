@@ -61,20 +61,14 @@ boolean ESAT_EPSSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
 
 boolean ESAT_EPSSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
 {
-  if (!newTelemetryPacket)
-  {
-    return false;
-  }
-  newTelemetryPacket = false;
-  const boolean gotTelemetry =
+  newTelemetryPacket =
     ESAT_I2CMaster.readTelemetry(Wire,
                                  ADDRESS,
-                                 HOUSEKEEPING,
                                  packet,
                                  MILLISECONDS_AFTER_WRITES,
                                  ATTEMPTS,
                                  MILLISECONDS_BETWEEN_ATTEMPTS);
-  return gotTelemetry;
+  return newTelemetryPacket;
 }
 
 void ESAT_EPSSubsystemClass::setTime()
