@@ -111,7 +111,7 @@ boolean ESAT_EPSSubsystemClass::telemetryAvailable()
 
 void ESAT_EPSSubsystemClass::update()
 {
-  newTelemetryPacket = true;
+  newTelemetryPacket = ESAT_I2CMaster.resetTelemetryQueue(Wire, ADDRESS);
 }
 
 void ESAT_EPSSubsystemClass::writeTelemetry(ESAT_CCSDSPacket& packet)
