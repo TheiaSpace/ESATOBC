@@ -46,12 +46,12 @@ void ESAT_EPSSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& packet)
   {
     return;
   }
-  (void) ESAT_I2CMaster.writeTelecommand(Wire,
-                                         ADDRESS,
-                                         packet,
-                                         MILLISECONDS_AFTER_WRITES,
-                                         ATTEMPTS,
-                                         MILLISECONDS_BETWEEN_ATTEMPTS);
+  (void) ESAT_I2CMaster.writePacket(Wire,
+                                    ADDRESS,
+                                    packet,
+                                    MILLISECONDS_AFTER_WRITES,
+                                    ATTEMPTS,
+                                    MILLISECONDS_BETWEEN_ATTEMPTS);
 }
 
 boolean ESAT_EPSSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
@@ -61,20 +61,14 @@ boolean ESAT_EPSSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
 
 boolean ESAT_EPSSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
 {
-  if (!newTelemetryPacket)
-  {
-    return false;
-  }
-  newTelemetryPacket = false;
-  const boolean gotTelemetry =
+  newTelemetryPacket =
     ESAT_I2CMaster.readTelemetry(Wire,
                                  ADDRESS,
-                                 HOUSEKEEPING,
                                  packet,
                                  MILLISECONDS_AFTER_WRITES,
                                  ATTEMPTS,
                                  MILLISECONDS_BETWEEN_ATTEMPTS);
-  return gotTelemetry;
+  return newTelemetryPacket;
 }
 
 void ESAT_EPSSubsystemClass::setTime()
@@ -102,12 +96,12 @@ void ESAT_EPSSubsystemClass::setTime()
   secondaryHeader.packetIdentifier = SET_CURRENT_TIME;
   packet.writeSecondaryHeader(secondaryHeader);
   packet.writeTimestamp(secondaryHeader.timestamp);
-  (void) ESAT_I2CMaster.writeTelecommand(Wire,
-                                         ADDRESS,
-                                         packet,
-                                         MILLISECONDS_AFTER_WRITES,
-                                         ATTEMPTS,
-                                         MILLISECONDS_BETWEEN_ATTEMPTS);
+  (void) ESAT_I2CMaster.writePacket(Wire,
+                                    ADDRESS,
+                                    packet,
+                                    MILLISECONDS_AFTER_WRITES,
+                                    ATTEMPTS,
+                                    MILLISECONDS_BETWEEN_ATTEMPTS);
 }
 
 boolean ESAT_EPSSubsystemClass::telemetryAvailable()
@@ -117,7 +111,7 @@ boolean ESAT_EPSSubsystemClass::telemetryAvailable()
 
 void ESAT_EPSSubsystemClass::update()
 {
-  newTelemetryPacket = true;
+  newTelemetryPacket = ESAT_I2CMaster.resetTelemetryQueue(Wire, ADDRESS);
 }
 
 void ESAT_EPSSubsystemClass::writeTelemetry(ESAT_CCSDSPacket& packet)
