@@ -18,11 +18,18 @@
 
 #include "ESAT_WifiSubsystem.h"
 #include "ESAT_OBCClock.h"
-#include <ESAT_CCSDSPrimaryHeader.h>
 
 void ESAT_WifiSubsystemClass::begin(byte buffer[],
                                     const unsigned long bufferLength)
 {
+  telecommandBuilder =
+    ESAT_CCSDSPacketBuilder(APPLICATION_PROCESS_IDENTIFIER,
+                            MAJOR_VERSION_NUMBER,
+                            MINOR_VERSION_NUMBER,
+                            PATCH_VERSION_NUMBER,
+                            ESAT_CCSDSPrimaryHeader::TELECOMMAND,
+                            0,
+                            ESAT_OBCClock);
   beginConnectionSensor();
   beginTelecommandDecoder(buffer, bufferLength);
   connect();
@@ -44,27 +51,13 @@ void ESAT_WifiSubsystemClass::connect()
   const byte packetDataBufferLength = ESAT_CCSDSSecondaryHeader::LENGTH;
   byte packetData[packetDataBufferLength];
   ESAT_CCSDSPacket packet(packetData, sizeof(packetData));
-  ESAT_CCSDSPrimaryHeader primaryHeader;
-  primaryHeader.packetVersionNumber = 0;
-  primaryHeader.packetType =
-    primaryHeader.TELECOMMAND;
-  primaryHeader.secondaryHeaderFlag =
-    primaryHeader.SECONDARY_HEADER_IS_PRESENT;
-  primaryHeader.applicationProcessIdentifier =
-    getApplicationProcessIdentifier();
-  primaryHeader.sequenceFlags =
-    primaryHeader.UNSEGMENTED_USER_DATA;
-  primaryHeader.packetSequenceCount = 0;
-  packet.writePrimaryHeader(primaryHeader);
-  ESAT_CCSDSSecondaryHeader secondaryHeader;
-  secondaryHeader.preamble =
-    secondaryHeader.CALENDAR_SEGMENTED_TIME_CODE_MONTH_DAY_VARIANT_1_SECOND_RESOLUTION;
-  secondaryHeader.timestamp = ESAT_OBCClock.read();
-  secondaryHeader.majorVersionNumber = MAJOR_VERSION_NUMBER;
-  secondaryHeader.minorVersionNumber = MINOR_VERSION_NUMBER;
-  secondaryHeader.patchVersionNumber = PATCH_VERSION_NUMBER;
-  secondaryHeader.packetIdentifier = CONNECT;
-  packet.writeSecondaryHeader(secondaryHeader);
+  const boolean headerCorrect = telecommandBuilder.fillHeaders(packet,
+                                                               CONNECT);
+  if (!headerCorrect)
+  {
+    return;
+  }
+  telecommandBuilder.incrementPacketSequenceCount();
   const unsigned long encoderBufferLength =
     ESAT_KISSStream::frameLength(packet.length());
   byte encoderBuffer[encoderBufferLength];
