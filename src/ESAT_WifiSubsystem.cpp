@@ -28,7 +28,6 @@ void ESAT_WifiSubsystemClass::begin(byte buffer[],
                             MINOR_VERSION_NUMBER,
                             PATCH_VERSION_NUMBER,
                             ESAT_CCSDSPrimaryHeader::TELECOMMAND,
-                            0,
                             ESAT_OBCClock);
   beginConnectionSensor();
   beginTelecommandDecoder(buffer, bufferLength);
