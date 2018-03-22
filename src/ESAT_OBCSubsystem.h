@@ -20,6 +20,7 @@
 #define ESAT_OBCSubsystem_h
 
 #include <Arduino.h>
+#include <ESAT_CCSDSPacketBuilder.h>
 #include "ESAT_Subsystem.h"
 
 // Interface to the OBC (on-board computer subsystem) from the point
@@ -96,9 +97,8 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
     // False otherwise (after readTelemetry()).
     boolean newHousekeepingTelemetryPacket;
 
-    // The telemetry packet sequence count is incremented every time a
-    // new telemetry packet is generated.
-    word telemetryPacketSequenceCount;
+    // Use this to build telemetry packets.
+    ESAT_CCSDSPacketBuilder telemetryBuilder;
 
     // Command handlers.
     void handleSetTimeCommand(ESAT_CCSDSPacket& packet);

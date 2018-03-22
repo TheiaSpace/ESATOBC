@@ -25,6 +25,14 @@
 void ESAT_EPSSubsystemClass::begin()
 {
   newTelemetryPacket = false;
+  telecommandBuilder =
+    ESAT_CCSDSPacketBuilder(APPLICATION_PROCESS_IDENTIFIER,
+                            MAJOR_VERSION_NUMBER,
+                            MINOR_VERSION_NUMBER,
+                            PATCH_VERSION_NUMBER,
+                            ESAT_CCSDSPrimaryHeader::TELECOMMAND,
+                            0,
+                            ESAT_OBCClock);
   setTime();
 }
 
@@ -77,25 +85,14 @@ void ESAT_EPSSubsystemClass::setTime()
     ESAT_CCSDSSecondaryHeader::LENGTH + 7;
   byte packetDataBuffer[packetDataBufferLength];
   ESAT_CCSDSPacket packet(packetDataBuffer, packetDataBufferLength);
-  ESAT_CCSDSPrimaryHeader primaryHeader;
-  primaryHeader.packetVersionNumber = 0;
-  primaryHeader.packetType = primaryHeader.TELECOMMAND;
-  primaryHeader.secondaryHeaderFlag = primaryHeader.SECONDARY_HEADER_IS_PRESENT;
-  primaryHeader.applicationProcessIdentifier =
-    getApplicationProcessIdentifier();
-  primaryHeader.sequenceFlags = primaryHeader.UNSEGMENTED_USER_DATA;
-  primaryHeader.packetSequenceCount = 0;
-  packet.writePrimaryHeader(primaryHeader);
-  ESAT_CCSDSSecondaryHeader secondaryHeader;
-  secondaryHeader.preamble =
-    secondaryHeader.CALENDAR_SEGMENTED_TIME_CODE_MONTH_DAY_VARIANT_1_SECOND_RESOLUTION;
-  secondaryHeader.timestamp = ESAT_OBCClock.read();
-  secondaryHeader.majorVersionNumber = MAJOR_VERSION_NUMBER;
-  secondaryHeader.minorVersionNumber = MINOR_VERSION_NUMBER;
-  secondaryHeader.patchVersionNumber = PATCH_VERSION_NUMBER;
-  secondaryHeader.packetIdentifier = SET_CURRENT_TIME;
-  packet.writeSecondaryHeader(secondaryHeader);
-  packet.writeTimestamp(secondaryHeader.timestamp);
+  const boolean headersCorrect =
+    telecommandBuilder.fillHeaders(packet, SET_CURRENT_TIME);
+  if (!headersCorrect)
+  {
+    return;
+  }
+  packet.writeTimestamp(ESAT_OBCClock.read());
+  telecommandBuilder.incrementPacketSequenceCount();
   (void) ESAT_I2CMaster.writePacket(Wire,
                                     ADDRESS,
                                     packet,
