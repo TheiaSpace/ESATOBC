@@ -16,8 +16,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESAT_Clock_h
-#define ESAT_Clock_h
+#ifndef ESAT_OBCClock_h
+#define ESAT_OBCClock_h
 
 #include <Arduino.h>
 #include <ESAT_Timestamp.h>
