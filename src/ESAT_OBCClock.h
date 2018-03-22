@@ -46,12 +46,6 @@ class ESAT_OBCClockClass: public ESAT_Clock
   private:
     static const byte ADDRESS = 0x68;
     static const byte TIME_REGISTER = 0;
-
-    // BCD to binary conversion.
-    byte BCDToBinary(byte value);
-
-    // Binary to BCD conversion.
-    byte binaryToBCD(byte value);
 };
 
 // Global instance of the OBC clock library.
