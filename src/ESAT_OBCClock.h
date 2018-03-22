@@ -20,14 +20,14 @@
 #define ESAT_OBCClock_h
 
 #include <Arduino.h>
-#include <ESAT_Timestamp.h>
+#include <ESAT_Clock.h>
 
 // Real-time clock.
 // The underlying hardware is the DS1338 serial real-time clock
 // mounted on the ESAT OBC board.
 // Communications are done through the OBC I2C bus.
 // Use the global instance ESAT_OBCClock.
-class ESAT_OBCClockClass
+class ESAT_OBCClockClass: public ESAT_Clock
 {
   public:
     // True on communication error.  Must be reset manually.
