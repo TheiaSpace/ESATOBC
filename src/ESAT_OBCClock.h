@@ -44,7 +44,10 @@ class ESAT_OBCClockClass: public ESAT_Clock
     void write(ESAT_Timestamp time);
 
   private:
+    // I2C address of the clock chip.
     static const byte ADDRESS = 0x68;
+
+    // The time is stored at this register.
     static const byte TIME_REGISTER = 0;
 };
 
