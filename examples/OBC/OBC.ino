@@ -118,6 +118,9 @@ byte usbTelecommandBuffer[WHOLE_PACKET_BUFFER_LENGTH];
 // Accumulate incoming Wifi telecommands in this buffer.
 byte wifiTelecommandBuffer[WHOLE_PACKET_BUFFER_LENGTH];
 
+// LED pin
+static const byte LED = 60;
+
 // Start peripherals and do the initial bookkeeping here:
 // - Activate the reception of telecommands from the USB interface.
 // - Activate the emission of telemetry through the USB interface.
@@ -149,6 +152,7 @@ void setup()
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_WifiSubsystem);
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ExampleSubsystem);
   ESAT_Timer.begin(PERIOD);
+  pinMode(LED,OUTPUT);
 }
 
 // Body of the main loop of the program:
@@ -174,4 +178,5 @@ void loop()
   {
     ESAT_OnBoardDataHandling.writeTelemetry(packet);
   }
+  digitalWrite(LED,!digitalRead(LED));
 }
