@@ -17,8 +17,8 @@ the ESAT_Subsystem interface.
 
 # ESAT_ADCSSubsystem
 
-Attitude Determination and Control Subsystem.  A wrapper to the
-ESAT_ADCS library.
+Attitude Determination and Control Subsystem (library backend).  A
+wrapper to the ESAT_ADCS library running in the On-Board Computer.
 
 
 # ESAT_EPSSubsystem
@@ -29,6 +29,12 @@ Electrical Power Subsystem.  Communicates with the EPS board.
 # ESAT_OBCSubsystem
 
 On-Board Computer subsystem.
+
+
+# ESAT_StandaloneADCSSubsystem
+
+Attitutde Determination and Control Subsystem (standalone backend).
+Communicates with the standalone ADCS board.
 
 
 # ESAT_WifiSubsystem
