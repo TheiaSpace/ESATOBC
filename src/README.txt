@@ -1,6 +1,6 @@
 On-Board Computer (OBC) for ESAT.
 
-See the example OBC program.
+See the example OBC programs.
 
 
 # ESAT_OnBoardDataHandling
