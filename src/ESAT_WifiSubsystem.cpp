@@ -130,6 +130,7 @@ boolean ESAT_WifiSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
 
 boolean ESAT_WifiSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
 {
+  (void) packet;
   return false;
 }
 
