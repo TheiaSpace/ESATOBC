@@ -59,6 +59,34 @@ class ESAT_ADCSSubsystemClass: public ESAT_Subsystem
 
    // Send a telemetry packet to this subsystem.
     void writeTelemetry(ESAT_CCSDSPacket& packet);
+
+#ifdef ESAT_USE_STANDALONE_ADCS
+    private:
+    // I2C address of the ADCS board.
+    static const byte ADDRESS = 2;
+
+    // Unique identifier of the subsystem.
+    static const word APPLICATION_PROCESS_IDENTIFIER = 2;
+
+    // Version numbers for I2C communication.
+    static const byte MAJOR_VERSION_NUMBER = 3;
+    static const byte MINOR_VERSION_NUMBER = 2;
+    static const byte PATCH_VERSION_NUMBER = 0;
+
+    // Time after I2C write operations to let the ADCS board process
+    // the requests.
+    static const byte MILLISECONDS_AFTER_WRITES = 1;
+
+    // Time between I2C telecommand and telemetry transfer attempts.
+    static const word MILLISECONDS_BETWEEN_ATTEMPTS = 20;
+
+    // Number of attempts for I2C telecommand and telemetry transfers.
+    static const byte ATTEMPTS = 100;
+
+    // True when there is a new telemetry packet available
+    // (after update()); false otherwise (after readTelemetry()).
+    boolean newTelemetryPacket;
+#endif /* ESAT_USE_STANDALONE_ADCS */
 };
 
 // Global instance of ESAT_ADCSSubsystemClass.  Register
