@@ -83,6 +83,8 @@ boolean ESAT_OnBoardDataHandlingClass::readTelecommand(ESAT_CCSDSPacket& packet)
   {
     return readTelecommandFromUSB(packet);
   }
+  (void) packet;
+  return false;
 }
 
 boolean ESAT_OnBoardDataHandlingClass::readTelecommandFromUSB(ESAT_CCSDSPacket& packet)
@@ -165,7 +167,6 @@ void ESAT_OnBoardDataHandlingClass::writeTelemetry(ESAT_CCSDSPacket& packet)
 void ESAT_OnBoardDataHandlingClass::writeTelemetryToUSB(ESAT_CCSDSPacket& packet)
 {
   packet.rewind();
-  const ESAT_CCSDSPrimaryHeader primaryHeader = packet.readPrimaryHeader();
   const unsigned long encoderBufferLength =
     ESAT_KISSStream::frameLength(packet.length());
   byte encoderBuffer[encoderBufferLength];

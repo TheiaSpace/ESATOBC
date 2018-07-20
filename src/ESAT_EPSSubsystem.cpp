@@ -63,6 +63,7 @@ void ESAT_EPSSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& packet)
 
 boolean ESAT_EPSSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
 {
+  (void) packet;
   return false;
 }
 
@@ -112,6 +113,7 @@ void ESAT_EPSSubsystemClass::update()
 
 void ESAT_EPSSubsystemClass::writeTelemetry(ESAT_CCSDSPacket& packet)
 {
+  (void) packet;
 }
 
 ESAT_EPSSubsystemClass ESAT_EPSSubsystem;

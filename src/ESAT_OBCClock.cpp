@@ -41,6 +41,7 @@ ESAT_Timestamp ESAT_OBCClockClass::read()
   const byte minutes = Wire.read();
   const byte hours = Wire.read();
   const byte weekDay = Wire.read();
+  (void) weekDay;
   const byte day = Wire.read();
   const byte month = Wire.read();
   const byte year = Wire.read();

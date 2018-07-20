@@ -119,6 +119,7 @@ void ESAT_OBCSubsystemClass::handleDownloadStoredTelemetry(ESAT_CCSDSPacket& pac
 
 void ESAT_OBCSubsystemClass::handleEraseStoredTelemetry(ESAT_CCSDSPacket& packet)
 {
+  (void) packet;
   ESAT_TelemetryStorage.erase();
 }
 
@@ -142,6 +143,7 @@ boolean ESAT_OBCSubsystemClass::readHousekeepingTelemetry(ESAT_CCSDSPacket& pack
 
 boolean ESAT_OBCSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
 {
+  (void) packet;
   return false;
 }
 
@@ -155,6 +157,8 @@ boolean ESAT_OBCSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
   {
     return readStoredTelemetry(packet);
   }
+  (void) packet;
+  return false;
 }
 
 boolean ESAT_OBCSubsystemClass::readStoredTelemetry(ESAT_CCSDSPacket& packet)
