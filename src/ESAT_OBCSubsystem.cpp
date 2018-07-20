@@ -158,6 +158,7 @@ boolean ESAT_OBCSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
     return readStoredTelemetry(packet);
   }
   (void) packet;
+  return false;
 }
 
 boolean ESAT_OBCSubsystemClass::readStoredTelemetry(ESAT_CCSDSPacket& packet)
