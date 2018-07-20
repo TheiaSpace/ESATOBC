@@ -58,6 +58,7 @@ class ESAT_ExampleSubsystemClass: public ESAT_Subsystem
     // getApplicationProcessIdentifier().
     void handleTelecommand(ESAT_CCSDSPacket& packet)
     {
+      (void) packet;
     }
 
     // Fill a packet with the next telecommand packet available.
@@ -66,6 +67,7 @@ class ESAT_ExampleSubsystemClass: public ESAT_Subsystem
     // Called from ESAT_OnBoardDataHandling.readTelecommand().
     boolean readTelecommand(ESAT_CCSDSPacket& packet)
     {
+      (void) packet;
       return false;
     }
 
@@ -75,6 +77,7 @@ class ESAT_ExampleSubsystemClass: public ESAT_Subsystem
     // ESAT_OnBoardDataHandling.readSubsystemsTelemetry().
     boolean readTelemetry(ESAT_CCSDSPacket& packet)
     {
+      (void) packet;
       return false;
     }
 
@@ -96,6 +99,7 @@ class ESAT_ExampleSubsystemClass: public ESAT_Subsystem
     // Called from ESAT_OnBoardDataHandling.writeTelemetry().
     void writeTelemetry(ESAT_CCSDSPacket& packet)
     {
+      (void) packet;
     }
 };
 
