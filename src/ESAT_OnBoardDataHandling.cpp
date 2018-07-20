@@ -83,6 +83,7 @@ boolean ESAT_OnBoardDataHandlingClass::readTelecommand(ESAT_CCSDSPacket& packet)
   {
     return readTelecommandFromUSB(packet);
   }
+  (void) packet;
 }
 
 boolean ESAT_OnBoardDataHandlingClass::readTelecommandFromUSB(ESAT_CCSDSPacket& packet)
