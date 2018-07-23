@@ -28,6 +28,9 @@
 // should be the only instance of ESAT_ADCSSubsystemClass.  Register
 // the EPS subsystem on the on-board data handling with
 // ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ADCSSubsystem).
+// If the macro ESAT_ADCS_CODE_RUNNING_IN_ADCS is defined, this module
+// communicates with the of the ADCS board; if it is undefined, this
+// module works as wrapper around ESAT_ADCS.
 class ESAT_ADCSSubsystemClass: public ESAT_Subsystem
 {
   public:
@@ -60,7 +63,7 @@ class ESAT_ADCSSubsystemClass: public ESAT_Subsystem
    // Send a telemetry packet to this subsystem.
     void writeTelemetry(ESAT_CCSDSPacket& packet);
 
-#ifdef ESAT_USE_STANDALONE_ADCS
+#ifdef ESAT_ADCS_CODE_RUNNING_IN_ADCS
     private:
     // I2C address of the ADCS board.
     static const byte ADDRESS = 2;
@@ -86,7 +89,7 @@ class ESAT_ADCSSubsystemClass: public ESAT_Subsystem
     // True when there is a new telemetry packet available
     // (after update()); false otherwise (after readTelemetry()).
     boolean newTelemetryPacket;
-#endif /* ESAT_USE_STANDALONE_ADCS */
+#endif /* ESAT_ADCS_CODE_RUNNING_IN_ADCS */
 };
 
 // Global instance of ESAT_ADCSSubsystemClass.  Register
