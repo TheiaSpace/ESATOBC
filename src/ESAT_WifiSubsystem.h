@@ -20,7 +20,6 @@
 #define ESAT_WifiSubsystem_h
 
 #include <Arduino.h>
-#include <ESAT_CCSDSPacketBuilder.h>
 #include <ESAT_KISSStream.h>
 #include "ESAT_Subsystem.h"
 
@@ -82,9 +81,6 @@ class ESAT_WifiSubsystemClass: public ESAT_Subsystem
     // to the server and it is pulled down when the Wifi board is
     // connected to the server.
     static const byte NOT_CONNECTED_SIGNAL_PIN = ESP0;
-
-    // Use this to build telecommands.
-    ESAT_CCSDSPacketBuilder telecommandBuilder;
 
     // Decode KISS frames with telecommands with this stream.
     ESAT_KISSStream telecommandDecoder;

@@ -20,7 +20,6 @@
 #define ESAT_EPSSubsystem_h
 
 #include <Arduino.h>
-#include <ESAT_CCSDSPacketBuilder.h>
 #include "ESAT_Subsystem.h"
 
 // Interface to the EPS (electrical power subsystem) from the point of
@@ -92,9 +91,6 @@ class ESAT_EPSSubsystemClass: public ESAT_Subsystem
   private:
     // Command code for setting the time of the EPS clock.
     static const byte SET_CURRENT_TIME = 0x00;
-
-    // Use this to build telecommands.
-    ESAT_CCSDSPacketBuilder telecommandBuilder;
 };
 
 // Global instance of ESAT_EPSSubsystemClass.  Register
