@@ -22,13 +22,6 @@
 void ESAT_WifiSubsystemClass::begin(byte buffer[],
                                     const unsigned long bufferLength)
 {
-  telecommandBuilder =
-    ESAT_CCSDSPacketBuilder(APPLICATION_PROCESS_IDENTIFIER,
-                            MAJOR_VERSION_NUMBER,
-                            MINOR_VERSION_NUMBER,
-                            PATCH_VERSION_NUMBER,
-                            ESAT_CCSDSPrimaryHeader::TELECOMMAND,
-                            ESAT_OBCClock);
   beginConnectionSensor();
   beginTelecommandDecoder(buffer, bufferLength);
   connect();
@@ -50,13 +43,13 @@ void ESAT_WifiSubsystemClass::connect()
   const byte packetDataBufferLength = ESAT_CCSDSSecondaryHeader::LENGTH;
   byte packetData[packetDataBufferLength];
   ESAT_CCSDSPacket packet(packetData, sizeof(packetData));
-  const boolean headerCorrect = telecommandBuilder.fillHeaders(packet,
-                                                               CONNECT);
-  if (!headerCorrect)
-  {
-    return;
-  }
-  telecommandBuilder.incrementPacketSequenceCount();
+  packet.writeTelecommandHeaders(getApplicationProcessIdentifier(),
+                                 0,
+                                 ESAT_OBCClock.read(),
+                                 MAJOR_VERSION_NUMBER,
+                                 MINOR_VERSION_NUMBER,
+                                 PATCH_VERSION_NUMBER,
+                                 CONNECT);
   const unsigned long encoderBufferLength =
     ESAT_KISSStream::frameLength(packet.length());
   byte encoderBuffer[encoderBufferLength];
