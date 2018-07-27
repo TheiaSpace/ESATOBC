@@ -25,13 +25,6 @@
 void ESAT_EPSSubsystemClass::begin()
 {
   newTelemetryPacket = false;
-  telecommandBuilder =
-    ESAT_CCSDSPacketBuilder(APPLICATION_PROCESS_IDENTIFIER,
-                            MAJOR_VERSION_NUMBER,
-                            MINOR_VERSION_NUMBER,
-                            PATCH_VERSION_NUMBER,
-                            ESAT_CCSDSPrimaryHeader::TELECOMMAND,
-                            ESAT_OBCClock);
   setTime();
 }
 
@@ -85,14 +78,15 @@ void ESAT_EPSSubsystemClass::setTime()
     ESAT_CCSDSSecondaryHeader::LENGTH + 7;
   byte packetDataBuffer[packetDataBufferLength];
   ESAT_CCSDSPacket packet(packetDataBuffer, packetDataBufferLength);
-  const boolean headersCorrect =
-    telecommandBuilder.fillHeaders(packet, SET_CURRENT_TIME);
-  if (!headersCorrect)
-  {
-    return;
-  }
-  packet.writeTimestamp(ESAT_OBCClock.read());
-  telecommandBuilder.incrementPacketSequenceCount();
+  const ESAT_Timestamp timestamp = ESAT_OBCClock.read();
+  packet.writeTelecommandHeaders(getApplicationProcessIdentifier(),
+                                 0,
+                                 timestamp,
+                                 MAJOR_VERSION_NUMBER,
+                                 MINOR_VERSION_NUMBER,
+                                 PATCH_VERSION_NUMBER,
+                                 SET_CURRENT_TIME);
+  packet.writeTimestamp(timestamp);
   (void) ESAT_I2CMaster.writePacket(Wire,
                                     ADDRESS,
                                     packet,
