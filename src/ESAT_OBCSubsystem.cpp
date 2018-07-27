@@ -24,15 +24,9 @@
 
 void ESAT_OBCSubsystemClass::begin()
 {
-  telemetryBuilder =
-    ESAT_CCSDSPacketBuilder(APPLICATION_PROCESS_IDENTIFIER,
-                            MAJOR_VERSION_NUMBER,
-                            MINOR_VERSION_NUMBER,
-                            PATCH_VERSION_NUMBER,
-                            ESAT_CCSDSPrimaryHeader::TELEMETRY,
-                            ESAT_OBCClock);
   newHousekeepingTelemetryPacket = false;
   downloadStoredTelemetry = false;
+  telemetryPacketSequenceCount = 0;
   storeTelemetry = false;
 }
 
@@ -126,18 +120,25 @@ void ESAT_OBCSubsystemClass::handleEraseStoredTelemetry(ESAT_CCSDSPacket& packet
 boolean ESAT_OBCSubsystemClass::readHousekeepingTelemetry(ESAT_CCSDSPacket& packet)
 {
   newHousekeepingTelemetryPacket = false;
-  const boolean headersCorrect = telemetryBuilder.fillHeaders(packet,
-                                                              HOUSEKEEPING);
-  if (!headersCorrect)
+  const byte userDataLength = 4;
+  if (packet.capacity() < (ESAT_CCSDSSecondaryHeader::LENGTH + userDataLength))
   {
     return false;
   }
+  packet.writeTelemetryHeaders(getApplicationProcessIdentifier(),
+                               telemetryPacketSequenceCount,
+                               ESAT_OBCClock.read(),
+                               MAJOR_VERSION_NUMBER,
+                               MINOR_VERSION_NUMBER,
+                               PATCH_VERSION_NUMBER,
+                               HOUSEKEEPING);
   packet.writeByte(ESAT_Timer.load());
   packet.writeBoolean(storeTelemetry);
   packet.writeBoolean(ESAT_TelemetryStorage.error);
   ESAT_TelemetryStorage.error = false;
   packet.writeBoolean(ESAT_OBCClock.error);
   ESAT_OBCClock.error = false;
+  telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
   return true;
 }
 
