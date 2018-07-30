@@ -81,11 +81,17 @@ class ESAT_OnBoardDataHandlingClass
     void writeTelemetry(ESAT_CCSDSPacket& packet);
 
   private:
-    static const byte MAXIMUM_NUMBER_OF_SUBSYSTEMS = 16;
-    ESAT_Subsystem* subsystems[MAXIMUM_NUMBER_OF_SUBSYSTEMS];
-    byte numberOfSubsystems;
-    byte telecommandIndex;
-    byte telemetryIndex;
+    // Head of the list of subsystems visited by readTelecommand().
+    ESAT_Subsystem* telecommandSubsystem;
+
+    // Head of the list of subsystems visited by readTelemetry().
+    ESAT_Subsystem* telemetrySubsystem;
+
+    // First subsystem of the list of registered subsystems.
+    ESAT_Subsystem* firstSubsystem;
+
+    // Last subsystem of the list of registered subsystems.
+    ESAT_Subsystem* lastSubsystem;
 
     // Store incoming USB telecommands in this buffer.
     byte* usbTelecommandBuffer;

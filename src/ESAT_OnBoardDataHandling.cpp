@@ -34,14 +34,16 @@ void ESAT_OnBoardDataHandlingClass::dispatchTelecommand(ESAT_CCSDSPacket& packet
 {
   packet.rewind();
   const ESAT_CCSDSPrimaryHeader primaryHeader = packet.readPrimaryHeader();
-  for (unsigned int i = 0; i < numberOfSubsystems; ++i)
+  for (ESAT_Subsystem* subsystem = firstSubsystem;
+       subsystem != nullptr;
+       subsystem = subsystem->nextSubsystem)
   {
     const word subsystemsApplicationProcessIdentifier =
-      subsystems[i]->getApplicationProcessIdentifier();
+      subsystem->getApplicationProcessIdentifier();
     if (subsystemsApplicationProcessIdentifier
         == primaryHeader.applicationProcessIdentifier)
     {
-      subsystems[i]->handleTelecommand(packet);
+      subsystem->handleTelecommand(packet);
       return;
     }
   }
@@ -65,10 +67,10 @@ void ESAT_OnBoardDataHandlingClass::enableUSBTelemetry()
 
 boolean ESAT_OnBoardDataHandlingClass::readTelecommand(ESAT_CCSDSPacket& packet)
 {
-  while (telecommandIndex < numberOfSubsystems)
+  while (telecommandSubsystem != nullptr)
   {
     const bool successfulRead =
-      subsystems[telecommandIndex]->readTelecommand(packet);
+      telecommandSubsystem->readTelecommand(packet);
     if (successfulRead)
     {
       packet.rewind();
@@ -76,7 +78,7 @@ boolean ESAT_OnBoardDataHandlingClass::readTelecommand(ESAT_CCSDSPacket& packet)
     }
     else
     {
-      telecommandIndex = telecommandIndex + 1;
+      telecommandSubsystem = telecommandSubsystem->nextSubsystem;
     }
   }
   if (usbTelecommandsEnabled)
@@ -110,13 +112,13 @@ boolean ESAT_OnBoardDataHandlingClass::readTelecommandFromUSB(ESAT_CCSDSPacket& 
 
 boolean ESAT_OnBoardDataHandlingClass::readSubsystemsTelemetry(ESAT_CCSDSPacket& packet)
 {
-  while (telemetryIndex < numberOfSubsystems)
+  while (telemetrySubsystem != nullptr)
   {
-    if (subsystems[telemetryIndex]->telemetryAvailable())
+    if (telemetrySubsystem->telemetryAvailable())
     {
       packet.flush();
       const boolean successfulRead =
-        subsystems[telemetryIndex]->readTelemetry(packet);
+        telemetrySubsystem->readTelemetry(packet);
       packet.rewind();
       const ESAT_CCSDSPrimaryHeader primaryHeader =
         packet.readPrimaryHeader();
@@ -128,7 +130,7 @@ boolean ESAT_OnBoardDataHandlingClass::readSubsystemsTelemetry(ESAT_CCSDSPacket&
     }
     else
     {
-      telemetryIndex = telemetryIndex + 1;
+      telemetrySubsystem = telemetrySubsystem->nextSubsystem;
     }
   }
   return false;
@@ -136,26 +138,38 @@ boolean ESAT_OnBoardDataHandlingClass::readSubsystemsTelemetry(ESAT_CCSDSPacket&
 
 void ESAT_OnBoardDataHandlingClass::registerSubsystem(ESAT_Subsystem& subsystem)
 {
-  subsystems[numberOfSubsystems] = &subsystem;
-  numberOfSubsystems = numberOfSubsystems + 1;
+  if (lastSubsystem == nullptr)
+  {
+    firstSubsystem = &subsystem;
+    lastSubsystem = &subsystem;
+  }
+  else
+  {
+    lastSubsystem->nextSubsystem = &subsystem;
+    lastSubsystem = &subsystem;
+  }
 }
 
 void ESAT_OnBoardDataHandlingClass::updateSubsystems()
 {
-  for (int i = 0; i < numberOfSubsystems; ++i)
+  for (ESAT_Subsystem* subsystem = firstSubsystem;
+       subsystem != nullptr;
+       subsystem = subsystem->nextSubsystem)
   {
-    subsystems[i]->update();
+    subsystem->update();
   }
-  telecommandIndex = 0;
-  telemetryIndex = 0;
+  telecommandSubsystem = firstSubsystem;
+  telemetrySubsystem = firstSubsystem;
 }
 
 void ESAT_OnBoardDataHandlingClass::writeTelemetry(ESAT_CCSDSPacket& packet)
 {
-  for (unsigned int i = 0; i < numberOfSubsystems; i++)
+  for (ESAT_Subsystem* subsystem = firstSubsystem;
+       subsystem != nullptr;
+       subsystem = subsystem->nextSubsystem)
   {
     packet.rewind();
-    subsystems[i]->writeTelemetry(packet);
+    subsystem->writeTelemetry(packet);
   }
   if (usbTelemetryEnabled)
   {

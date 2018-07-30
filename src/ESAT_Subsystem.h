@@ -35,6 +35,14 @@
 class ESAT_Subsystem
 {
   public:
+    // Next subsystem in the list of registered subsystems.
+    // ESAT_OnBoardDataHandling uses this to keep a linked
+    // list of registered subsystems: it can traverse
+    // the list by going from one subsystem to the next subsystem
+    // until reaching the end of the list at nullptr.
+    // Only ESAT_OnBoardDataHandling should care about this.
+    ESAT_Subsystem* nextSubsystem = nullptr;
+
     virtual ~ESAT_Subsystem() {};
 
     // Return the application process identifier of this subsystem.
