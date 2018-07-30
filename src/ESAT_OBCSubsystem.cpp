@@ -18,6 +18,7 @@
 
 #include "ESAT_OBCSubsystem.h"
 #include "ESAT_OBCClock.h"
+#include "ESAT_OBCLED.h"
 #include "ESAT_TelemetryStorage.h"
 #include <ESAT_Timer.h>
 #include <ESAT_Timestamp.h>
@@ -28,6 +29,7 @@ void ESAT_OBCSubsystemClass::begin()
   downloadStoredTelemetry = false;
   telemetryPacketSequenceCount = 0;
   storeTelemetry = false;
+  ESAT_OBCLED.begin();
 }
 
 word ESAT_OBCSubsystemClass::getApplicationProcessIdentifier()
@@ -189,6 +191,7 @@ boolean ESAT_OBCSubsystemClass::telemetryAvailable()
 void ESAT_OBCSubsystemClass::update()
 {
   newHousekeepingTelemetryPacket = true;
+  ESAT_OBCLED.toggle();
 }
 
 void ESAT_OBCSubsystemClass::writeTelemetry(ESAT_CCSDSPacket& packet)
