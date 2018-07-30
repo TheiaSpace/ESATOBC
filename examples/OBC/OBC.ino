@@ -156,7 +156,7 @@ void setup()
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_WifiSubsystem);
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ExampleSubsystem);
   ESAT_Timer.begin(PERIOD);
-  pinMode(LED,OUTPUT);
+  pinMode(LED, OUTPUT);
 }
 
 // Body of the main loop of the program:
@@ -182,5 +182,5 @@ void loop()
   {
     ESAT_OnBoardDataHandling.writeTelemetry(packet);
   }
-  digitalWrite(LED,!digitalRead(LED));
+  digitalWrite(LED, !digitalRead(LED));
 }
