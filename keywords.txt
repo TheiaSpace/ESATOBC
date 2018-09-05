@@ -1,15 +1,38 @@
-ESAT_ADCSSubsystem	KEYWORD1
+#######################################
+# Syntax Coloring Map For ESATOBC
+#######################################
 
-ESAT_EPSSubsystem	KEYWORD1
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
 
-ESAT_OBCClock	KEYWORD1
-
-ESAT_OBCSubsystem	KEYWORD1
-
-ESAT_OnBoardDataHandling	KEYWORD1
-
+ESAT_ADCSSubsystemClass	KEYWORD1
+ESAT_EPSSubsystemClass	KEYWORD1
+ESAT_OBCClockClass	KEYWORD1
+ESAT_OBCLEDClass	KEYWORD1
+ESAT_OBCSubsystemClass	KEYWORD1
+ESAT_OnBoardDataHandlingClass	KEYWORD1
 ESAT_Subsystem	KEYWORD1
+ESAT_TelemetryStorageClass	KEYWORD1
+ESAT_WifiSubsystemClass	KEYWORD1
 
-ESAT_TelemetryStorage	KEYWORD1
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
 
-ESAT_WifiSubsystem	KEYWORD1
+#######################################
+# Instances (KEYWORD2)
+#######################################
+
+ESAT_ADCSSubsystem	KEYWORD2
+ESAT_EPSSubsystem	KEYWORD2
+ESAT_OBCClock	KEYWORD2
+ESAT_OBCLED	KEYWORD2
+ESAT_OBCSubsystem	KEYWORD2
+ESAT_OnBoardDataHandling	KEYWORD2
+ESAT_TelemetryStorage	KEYWORD2
+ESAT_WifiSubsystem	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
