@@ -80,6 +80,11 @@ Wifi communications subsystem.  Communicates with the Wifi board.
 Access to the real-time clock mounted on the OBC board.
 
 
+# ESAT_OBCLED
+
+Control the on-board heartbeat led.
+
+
 # ESAT_TelemetryStorage
 
 Access to the memory card mounted on the OBC board for telemetry
