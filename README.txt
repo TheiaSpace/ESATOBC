@@ -53,8 +53,11 @@ the ESAT_Subsystem interface.
 
 # ESAT_ADCSSubsystem
 
-Attitude Determination and Control Subsystem (library backend).  A
-wrapper to the ESAT_ADCS library running in the On-Board Computer.
+Attitude Determination and Control Subsystem.  Either communicates
+with the ADCS board (option ADCS=ADCS, for using together with newer
+ADCS boards with a standalone microprocessor) or wraps the ESAT_ADCS
+library (option ADCS=OBC, for using together with legacy ADCS boards
+controlled by the OBC board).
 
 
 # ESAT_EPSSubsystem
