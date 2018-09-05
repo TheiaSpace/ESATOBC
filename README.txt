@@ -21,7 +21,11 @@ ESAT OBC library version 4.1.0.
 
 On-Board Computer (OBC) for ESAT.
 
-See the example OBC program (examples/OBC/OBC.ino).
+See the example OBC program (examples/OBC/OBC.ino).  This program uses
+the modules of the OBC library.
+
+The src/ directory contains the OBC library, which consists of the
+following modules:
 
 
 # ESAT_OnBoardDataHandling
