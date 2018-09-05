@@ -67,12 +67,6 @@ Electrical Power Subsystem.  Communicates with the EPS board.
 On-Board Computer subsystem.
 
 
-# ESAT_StandaloneADCSSubsystem
-
-Attitutde Determination and Control Subsystem (standalone backend).
-Communicates with the standalone ADCS board.
-
-
 # ESAT_WifiSubsystem
 
 Wifi communications subsystem.  Communicates with the Wifi board.
