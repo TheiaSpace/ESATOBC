@@ -22,6 +22,8 @@
 #define ESAT_OBCSubsystem_h
 
 #include <Arduino.h>
+#include <ESAT_CCSDSTelemetryPacketBuilder.h>
+#include <ESAT_FlagContainer.h>
 #include "ESAT_Subsystem.h"
 
 // Interface to the OBC (on-board computer subsystem) from the point
@@ -74,12 +76,8 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
       STORE_TELEMETRY = 0x01,
       DOWNLOAD_STORED_TELEMETRY = 0x02,
       ERASE_STORED_TELEMETRY = 0x03,
-    };
-
-    // Telemetry packet identifiers.
-    enum TelemetryPacketIdentifier
-    {
-      HOUSEKEEPING = 0,
+      ENABLE_TELEMETRY = 0x04,
+      DISABLE_TELEMETRY = 0x05,
     };
 
     // Unique identifier of the subsystem.
@@ -94,13 +92,14 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
     // otherwise.
     boolean downloadStoredTelemetry;
 
-    // True when a new telemetry packet is ready (after update()).
-    // False otherwise (after readTelemetry()).
-    boolean newHousekeepingTelemetryPacket;
+    // List of enabled telemetry packet identifiers.
+    ESAT_FlagContainer enabledTelemetry;
 
-    // Packet sequence count.
-    // Increase by 1 with each new telemetry packet.
-    word telemetryPacketSequenceCount;
+    // List of pending telemetry packet identifiers.
+    ESAT_FlagContainer pendingTelemetry;
+
+    // Telemetry packet builder.
+    ESAT_CCSDSTelemetryPacketBuilder telemetryPacketBuilder;
 
     // Command handlers.
     void handleSetTimeCommand(ESAT_CCSDSPacket& packet);
@@ -108,11 +107,8 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
     void handleStoreTelemetry(ESAT_CCSDSPacket& packet);
     void handleDownloadStoredTelemetry(ESAT_CCSDSPacket& packet);
     void handleEraseStoredTelemetry(ESAT_CCSDSPacket& packet);
-
-    // Fill a new housekeeping telemetry packet.  Return true on
-    // success; otherwise return false.
-    // Set newHousekeepingTelemetryPacket to false.
-    boolean readHousekeepingTelemetry(ESAT_CCSDSPacket& packet);
+    void handleEnableTelemetry(ESAT_CCSDSPacket& packet);
+    void handleDisableTelemetry(ESAT_CCSDSPacket& packet);
 
     // Read the next stored telemetry packet and fill the given packet buffer.
     // Return true on success; otherwise return false.

@@ -20,17 +20,29 @@
 
 #include "ESAT_OBCSubsystem.h"
 #include "ESAT_OBCClock.h"
+#include "ESAT_OBCHousekeepingTelemetry.h"
 #include "ESAT_OBCLED.h"
+#include "ESAT_OBCLinesTelemetry.h"
 #include "ESAT_TelemetryStorage.h"
 #include <ESAT_Timer.h>
 #include <ESAT_Timestamp.h>
 
 void ESAT_OBCSubsystemClass::begin()
 {
-  newHousekeepingTelemetryPacket = false;
   downloadStoredTelemetry = false;
-  telemetryPacketSequenceCount = 0;
   storeTelemetry = false;
+  telemetryPacketBuilder =
+    ESAT_CCSDSTelemetryPacketBuilder(getApplicationProcessIdentifier(),
+                                     MAJOR_VERSION_NUMBER,
+                                     MINOR_VERSION_NUMBER,
+                                     PATCH_VERSION_NUMBER,
+                                     ESAT_OBCClock);
+  enabledTelemetry.clearAll();
+  pendingTelemetry.clearAll();
+  telemetryPacketBuilder.add(ESAT_OBCHousekeepingTelemetry);
+  telemetryPacketBuilder.add(ESAT_OBCLinesTelemetry);
+  enabledTelemetry.set(ESAT_OBCHousekeepingTelemetry.packetIdentifier());
+  enabledTelemetry.clear(ESAT_OBCLinesTelemetry.packetIdentifier());
   ESAT_OBCLED.begin();
 }
 
@@ -75,6 +87,12 @@ void ESAT_OBCSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& packet)
       break;
     case ERASE_STORED_TELEMETRY:
       handleEraseStoredTelemetry(packet);
+      break;
+    case ENABLE_TELEMETRY:
+      handleEnableTelemetry(packet);
+      break;
+    case DISABLE_TELEMETRY:
+      handleDisableTelemetry(packet);
       break;
     default:
       break;
@@ -121,29 +139,24 @@ void ESAT_OBCSubsystemClass::handleEraseStoredTelemetry(ESAT_CCSDSPacket& packet
   ESAT_TelemetryStorage.erase();
 }
 
-boolean ESAT_OBCSubsystemClass::readHousekeepingTelemetry(ESAT_CCSDSPacket& packet)
+void ESAT_OBCSubsystemClass::handleEnableTelemetry(ESAT_CCSDSPacket& packet)
 {
-  newHousekeepingTelemetryPacket = false;
-  const byte userDataLength = 4;
-  if (packet.capacity() < (ESAT_CCSDSSecondaryHeader::LENGTH + userDataLength))
+  if (packet.available() < 1)
   {
-    return false;
+    return;
   }
-  packet.writeTelemetryHeaders(getApplicationProcessIdentifier(),
-                               telemetryPacketSequenceCount,
-                               ESAT_OBCClock.read(),
-                               MAJOR_VERSION_NUMBER,
-                               MINOR_VERSION_NUMBER,
-                               PATCH_VERSION_NUMBER,
-                               HOUSEKEEPING);
-  packet.writeByte(ESAT_Timer.load());
-  packet.writeBoolean(storeTelemetry);
-  packet.writeBoolean(ESAT_TelemetryStorage.error);
-  ESAT_TelemetryStorage.error = false;
-  packet.writeBoolean(ESAT_OBCClock.error);
-  ESAT_OBCClock.error = false;
-  telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
-  return true;
+  const byte identifier = packet.readByte();
+  enabledTelemetry.set(identifier);
+}
+
+void ESAT_OBCSubsystemClass::handleDisableTelemetry(ESAT_CCSDSPacket& packet)
+{
+  if (packet.available() < 1)
+  {
+    return;
+  }
+  const byte identifier = packet.readByte();
+  enabledTelemetry.clear(identifier);
 }
 
 boolean ESAT_OBCSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
@@ -154,9 +167,9 @@ boolean ESAT_OBCSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
 
 boolean ESAT_OBCSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
 {
-  if (newHousekeepingTelemetryPacket)
+  if (telemetryAvailable())
   {
-    return readHousekeepingTelemetry(packet);
+    return telemetryPacketBuilder.buildNext(packet, pendingTelemetry);
   }
   if (downloadStoredTelemetry)
   {
@@ -179,7 +192,7 @@ boolean ESAT_OBCSubsystemClass::readStoredTelemetry(ESAT_CCSDSPacket& packet)
 
 boolean ESAT_OBCSubsystemClass::telemetryAvailable()
 {
-  if (newHousekeepingTelemetryPacket)
+  if (pendingTelemetry.readNext() != pendingTelemetry.NO_ACTIVE_FLAGS)
   {
     return true;
   }
@@ -192,7 +205,11 @@ boolean ESAT_OBCSubsystemClass::telemetryAvailable()
 
 void ESAT_OBCSubsystemClass::update()
 {
-  newHousekeepingTelemetryPacket = true;
+  const ESAT_FlagContainer availableTelemetry =
+    telemetryPacketBuilder.available();
+  const ESAT_FlagContainer availableAndEnabledTelemetry =
+    availableTelemetry & enabledTelemetry;
+  pendingTelemetry = availableAndEnabledTelemetry;
   ESAT_OBCLED.toggle();
 }
 
