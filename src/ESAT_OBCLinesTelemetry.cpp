@@ -23,6 +23,7 @@
 #include "ESAT_OBCSubsystem.h"
 #include "ESAT_TelemetryStorage.h"
 #include <ESAT_Timer.h>
+#include <Wire.h>
 
 boolean ESAT_OBCLinesTelemetryClass::available()
 {
@@ -74,6 +75,9 @@ boolean ESAT_OBCLinesTelemetryClass::fillUserData(ESAT_CCSDSPacket& packet)
   packet.writeBoolean(boolean(digitalRead(TEST_O)));
   packet.writeBoolean(boolean(digitalRead(RST_O)));
   packet.writeBoolean(boolean(digitalRead(LED_O)));
+  // The I2C bus stops working after reading the lines directly,
+  // so we have to reset it.
+  Wire.begin();
   return true;
 }
 
