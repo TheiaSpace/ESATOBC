@@ -87,6 +87,12 @@ void ESAT_OBCSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& packet)
     case ERASE_STORED_TELEMETRY:
       handleEraseStoredTelemetry(packet);
       break;
+    case ENABLE_TELEMETRY:
+      handleEnableTelemetry(packet);
+      break;
+    case DISABLE_TELEMETRY:
+      handleDisableTelemetry(packet);
+      break;
     default:
       break;
   }
@@ -130,6 +136,32 @@ void ESAT_OBCSubsystemClass::handleEraseStoredTelemetry(ESAT_CCSDSPacket& packet
 {
   (void) packet;
   ESAT_TelemetryStorage.erase();
+}
+
+void ESAT_OBCSubsystemClass::handleEnableTelemetry(ESAT_CCSDSPacket& packet)
+{
+  if (packet.available() < 1)
+  {
+    return;
+  }
+  const byte identifier = packet.readByte();
+  if (availableTelemetry.read(identifier))
+  {
+    enabledTelemetry.set(identifier);
+  }
+}
+
+void ESAT_OBCSubsystemClass::handleDisableTelemetry(ESAT_CCSDSPacket& packet)
+{
+  if (packet.available() < 1)
+  {
+    return;
+  }
+  const byte identifier = packet.readByte();
+  if (availableTelemetry.read(identifier))
+  {
+    enabledTelemetry.clear(identifier);
+  }
 }
 
 boolean ESAT_OBCSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)

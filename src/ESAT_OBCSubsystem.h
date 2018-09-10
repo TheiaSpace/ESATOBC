@@ -76,6 +76,8 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
       STORE_TELEMETRY = 0x01,
       DOWNLOAD_STORED_TELEMETRY = 0x02,
       ERASE_STORED_TELEMETRY = 0x03,
+      ENABLE_TELEMETRY = 0x04,
+      DISABLE_TELEMETRY = 0x05,
     };
 
     // Unique identifier of the subsystem.
@@ -108,6 +110,8 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
     void handleStoreTelemetry(ESAT_CCSDSPacket& packet);
     void handleDownloadStoredTelemetry(ESAT_CCSDSPacket& packet);
     void handleEraseStoredTelemetry(ESAT_CCSDSPacket& packet);
+    void handleEnableTelemetry(ESAT_CCSDSPacket& packet);
+    void handleDisableTelemetry(ESAT_CCSDSPacket& packet);
 
     // Read the next stored telemetry packet and fill the given packet buffer.
     // Return true on success; otherwise return false.
