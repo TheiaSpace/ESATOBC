@@ -22,6 +22,7 @@
 #include "ESAT_OBCClock.h"
 #include "ESAT_OBCHousekeepingTelemetry.h"
 #include "ESAT_OBCLED.h"
+#include "ESAT_OBCLinesTelemetry.h"
 #include "ESAT_TelemetryStorage.h"
 #include <ESAT_Timer.h>
 #include <ESAT_Timestamp.h>
@@ -40,8 +41,11 @@ void ESAT_OBCSubsystemClass::begin()
   enabledTelemetry.clearAll();
   pendingTelemetry.clearAll();
   telemetryPacketBuilder.add(ESAT_OBCHousekeepingTelemetry);
+  telemetryPacketBuilder.add(ESAT_OBCLinesTelemetry);
   availableTelemetry.set(ESAT_OBCHousekeepingTelemetry.packetIdentifier());
+  availableTelemetry.set(ESAT_OBCLinesTelemetry.packetIdentifier());
   enabledTelemetry.set(ESAT_OBCHousekeepingTelemetry.packetIdentifier());
+  enabledTelemetry.clear(ESAT_OBCLinesTelemetry.packetIdentifier());
   ESAT_OBCLED.begin();
 }
 
