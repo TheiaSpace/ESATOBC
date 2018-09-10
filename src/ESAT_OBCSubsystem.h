@@ -88,9 +88,6 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
     static const byte MINOR_VERSION_NUMBER = 0;
     static const byte PATCH_VERSION_NUMBER = 0;
 
-    // List of available telemetry packet identifiers.
-    ESAT_FlagContainer availableTelemetry;
-
     // True if we were commanded to download telemetry; false
     // otherwise.
     boolean downloadStoredTelemetry;

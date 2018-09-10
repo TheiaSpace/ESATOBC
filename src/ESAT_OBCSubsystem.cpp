@@ -37,13 +37,10 @@ void ESAT_OBCSubsystemClass::begin()
                                      MINOR_VERSION_NUMBER,
                                      PATCH_VERSION_NUMBER,
                                      ESAT_OBCClock);
-  availableTelemetry.clearAll();
   enabledTelemetry.clearAll();
   pendingTelemetry.clearAll();
   telemetryPacketBuilder.add(ESAT_OBCHousekeepingTelemetry);
   telemetryPacketBuilder.add(ESAT_OBCLinesTelemetry);
-  availableTelemetry.set(ESAT_OBCHousekeepingTelemetry.packetIdentifier());
-  availableTelemetry.set(ESAT_OBCLinesTelemetry.packetIdentifier());
   enabledTelemetry.set(ESAT_OBCHousekeepingTelemetry.packetIdentifier());
   enabledTelemetry.clear(ESAT_OBCLinesTelemetry.packetIdentifier());
   ESAT_OBCLED.begin();
@@ -149,10 +146,7 @@ void ESAT_OBCSubsystemClass::handleEnableTelemetry(ESAT_CCSDSPacket& packet)
     return;
   }
   const byte identifier = packet.readByte();
-  if (availableTelemetry.read(identifier))
-  {
-    enabledTelemetry.set(identifier);
-  }
+  enabledTelemetry.set(identifier);
 }
 
 void ESAT_OBCSubsystemClass::handleDisableTelemetry(ESAT_CCSDSPacket& packet)
@@ -162,10 +156,7 @@ void ESAT_OBCSubsystemClass::handleDisableTelemetry(ESAT_CCSDSPacket& packet)
     return;
   }
   const byte identifier = packet.readByte();
-  if (availableTelemetry.read(identifier))
-  {
-    enabledTelemetry.clear(identifier);
-  }
+  enabledTelemetry.clear(identifier);
 }
 
 boolean ESAT_OBCSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
@@ -214,7 +205,11 @@ boolean ESAT_OBCSubsystemClass::telemetryAvailable()
 
 void ESAT_OBCSubsystemClass::update()
 {
-  pendingTelemetry = enabledTelemetry;
+  const ESAT_FlagContainer availableTelemetry =
+    telemetryPacketBuilder.available();
+  const ESAT_FlagContainer availableAndEnabledTelemetry =
+    availableTelemetry & enabledTelemetry;
+  pendingTelemetry = availableAndEnabledTelemetry;
   ESAT_OBCLED.toggle();
 }
 
