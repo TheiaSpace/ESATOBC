@@ -18,23 +18,23 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESAT_OBCHousekeeping.h"
+#include "ESAT_OBCHousekeepingTelemetry.h"
 #include "ESAT_OBCClock.h"
 #include "ESAT_OBCSubsystem.h"
 #include "ESAT_TelemetryStorage.h"
 #include <ESAT_Timer.h>
 
-boolean ESAT_OBCHousekeepingClass::available()
+boolean ESAT_OBCHousekeepingTelemetryClass::available()
 {
   return true;
 }
 
-byte ESAT_OBCHousekeepingClass::packetIdentifier()
+byte ESAT_OBCHousekeepingTelemetryClass::packetIdentifier()
 {
   return PACKET_IDENTIFIER;
 }
 
-boolean ESAT_OBCHousekeepingClass::fillUserData(ESAT_CCSDSPacket& packet)
+boolean ESAT_OBCHousekeepingTelemetryClass::fillUserData(ESAT_CCSDSPacket& packet)
 {
   const byte userDataLength = 4;
   if (packet.capacity() < (ESAT_CCSDSSecondaryHeader::LENGTH + userDataLength))
@@ -50,4 +50,4 @@ boolean ESAT_OBCHousekeepingClass::fillUserData(ESAT_CCSDSPacket& packet)
   return true;
 }
 
-ESAT_OBCHousekeepingClass ESAT_OBCHousekeeping;
+ESAT_OBCHousekeepingTelemetryClass ESAT_OBCHousekeepingTelemetry;

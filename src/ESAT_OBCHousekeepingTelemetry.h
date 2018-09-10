@@ -18,15 +18,15 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESAT_OBCHousekeeping_h
-#define ESAT_OBCHousekeeping_h
+#ifndef ESAT_OBCHousekeepingTelemetry_h
+#define ESAT_OBCHousekeepingTelemetry_h
 
 #include <Arduino.h>
 #include <ESAT_CCSDSPacketContents.h>
 
 // OBC (On-Board Computer) housekeeping telemetry packet contents.
 // ESAT_OBCSubsystem uses this.
-class ESAT_OBCHousekeepingClass: public ESAT_CCSDSPacketContents
+class ESAT_OBCHousekeepingTelemetryClass: public ESAT_CCSDSPacketContents
 {
   public:
     // Return true: the OBC housekeeping packet is always available.
@@ -46,8 +46,8 @@ class ESAT_OBCHousekeepingClass: public ESAT_CCSDSPacketContents
     static const byte PACKET_IDENTIFIER = 0;
 };
 
-// Global instance of ESAT_OBCHousekeeping.  ESAT_OBCSubsystem uses this
+// Global instance of ESAT_OBCHousekeepingTelemetry.  ESAT_OBCSubsystem uses this
 // to fill the OBC housekeeping telemetry packet.
-extern ESAT_OBCHousekeepingClass ESAT_OBCHousekeeping;
+extern ESAT_OBCHousekeepingTelemetryClass ESAT_OBCHousekeepingTelemetry;
 
-#endif /* ESAT_OBCHousekeeping_h */
+#endif /* ESAT_OBCHousekeepingTelemetry_h */
