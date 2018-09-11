@@ -138,7 +138,7 @@ void setup()
   Serial.begin(9600);
   USB.begin();
   Wire.begin();
-  SD.begin(SS1);
+  SD.begin(CS_SD);
   delay(1000);
   ESAT_OBCSubsystem.begin();
   ESAT_EPSSubsystem.begin();

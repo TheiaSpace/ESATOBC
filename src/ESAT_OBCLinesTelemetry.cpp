@@ -68,7 +68,7 @@ boolean ESAT_OBCLinesTelemetryClass::fillUserData(ESAT_CCSDSPacket& packet)
   packet.writeBoolean(boolean(digitalRead(SCL_O)));
   packet.writeBoolean(boolean(digitalRead(SDA_O)));
   packet.writeBoolean(boolean(digitalRead(CLK_O)));
-  packet.writeBoolean(boolean(digitalRead(SS1)));
+  packet.writeBoolean(boolean(digitalRead(CS_SD)));
   packet.writeBoolean(boolean(digitalRead(CS_O)));
   packet.writeBoolean(boolean(digitalRead(MISO_O)));
   packet.writeBoolean(boolean(digitalRead(MOSI_O)));
