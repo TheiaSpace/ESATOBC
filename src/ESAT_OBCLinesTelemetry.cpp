@@ -37,7 +37,7 @@ byte ESAT_OBCLinesTelemetryClass::packetIdentifier()
 
 boolean ESAT_OBCLinesTelemetryClass::fillUserData(ESAT_CCSDSPacket& packet)
 {
-  const byte userDataLength = 41;
+  const byte userDataLength = 45;
   if (packet.capacity() < (ESAT_CCSDSSecondaryHeader::LENGTH + userDataLength))
   {
     return false;
@@ -75,6 +75,8 @@ boolean ESAT_OBCLinesTelemetryClass::fillUserData(ESAT_CCSDSPacket& packet)
   packet.writeBoolean(boolean(digitalRead(TEST_O)));
   packet.writeBoolean(boolean(digitalRead(RST_O)));
   packet.writeBoolean(boolean(digitalRead(LED_O)));
+  packet.writeWord(analogRead(TEMPSENSOR));
+  packet.writeWord(analogRead(VCC_2));
   // The I2C bus stops working after reading the lines directly,
   // so we have to reset it.
   Wire.begin();
