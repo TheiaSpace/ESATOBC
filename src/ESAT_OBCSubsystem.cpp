@@ -167,7 +167,7 @@ boolean ESAT_OBCSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
 
 boolean ESAT_OBCSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
 {
-  if (telemetryAvailable())
+  if (pendingTelemetry.readNext() != pendingTelemetry.NO_ACTIVE_FLAGS)
   {
     return telemetryPacketBuilder.buildNext(packet, pendingTelemetry);
   }
