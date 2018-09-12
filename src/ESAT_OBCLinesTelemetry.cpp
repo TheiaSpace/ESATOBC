@@ -64,19 +64,13 @@ boolean ESAT_OBCLinesTelemetryClass::fillUserData(ESAT_CCSDSPacket& packet)
   packet.writeBoolean(boolean(digitalRead(PWM)));
   packet.writeBoolean(boolean(digitalRead(TCH)));
   packet.writeBoolean(boolean(digitalRead(EMG)));
-  packet.writeBoolean(boolean(digitalRead(CLK_O)));
   packet.writeBoolean(boolean(digitalRead(CS_SD)));
   packet.writeBoolean(boolean(digitalRead(CS_O)));
-  packet.writeBoolean(boolean(digitalRead(MISO_O)));
-  packet.writeBoolean(boolean(digitalRead(MOSI_O)));
   packet.writeBoolean(boolean(digitalRead(TEST_O)));
   packet.writeBoolean(boolean(digitalRead(RST_O)));
   packet.writeBoolean(boolean(digitalRead(LED_O)));
   packet.writeWord(analogRead(TEMPSENSOR));
   packet.writeWord(analogRead(VCC_2));
-  // The I2C bus stops working after reading the lines directly,
-  // so we have to reset it.
-  SPI.begin();
   return true;
 }
 
