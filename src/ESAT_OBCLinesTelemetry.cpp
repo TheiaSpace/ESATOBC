@@ -38,7 +38,7 @@ byte ESAT_OBCLinesTelemetryClass::packetIdentifier()
 
 boolean ESAT_OBCLinesTelemetryClass::fillUserData(ESAT_CCSDSPacket& packet)
 {
-  const byte userDataLength = 45;
+  const byte userDataLength = 38;
   if (packet.capacity() < (ESAT_CCSDSSecondaryHeader::LENGTH + userDataLength))
   {
     return false;
