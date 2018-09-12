@@ -85,7 +85,7 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
 
     // Version numbers.
     static const byte MAJOR_VERSION_NUMBER = 4;
-    static const byte MINOR_VERSION_NUMBER = 0;
+    static const byte MINOR_VERSION_NUMBER = 1;
     static const byte PATCH_VERSION_NUMBER = 0;
 
     // True if we were commanded to download telemetry; false
