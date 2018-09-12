@@ -64,8 +64,6 @@ boolean ESAT_OBCLinesTelemetryClass::fillUserData(ESAT_CCSDSPacket& packet)
   packet.writeBoolean(boolean(digitalRead(PWM)));
   packet.writeBoolean(boolean(digitalRead(TCH)));
   packet.writeBoolean(boolean(digitalRead(EMG)));
-  packet.writeBoolean(boolean(digitalRead(SCL_O)));
-  packet.writeBoolean(boolean(digitalRead(SDA_O)));
   packet.writeBoolean(boolean(digitalRead(CLK_O)));
   packet.writeBoolean(boolean(digitalRead(CS_SD)));
   packet.writeBoolean(boolean(digitalRead(CS_O)));
@@ -79,9 +77,6 @@ boolean ESAT_OBCLinesTelemetryClass::fillUserData(ESAT_CCSDSPacket& packet)
   // The I2C bus stops working after reading the lines directly,
   // so we have to reset it.
   SPI.begin();
-  // The I2C bus stops working after reading the lines directly,
-  // so we have to reset it.
-  Wire.begin();
   return true;
 }
 
