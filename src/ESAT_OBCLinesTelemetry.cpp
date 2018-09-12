@@ -38,7 +38,7 @@ byte ESAT_OBCLinesTelemetryClass::packetIdentifier()
 
 boolean ESAT_OBCLinesTelemetryClass::fillUserData(ESAT_CCSDSPacket& packet)
 {
-  const byte userDataLength = 45;
+  const byte userDataLength = 38;
   if (packet.capacity() < (ESAT_CCSDSSecondaryHeader::LENGTH + userDataLength))
   {
     return false;
@@ -50,8 +50,6 @@ boolean ESAT_OBCLinesTelemetryClass::fillUserData(ESAT_CCSDSPacket& packet)
   packet.writeBoolean(boolean(digitalRead(ESPRST)));
   packet.writeBoolean(boolean(digitalRead(ESP_SLEEP)));
   packet.writeBoolean(boolean(digitalRead(ESP0)));
-  packet.writeBoolean(boolean(digitalRead(RX0)));
-  packet.writeBoolean(boolean(digitalRead(TX0)));
   packet.writeBoolean(boolean(digitalRead(GPIO0)));
   packet.writeBoolean(boolean(digitalRead(GPIO1)));
   packet.writeBoolean(boolean(digitalRead(GPIO2)));
@@ -66,24 +64,13 @@ boolean ESAT_OBCLinesTelemetryClass::fillUserData(ESAT_CCSDSPacket& packet)
   packet.writeBoolean(boolean(digitalRead(PWM)));
   packet.writeBoolean(boolean(digitalRead(TCH)));
   packet.writeBoolean(boolean(digitalRead(EMG)));
-  packet.writeBoolean(boolean(digitalRead(SCL_O)));
-  packet.writeBoolean(boolean(digitalRead(SDA_O)));
-  packet.writeBoolean(boolean(digitalRead(CLK_O)));
   packet.writeBoolean(boolean(digitalRead(CS_SD)));
   packet.writeBoolean(boolean(digitalRead(CS_O)));
-  packet.writeBoolean(boolean(digitalRead(MISO_O)));
-  packet.writeBoolean(boolean(digitalRead(MOSI_O)));
   packet.writeBoolean(boolean(digitalRead(TEST_O)));
   packet.writeBoolean(boolean(digitalRead(RST_O)));
   packet.writeBoolean(boolean(digitalRead(LED_O)));
   packet.writeWord(analogRead(TEMPSENSOR));
   packet.writeWord(analogRead(VCC_2));
-  // The I2C bus stops working after reading the lines directly,
-  // so we have to reset it.
-  SPI.begin();
-  // The I2C bus stops working after reading the lines directly,
-  // so we have to reset it.
-  Wire.begin();
   return true;
 }
 
