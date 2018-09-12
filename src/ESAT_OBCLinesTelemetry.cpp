@@ -50,8 +50,6 @@ boolean ESAT_OBCLinesTelemetryClass::fillUserData(ESAT_CCSDSPacket& packet)
   packet.writeBoolean(boolean(digitalRead(ESPRST)));
   packet.writeBoolean(boolean(digitalRead(ESP_SLEEP)));
   packet.writeBoolean(boolean(digitalRead(ESP0)));
-  packet.writeBoolean(boolean(digitalRead(RX0)));
-  packet.writeBoolean(boolean(digitalRead(TX0)));
   packet.writeBoolean(boolean(digitalRead(GPIO0)));
   packet.writeBoolean(boolean(digitalRead(GPIO1)));
   packet.writeBoolean(boolean(digitalRead(GPIO2)));
