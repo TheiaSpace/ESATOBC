@@ -150,10 +150,7 @@ void ESAT_WifiSubsystemClass::writeTelemetry(ESAT_CCSDSPacket& packet)
   {
     return;
   }
-  const unsigned long encoderBufferLength =
-    ESAT_KISSStream::frameLength(packet.length());
-  byte encoderBuffer[encoderBufferLength];
-  ESAT_KISSStream encoder(Serial, encoderBuffer, sizeof(encoderBuffer));
+  ESAT_KISSStream encoder(Serial);
   (void) encoder.beginFrame();
   (void) packet.writeTo(encoder);
   (void) encoder.endFrame();
