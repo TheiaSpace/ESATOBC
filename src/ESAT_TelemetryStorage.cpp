@@ -100,10 +100,7 @@ void ESAT_TelemetryStorageClass::write(ESAT_CCSDSPacket& packet)
     return;
   }
   packet.rewind();
-  const unsigned long encoderBufferLength =
-    ESAT_KISSStream::frameLength(packet.length());
-  byte encoderBuffer[encoderBufferLength];
-  ESAT_KISSStream encoder(file, encoderBuffer, sizeof(encoderBuffer));
+  ESAT_KISSStream encoder(file);
   const size_t beginBytesWritten = encoder.beginFrame();
   if (beginBytesWritten < 2)
   {
