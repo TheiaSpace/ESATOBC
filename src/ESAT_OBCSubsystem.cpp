@@ -169,7 +169,9 @@ boolean ESAT_OBCSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
 {
   if (pendingTelemetry.available() > 0)
   {
-    return telemetryPacketBuilder.buildNext(packet, pendingTelemetry);
+    const byte identifier = byte(pendingTelemetry.readNext());
+    pendingTelemetry.clear(identifier);
+    return telemetryPacketBuilder.build(packet, identifier);
   }
   if (downloadStoredTelemetry)
   {
