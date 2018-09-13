@@ -36,18 +36,20 @@ byte ESAT_OBCHousekeepingTelemetryClass::packetIdentifier()
 
 boolean ESAT_OBCHousekeepingTelemetryClass::fillUserData(ESAT_CCSDSPacket& packet)
 {
-  const byte userDataLength = 4;
-  if (packet.capacity() < (ESAT_CCSDSSecondaryHeader::LENGTH + userDataLength))
-  {
-    return false;
-  }
   packet.writeByte(ESAT_Timer.load());
   packet.writeBoolean(ESAT_OBCSubsystem.storeTelemetry);
   packet.writeBoolean(ESAT_TelemetryStorage.error);
   ESAT_TelemetryStorage.error = false;
   packet.writeBoolean(ESAT_OBCClock.error);
   ESAT_OBCClock.error = false;
-  return true;
+  if (packet.triedToWriteBeyondCapacity())
+  {
+    return false;
+  }
+  else
+  {
+    return true;
+  }
 }
 
 ESAT_OBCHousekeepingTelemetryClass ESAT_OBCHousekeepingTelemetry;
