@@ -38,11 +38,6 @@ byte ESAT_OBCLinesTelemetryClass::packetIdentifier()
 
 boolean ESAT_OBCLinesTelemetryClass::fillUserData(ESAT_CCSDSPacket& packet)
 {
-  const byte userDataLength = 38;
-  if (packet.capacity() < (ESAT_CCSDSSecondaryHeader::LENGTH + userDataLength))
-  {
-    return false;
-  }
   packet.writeWord(analogRead(ADC12));
   packet.writeWord(analogRead(ADC13));
   packet.writeWord(analogRead(ADC14));
@@ -71,7 +66,14 @@ boolean ESAT_OBCLinesTelemetryClass::fillUserData(ESAT_CCSDSPacket& packet)
   packet.writeBoolean(boolean(digitalRead(LED_O)));
   packet.writeWord(analogRead(TEMPSENSOR));
   packet.writeWord(analogRead(VCC_2));
-  return true;
+  if (packet.triedToWriteBeyondCapacity())
+  {
+    return false;
+  }
+  else
+  {
+    return true;
+  }
 }
 
 ESAT_OBCLinesTelemetryClass ESAT_OBCLinesTelemetry;
