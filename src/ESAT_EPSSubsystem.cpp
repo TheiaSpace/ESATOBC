@@ -48,12 +48,7 @@ void ESAT_EPSSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& packet)
   {
     return;
   }
-  (void) ESAT_I2CMaster.writePacket(Wire,
-                                    ADDRESS,
-                                    packet,
-                                    MILLISECONDS_AFTER_WRITES,
-                                    ATTEMPTS,
-                                    MILLISECONDS_BETWEEN_ATTEMPTS);
+  (void) ESAT_I2CMaster.writePacket(packet, ADDRESS);
 }
 
 boolean ESAT_EPSSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
@@ -65,12 +60,7 @@ boolean ESAT_EPSSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
 boolean ESAT_EPSSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
 {
   newTelemetryPacket =
-    ESAT_I2CMaster.readTelemetry(Wire,
-                                 ADDRESS,
-                                 packet,
-                                 MILLISECONDS_AFTER_WRITES,
-                                 ATTEMPTS,
-                                 MILLISECONDS_BETWEEN_ATTEMPTS);
+    ESAT_I2CMaster.readNextTelemetry(packet, ADDRESS);
   return newTelemetryPacket;
 }
 
@@ -89,12 +79,7 @@ void ESAT_EPSSubsystemClass::setTime()
                                  PATCH_VERSION_NUMBER,
                                  SET_CURRENT_TIME);
   packet.writeTimestamp(timestamp);
-  (void) ESAT_I2CMaster.writePacket(Wire,
-                                    ADDRESS,
-                                    packet,
-                                    MILLISECONDS_AFTER_WRITES,
-                                    ATTEMPTS,
-                                    MILLISECONDS_BETWEEN_ATTEMPTS);
+  (void) ESAT_I2CMaster.writePacket(packet, ADDRESS);
 }
 
 boolean ESAT_EPSSubsystemClass::telemetryAvailable()
@@ -104,7 +89,7 @@ boolean ESAT_EPSSubsystemClass::telemetryAvailable()
 
 void ESAT_EPSSubsystemClass::update()
 {
-  newTelemetryPacket = ESAT_I2CMaster.resetTelemetryQueue(Wire, ADDRESS);
+  newTelemetryPacket = ESAT_I2CMaster.resetTelemetryQueue(ADDRESS);
 }
 
 void ESAT_EPSSubsystemClass::writeTelemetry(ESAT_CCSDSPacket& packet)

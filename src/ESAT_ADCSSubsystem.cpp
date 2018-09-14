@@ -53,12 +53,7 @@ void ESAT_ADCSSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& packet)
   {
     return;
   }
-  (void) ESAT_I2CMaster.writePacket(Wire,
-                                    ADDRESS,
-                                    packet,
-                                    MILLISECONDS_AFTER_WRITES,
-                                    ATTEMPTS,
-                                    MILLISECONDS_BETWEEN_ATTEMPTS);
+  (void) ESAT_I2CMaster.writePacket(packet, ADDRESS);
 #else
   ESAT_ADCS.handleTelecommand(packet);
 #endif /* ESAT_ADCS_CODE_RUNNING_IN_ADCS */
@@ -74,12 +69,7 @@ boolean ESAT_ADCSSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
 {
 #ifdef ESAT_ADCS_CODE_RUNNING_IN_ADCS
   newTelemetryPacket =
-    ESAT_I2CMaster.readTelemetry(Wire,
-                                 ADDRESS,
-                                 packet,
-                                 MILLISECONDS_AFTER_WRITES,
-                                 ATTEMPTS,
-                                 MILLISECONDS_BETWEEN_ATTEMPTS);
+    ESAT_I2CMaster.readNextTelemetry(packet, ADDRESS);
   return newTelemetryPacket;
 #else
   return ESAT_ADCS.readTelemetry(packet);
@@ -98,7 +88,7 @@ boolean ESAT_ADCSSubsystemClass::telemetryAvailable()
 void ESAT_ADCSSubsystemClass::update()
 {
 #ifdef ESAT_ADCS_CODE_RUNNING_IN_ADCS
-  newTelemetryPacket = ESAT_I2CMaster.resetTelemetryQueue(Wire, ADDRESS);
+  newTelemetryPacket = ESAT_I2CMaster.resetTelemetryQueue(ADDRESS);
 #else
   ESAT_ADCS.update();
 #endif /* ESAT_ADCS_CODE_RUNNING_IN_ADCS */

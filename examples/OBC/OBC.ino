@@ -17,6 +17,7 @@
 
 #include <ESAT_ADCSSubsystem.h>
 #include <ESAT_EPSSubsystem.h>
+#include <ESAT_I2CMaster.h>
 #include <ESAT_KISSStream.h>
 #include <ESAT_OBCSubsystem.h>
 #include <ESAT_WifiSubsystem.h>
@@ -139,6 +140,7 @@ void setup()
   USB.begin();
   Wire.begin();
   SD.begin(CS_SD);
+  ESAT_I2CMaster.begin(Wire);
   delay(1000);
   ESAT_OBCSubsystem.begin();
   ESAT_EPSSubsystem.begin();
