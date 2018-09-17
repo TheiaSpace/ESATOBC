@@ -20,7 +20,6 @@
 
 #include "ESAT_OnBoardDataHandling.h"
 #include <ESAT_KISSStream.h>
-#include <USBSerial.h>
 
 void ESAT_OnBoardDataHandlingClass::disableUSBTelecommands()
 {
@@ -57,7 +56,7 @@ void ESAT_OnBoardDataHandlingClass::enableUSBTelecommands(byte buffer[],
   usbTelecommandsEnabled = true;
   usbTelecommandBuffer = buffer;
   usbTelecommandBufferLength = bufferLength;
-  usbTelecommandDecoder = ESAT_KISSStream(USB,
+  usbTelecommandDecoder = ESAT_KISSStream(Serial,
                                           usbTelecommandBuffer,
                                           usbTelecommandBufferLength);
 }
@@ -183,7 +182,7 @@ void ESAT_OnBoardDataHandlingClass::writeTelemetry(ESAT_CCSDSPacket& packet)
 void ESAT_OnBoardDataHandlingClass::writeTelemetryToUSB(ESAT_CCSDSPacket& packet)
 {
   packet.rewind();
-  ESAT_KISSStream encoder(USB);
+  ESAT_KISSStream encoder(Serial);
   (void) encoder.beginFrame();
   (void) packet.writeTo(encoder);
   (void) encoder.endFrame();
