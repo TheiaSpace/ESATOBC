@@ -23,7 +23,6 @@
 #include <ESAT_WifiSubsystem.h>
 #include <ESAT_OnBoardDataHandling.h>
 #include <ESAT_Timer.h>
-#include <USBSerial.h>
 #include <SD.h>
 #include <Wire.h>
 
@@ -136,8 +135,8 @@ byte wifiTelecommandBuffer[WHOLE_PACKET_BUFFER_LENGTH];
 // once.
 void setup()
 {
-  Serial.begin(9600);
-  USB.begin();
+  Serial.begin();
+  SerialWifi.begin(9600);
   Wire.begin();
   SD.begin(CS_SD);
   ESAT_I2CMaster.begin(Wire);
