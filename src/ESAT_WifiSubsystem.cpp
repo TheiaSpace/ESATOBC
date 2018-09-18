@@ -25,7 +25,7 @@ void ESAT_WifiSubsystemClass::begin(byte buffer[],
                                     const unsigned long bufferLength)
 {
   beginConnectionSensor();
-  beginTelecommandDecoder(buffer, bufferLength);
+  beginWifiBridge(buffer, bufferLength);
   connect();
 }
 
@@ -34,10 +34,12 @@ void ESAT_WifiSubsystemClass::beginConnectionSensor()
   pinMode(NOT_CONNECTED_SIGNAL_PIN, INPUT_PULLUP);
 }
 
-void ESAT_WifiSubsystemClass::beginTelecommandDecoder(byte buffer[],
-                                                      const unsigned long bufferLength)
+void ESAT_WifiSubsystemClass::beginWifiBridge(byte buffer[],
+                                              const unsigned long bufferLength)
 {
-  telecommandDecoder = ESAT_KISSStream(SerialWifi, buffer, bufferLength);
+  wifi = ESAT_CCSDSKISSBridge(SerialWifi);
+  wifi.enableReading(buffer, bufferLength);
+  wifi.enableWriting();
 }
 
 void ESAT_WifiSubsystemClass::connect()
@@ -52,13 +54,7 @@ void ESAT_WifiSubsystemClass::connect()
                                  MINOR_VERSION_NUMBER,
                                  PATCH_VERSION_NUMBER,
                                  CONNECT);
-  const unsigned long encoderBufferLength =
-    ESAT_KISSStream::frameLength(packet.length());
-  byte encoderBuffer[encoderBufferLength];
-  ESAT_KISSStream encoder(SerialWifi, encoderBuffer, sizeof(encoderBuffer));
-  (void) encoder.beginFrame();
-  (void) packet.writeTo(encoder);
-  (void) encoder.endFrame();
+  wifi.write(packet);
 }
 
 word ESAT_WifiSubsystemClass::getApplicationProcessIdentifier()
@@ -79,13 +75,7 @@ void ESAT_WifiSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& packet)
   {
     return;
   }
-  const unsigned long encoderBufferLength =
-    ESAT_KISSStream::frameLength(packet.length());
-  byte encoderBuffer[encoderBufferLength];
-  ESAT_KISSStream encoder(SerialWifi, encoderBuffer, sizeof(encoderBuffer));
-  (void) encoder.beginFrame();
-  (void) packet.writeTo(encoder);
-  (void) encoder.endFrame();
+  wifi.write(packet);
 }
 
 boolean ESAT_WifiSubsystemClass::isConnected()
@@ -102,12 +92,7 @@ boolean ESAT_WifiSubsystemClass::isConnected()
 
 boolean ESAT_WifiSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
 {
-  const boolean gotFrame = telecommandDecoder.receiveFrame();
-  if (!gotFrame)
-  {
-    return false;
-  }
-  const boolean gotPacket = packet.readFrom(telecommandDecoder);
+  const boolean gotPacket = wifi.read(packet);
   if (!gotPacket)
   {
     return false;
@@ -150,10 +135,7 @@ void ESAT_WifiSubsystemClass::writeTelemetry(ESAT_CCSDSPacket& packet)
   {
     return;
   }
-  ESAT_KISSStream encoder(SerialWifi);
-  (void) encoder.beginFrame();
-  (void) packet.writeTo(encoder);
-  (void) encoder.endFrame();
+  wifi.write(packet);
 }
 
 ESAT_WifiSubsystemClass ESAT_WifiSubsystem;
