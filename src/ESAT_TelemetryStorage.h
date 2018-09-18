@@ -27,6 +27,8 @@
 #include <ESAT_Timestamp.h>
 
 // Telemetry storage library.
+// The SPI interface must be configured before using this library. You
+// must have called SPI.begin(CS_SD) before using this library.
 // Use the global instance ESAT_TelemetryStorage.
 class ESAT_TelemetryStorageClass
 {
