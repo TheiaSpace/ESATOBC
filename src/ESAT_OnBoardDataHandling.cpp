@@ -19,16 +19,15 @@
  */
 
 #include "ESAT_OnBoardDataHandling.h"
-#include <ESAT_KISSStream.h>
 
 void ESAT_OnBoardDataHandlingClass::disableUSBTelecommands()
 {
-  usbTelecommandsEnabled = false;
+  usb.disableReading();
 }
 
 void ESAT_OnBoardDataHandlingClass::disableUSBTelemetry()
 {
-  usbTelemetryEnabled = false;
+  usb.disableWriting();
 }
 
 void ESAT_OnBoardDataHandlingClass::dispatchTelecommand(ESAT_CCSDSPacket& packet)
@@ -53,17 +52,12 @@ void ESAT_OnBoardDataHandlingClass::dispatchTelecommand(ESAT_CCSDSPacket& packet
 void ESAT_OnBoardDataHandlingClass::enableUSBTelecommands(byte buffer[],
                                                           const unsigned long bufferLength)
 {
-  usbTelecommandsEnabled = true;
-  usbTelecommandBuffer = buffer;
-  usbTelecommandBufferLength = bufferLength;
-  usbTelecommandDecoder = ESAT_KISSStream(Serial,
-                                          usbTelecommandBuffer,
-                                          usbTelecommandBufferLength);
+  usb.enableReading(buffer, bufferLength);
 }
 
 void ESAT_OnBoardDataHandlingClass::enableUSBTelemetry()
 {
-  usbTelemetryEnabled = true;
+  usb.enableWriting();
 }
 
 boolean ESAT_OnBoardDataHandlingClass::readTelecommand(ESAT_CCSDSPacket& packet)
@@ -82,33 +76,7 @@ boolean ESAT_OnBoardDataHandlingClass::readTelecommand(ESAT_CCSDSPacket& packet)
       telecommandSubsystem = telecommandSubsystem->nextSubsystem;
     }
   }
-  if (usbTelecommandsEnabled)
-  {
-    return readTelecommandFromUSB(packet);
-  }
-  (void) packet;
-  return false;
-}
-
-boolean ESAT_OnBoardDataHandlingClass::readTelecommandFromUSB(ESAT_CCSDSPacket& packet)
-{
-  const boolean gotFrame = usbTelecommandDecoder.receiveFrame();
-  if (!gotFrame)
-  {
-    return false;
-  }
-  const boolean gotPacket = packet.readFrom(usbTelecommandDecoder);
-  if (!gotPacket)
-  {
-    return false;
-  }
-  packet.rewind();
-  const ESAT_CCSDSPrimaryHeader primaryHeader = packet.readPrimaryHeader();
-  if (primaryHeader.packetType != primaryHeader.TELECOMMAND)
-  {
-    return false;
-  }
-  return true;
+  return usb.read(packet);
 }
 
 boolean ESAT_OnBoardDataHandlingClass::readSubsystemsTelemetry(ESAT_CCSDSPacket& packet)
@@ -172,20 +140,7 @@ void ESAT_OnBoardDataHandlingClass::writeTelemetry(ESAT_CCSDSPacket& packet)
     packet.rewind();
     subsystem->writeTelemetry(packet);
   }
-  if (usbTelemetryEnabled)
-  {
-    packet.rewind();
-    writeTelemetryToUSB(packet);
-  }
-}
-
-void ESAT_OnBoardDataHandlingClass::writeTelemetryToUSB(ESAT_CCSDSPacket& packet)
-{
-  packet.rewind();
-  ESAT_KISSStream encoder(Serial);
-  (void) encoder.beginFrame();
-  (void) packet.writeTo(encoder);
-  (void) encoder.endFrame();
+  usb.write(packet);
 }
 
 ESAT_OnBoardDataHandlingClass ESAT_OnBoardDataHandling;

@@ -22,7 +22,7 @@
 #define ESAT_WifiSubsystem_h
 
 #include <Arduino.h>
-#include <ESAT_KISSStream.h>
+#include <ESAT_CCSDSKISSBridge.h>
 #include "ESAT_Subsystem.h"
 
 // Interface to the Wifi subsystem from the point of view of the
@@ -84,14 +84,16 @@ class ESAT_WifiSubsystemClass: public ESAT_Subsystem
     // connected to the server.
     static const byte NOT_CONNECTED_SIGNAL_PIN = ESP0;
 
-    // Decode KISS frames with telecommands with this stream.
-    ESAT_KISSStream telecommandDecoder;
+    // Use this CCSDS-to-KISS to move packets through the Wifi serial
+    // interface.
+    ESAT_CCSDSKISSBridge wifi;
 
     // Set up the connection sensor line.
     void beginConnectionSensor();
 
+    // Configure the CCSDS-to-KISS bridge with the Wifi board.
     // Specify a buffer to accumulate the incomming telecommands.
-    void beginTelecommandDecoder(byte buffer[], unsigned long bufferLength);
+    void beginWifiBridge(byte buffer[], unsigned long bufferLength);
 
     // Command the Wifi module to connect to the network and ground
     // segment server.
