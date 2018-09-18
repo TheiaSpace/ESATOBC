@@ -22,8 +22,8 @@
 #define ESAT_OnBoardDataHandling_h
 
 #include <Arduino.h>
+#include <ESAT_CCSDSKISSBridge.h>
 #include <ESAT_CCSDSPacket.h>
-#include <ESAT_KISSStream.h>
 #include "ESAT_Subsystem.h"
 
 // On-board data handling library.
@@ -95,28 +95,8 @@ class ESAT_OnBoardDataHandlingClass
     // Last subsystem of the list of registered subsystems.
     ESAT_Subsystem* lastSubsystem;
 
-    // Store incoming USB telecommands in this buffer.
-    byte* usbTelecommandBuffer;
-
-    // Length of the USB telecommand buffer.
-    unsigned long usbTelecommandBufferLength;
-
-    // Decode USB KISS frames with telecommands with this stream.
-    ESAT_KISSStream usbTelecommandDecoder;
-
-    // True if the reception of telecommands from the USB interface is
-    // enabled; false otherwise.
-    boolean usbTelecommandsEnabled;
-
-    // True if the emission of telemetry through the USB interface is
-    // enabled; false otherwise.
-    boolean usbTelemetryEnabled;
-
-    // Read a telecommand from the USB interface.
-    boolean readTelecommandFromUSB(ESAT_CCSDSPacket& packet);
-
-    // Write a telemetry packet to the USB interface.
-    void writeTelemetryToUSB(ESAT_CCSDSPacket& packet);
+    // Use this to move packets through the USB interface.
+    ESAT_CCSDSKISSBridge usb = ESAT_CCSDSKISSBridge(Serial);
 };
 
 // Global instance of the on-board data handling library.
