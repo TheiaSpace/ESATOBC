@@ -27,7 +27,9 @@
 // Real-time clock.
 // The underlying hardware is the DS1338 serial real-time clock
 // mounted on the ESAT OBC board.
-// Communications are done through the OBC I2C bus.
+// Communications are done through the OBC I2C bus.  The I2C bus must
+// be configured before using this library.  You must have called
+// Wire.begin() before using this library.
 // Use the global instance ESAT_OBCClock.
 class ESAT_OBCClockClass: public ESAT_Clock
 {
