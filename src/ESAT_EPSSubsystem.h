@@ -26,7 +26,7 @@
 
 // Interface to the EPS (electrical power subsystem) from the point of
 // view of the on-board data handling subsystem.  There is a global
-// instance: EPS_Subsystem.  This should be the only instance of
+// instance: ESAT_EPSSubsystem.  This should be the only instance of
 // ESAT_EPSSubsystemClass.  Register the EPS subsystem on the on-board
 // data handling with
 // ESAT_OnBoardDataHandling.registerSubsystem(ESAT_EPSSubsystem).
