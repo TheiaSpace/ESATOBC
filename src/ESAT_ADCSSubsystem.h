@@ -28,11 +28,13 @@
 // subsystem) from the point of view of the on-board data handling
 // subsystem.  There is a global instance: ESAT_ADCSSubsystem.  This
 // should be the only instance of ESAT_ADCSSubsystemClass.  Register
-// the EPS subsystem on the on-board data handling with
+// the ADCS subsystem on the on-board data handling with
 // ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ADCSSubsystem).
 // If the macro ESAT_ADCS_CODE_RUNNING_IN_ADCS is defined, this module
 // communicates with the of the ADCS board; if it is undefined, this
 // module works as wrapper around ESAT_ADCS.
+// The I2C bus must be configured before using this library.  You must
+// have called Wire.begin() before using this library.
 class ESAT_ADCSSubsystemClass: public ESAT_Subsystem
 {
   public:
