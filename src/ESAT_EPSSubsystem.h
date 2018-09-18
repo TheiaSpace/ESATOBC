@@ -30,6 +30,8 @@
 // ESAT_EPSSubsystemClass.  Register the EPS subsystem on the on-board
 // data handling with
 // ESAT_OnBoardDataHandling.registerSubsystem(ESAT_EPSSubsystem).
+// The I2C bus must be configured before using this library.  You must
+// have called Wire.begin() before using this library.
 class ESAT_EPSSubsystemClass: public ESAT_Subsystem
 {
   public:
