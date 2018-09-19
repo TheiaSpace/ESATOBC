@@ -22,8 +22,9 @@
 #define ESAT_OnBoardDataHandling_h
 
 #include <Arduino.h>
-#include <ESAT_CCSDSKISSBridge.h>
 #include <ESAT_CCSDSPacket.h>
+#include <ESAT_CCSDSPacketFromKISSFrameReader.h>
+#include <ESAT_CCSDSPacketToKISSFrameWriter.h>
 #include "ESAT_Subsystem.h"
 
 // On-board data handling library.
@@ -95,8 +96,11 @@ class ESAT_OnBoardDataHandlingClass
     // Last subsystem of the list of registered subsystems.
     ESAT_Subsystem* lastSubsystem;
 
-    // Use this to move packets through the USB interface.
-    ESAT_CCSDSKISSBridge usb = ESAT_CCSDSKISSBridge(Serial);
+    // Use this to read packets from the USB interface.
+    ESAT_CCSDSPacketFromKISSFrameReader usbReader;
+
+    // Use this to write packets to the USB interface.
+    ESAT_CCSDSPacketToKISSFrameWriter usbWriter;
 };
 
 // Global instance of the on-board data handling library.

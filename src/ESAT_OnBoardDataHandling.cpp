@@ -22,12 +22,12 @@
 
 void ESAT_OnBoardDataHandlingClass::disableUSBTelecommands()
 {
-  usb.disableReading();
+  usbReader = ESAT_CCSDSPacketFromKISSFrameReader();
 }
 
 void ESAT_OnBoardDataHandlingClass::disableUSBTelemetry()
 {
-  usb.disableWriting();
+  usbWriter = ESAT_CCSDSPacketToKISSFrameWriter();
 }
 
 void ESAT_OnBoardDataHandlingClass::dispatchTelecommand(ESAT_CCSDSPacket& packet)
@@ -52,12 +52,14 @@ void ESAT_OnBoardDataHandlingClass::dispatchTelecommand(ESAT_CCSDSPacket& packet
 void ESAT_OnBoardDataHandlingClass::enableUSBTelecommands(byte buffer[],
                                                           const unsigned long bufferLength)
 {
-  usb.enableReading(buffer, bufferLength);
+  usbReader = ESAT_CCSDSPacketFromKISSFrameReader(Serial,
+                                                  buffer,
+                                                  bufferLength);
 }
 
 void ESAT_OnBoardDataHandlingClass::enableUSBTelemetry()
 {
-  usb.enableWriting();
+  usbWriter = ESAT_CCSDSPacketToKISSFrameWriter(Serial);
 }
 
 boolean ESAT_OnBoardDataHandlingClass::readTelecommand(ESAT_CCSDSPacket& packet)
@@ -76,7 +78,7 @@ boolean ESAT_OnBoardDataHandlingClass::readTelecommand(ESAT_CCSDSPacket& packet)
       telecommandSubsystem = telecommandSubsystem->nextSubsystem;
     }
   }
-  return usb.read(packet);
+  return usbReader.read(packet);
 }
 
 boolean ESAT_OnBoardDataHandlingClass::readSubsystemsTelemetry(ESAT_CCSDSPacket& packet)
@@ -140,7 +142,7 @@ void ESAT_OnBoardDataHandlingClass::writeTelemetry(ESAT_CCSDSPacket& packet)
     packet.rewind();
     subsystem->writeTelemetry(packet);
   }
-  usb.write(packet);
+  (void) usbWriter.unbufferedWrite(packet);
 }
 
 ESAT_OnBoardDataHandlingClass ESAT_OnBoardDataHandling;

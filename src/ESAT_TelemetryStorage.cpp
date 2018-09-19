@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Theia Space, Universidad Politécnica de Madrid
+ * Copyright (C) 2017-2018 Theia Space, Universidad Politécnica de Madrid
  *
  * This file is part of Theia Space's ESAT OBC library.
  *
@@ -19,7 +19,8 @@
  */
 
 #include "ESAT_TelemetryStorage.h"
-#include <ESAT_KISSStream.h>
+#include <ESAT_CCSDSPacketFromKISSFrameReader.h>
+#include <ESAT_CCSDSPacketToKISSFrameWriter.h>
 
 const char ESAT_TelemetryStorageClass::TELEMETRY_FILE[] = "telem_db";
 
@@ -59,17 +60,11 @@ boolean ESAT_TelemetryStorageClass::read(ESAT_CCSDSPacket& packet)
     ESAT_KISSStream::frameLength(ESAT_CCSDSPrimaryHeader::LENGTH
                                  + packet.capacity());
   byte buffer[bufferLength];
-  ESAT_KISSStream decoder(file, buffer, sizeof(buffer));
+  ESAT_CCSDSPacketFromKISSFrameReader reader(file, buffer, bufferLength);
   while (file.available() > 0)
   {
-    const boolean correctFrame = decoder.receiveFrame();
-    if (!correctFrame)
-    {
-      error = true;
-      return false;
-    }
-    const boolean correctRead = packet.readFrom(decoder);
-    if (!correctRead)
+    const boolean correctPacket = reader.read(packet);
+    if (!correctPacket)
     {
       error = true;
       return false;
@@ -100,24 +95,9 @@ void ESAT_TelemetryStorageClass::write(ESAT_CCSDSPacket& packet)
     error = true;
     return;
   }
-  packet.rewind();
-  ESAT_KISSStream encoder(file);
-  const size_t beginBytesWritten = encoder.beginFrame();
-  if (beginBytesWritten < 2)
-  {
-    error = true;
-    file.close();
-    return;
-  }
-  const boolean correctWrite = packet.writeTo(encoder);
+  ESAT_CCSDSPacketToKISSFrameWriter writer(file);
+  const boolean correctWrite = writer.unbufferedWrite(packet);
   if (!correctWrite)
-  {
-    error = true;
-    file.close();
-    return;
-  }
-  const size_t endBytesWritten = encoder.endFrame();
-  if (endBytesWritten < 1)
   {
     error = true;
   }
