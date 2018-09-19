@@ -22,7 +22,8 @@
 #define ESAT_WifiSubsystem_h
 
 #include <Arduino.h>
-#include <ESAT_CCSDSKISSBridge.h>
+#include <ESAT_CCSDSPacketFromKISSFrameReader.h>
+#include <ESAT_CCSDSPacketToKISSFrameWriter.h>
 #include "ESAT_Subsystem.h"
 
 // Interface to the Wifi subsystem from the point of view of the
@@ -84,9 +85,11 @@ class ESAT_WifiSubsystemClass: public ESAT_Subsystem
     // connected to the server.
     static const byte NOT_CONNECTED_SIGNAL_PIN = ESP0;
 
-    // Use this CCSDS-to-KISS to move packets through the Wifi serial
-    // interface.
-    ESAT_CCSDSKISSBridge wifi;
+    // Use this to read packets from the Wifi boad.
+    ESAT_CCSDSPacketFromKISSFrameReader wifiReader;
+
+    // Use this to write packets to the Wifi board.
+    ESAT_CCSDSPacketToKISSFrameWriter wifiWriter;
 
     // Set up the connection sensor line.
     void beginConnectionSensor();

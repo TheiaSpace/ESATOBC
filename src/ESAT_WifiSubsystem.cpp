@@ -37,9 +37,10 @@ void ESAT_WifiSubsystemClass::beginConnectionSensor()
 void ESAT_WifiSubsystemClass::beginWifiBridge(byte buffer[],
                                               const unsigned long bufferLength)
 {
-  wifi = ESAT_CCSDSKISSBridge(SerialWifi);
-  wifi.enableReading(buffer, bufferLength);
-  wifi.enableWriting();
+  wifiReader = ESAT_CCSDSPacketFromKISSFrameReader(SerialWifi,
+                                                   buffer,
+                                                   bufferLength);
+  wifiWriter = ESAT_CCSDSPacketToKISSFrameWriter(SerialWifi);
 }
 
 void ESAT_WifiSubsystemClass::connect()
@@ -54,7 +55,7 @@ void ESAT_WifiSubsystemClass::connect()
                                  MINOR_VERSION_NUMBER,
                                  PATCH_VERSION_NUMBER,
                                  CONNECT);
-  wifi.write(packet);
+  (void) wifiWriter.unbufferedWrite(packet);
 }
 
 word ESAT_WifiSubsystemClass::getApplicationProcessIdentifier()
@@ -75,7 +76,7 @@ void ESAT_WifiSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& packet)
   {
     return;
   }
-  wifi.write(packet);
+  (void) wifiWriter.unbufferedWrite(packet);
 }
 
 boolean ESAT_WifiSubsystemClass::isConnected()
@@ -92,7 +93,7 @@ boolean ESAT_WifiSubsystemClass::isConnected()
 
 boolean ESAT_WifiSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
 {
-  const boolean gotPacket = wifi.read(packet);
+  const boolean gotPacket = wifiReader.read(packet);
   if (!gotPacket)
   {
     return false;
@@ -135,7 +136,7 @@ void ESAT_WifiSubsystemClass::writeTelemetry(ESAT_CCSDSPacket& packet)
   {
     return;
   }
-  wifi.write(packet);
+  (void) wifiWriter.unbufferedWrite(packet);
 }
 
 ESAT_WifiSubsystemClass ESAT_WifiSubsystem;
