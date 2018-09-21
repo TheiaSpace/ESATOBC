@@ -83,6 +83,9 @@ class ESAT_EPSSubsystemClass: public ESAT_Subsystem
     void setTime();
 
   private:
+    // Packet identifier of the EPS housekeeping telemetry packet.
+    static const byte HOUSEKEEPING = 0x00;
+
     // Command code for setting the time of the EPS clock.
     static const byte SET_CURRENT_TIME = 0x00;
 };
