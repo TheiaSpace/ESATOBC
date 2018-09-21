@@ -59,9 +59,24 @@ boolean ESAT_EPSSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
 
 boolean ESAT_EPSSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
 {
-  newTelemetryPacket =
-    ESAT_I2CMaster.readNextTelemetry(packet, ADDRESS);
-  return newTelemetryPacket;
+  // ESATEPS 2.0.0 used the preliminary (0.0.0) version of our I2C
+  // protocol and didn't support next-packet telemetry requests.
+  // If the protocol version number is 0.0.0, we will request just one
+  // housekeeping telemetry packet per cycle; for newer protocol
+  // versions, we will do a next-packet telemetry request.
+  const ESAT_SemanticVersionNumber protocolVersionNumber =
+    ESAT_I2CMaster.readProtocolVersionNumber(ADDRESS);
+  if (protocolVersionNumber == ESAT_SemanticVersionNumber(0, 0, 0))
+  {
+    newTelemetryPacket = false;
+    return ESAT_I2CMaster.readNamedTelemetry(packet, HOUSEKEEPING, ADDRESS);
+  }
+  else
+  {
+    newTelemetryPacket =
+      ESAT_I2CMaster.readNextTelemetry(packet, ADDRESS);
+    return newTelemetryPacket;
+  }
 }
 
 void ESAT_EPSSubsystemClass::setTime()
@@ -89,7 +104,22 @@ boolean ESAT_EPSSubsystemClass::telemetryAvailable()
 
 void ESAT_EPSSubsystemClass::update()
 {
-  newTelemetryPacket = ESAT_I2CMaster.resetTelemetryQueue(ADDRESS);
+  // ESATEPS 2.0.0 used the preliminary (0.0.0) version of our I2C
+  // protocol and didn't support next-packet telemetry requests.
+  // If the protocol version number is 0.0.0, we will request just one
+  // housekeeping telemetry packet per cycle; for newer protocol
+  // versions, we will start a new series of next-packet telemetry
+  // requests.
+  const ESAT_SemanticVersionNumber protocolVersionNumber =
+    ESAT_I2CMaster.readProtocolVersionNumber(ADDRESS);
+  if (protocolVersionNumber == ESAT_SemanticVersionNumber(0, 0, 0))
+  {
+    newTelemetryPacket = true;
+  }
+  else
+  {
+    newTelemetryPacket = ESAT_I2CMaster.resetTelemetryQueue(ADDRESS);
+  }
 }
 
 void ESAT_EPSSubsystemClass::writeTelemetry(ESAT_CCSDSPacket& packet)
