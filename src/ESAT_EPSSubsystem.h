@@ -86,6 +86,10 @@ class ESAT_EPSSubsystemClass: public ESAT_Subsystem
     // Packet identifier of the EPS housekeeping telemetry packet.
     static const byte HOUSEKEEPING = 0x00;
 
+    // Wait this number of microseconds between successive chunks when
+    // writing packets to the EPS board.
+    static const word MICROSECONDS_BETWEEN_CHUNKS = 128;
+
     // Command code for setting the time of the EPS clock.
     static const byte SET_CURRENT_TIME = 0x00;
 };
