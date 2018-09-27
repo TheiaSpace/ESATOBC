@@ -89,3 +89,18 @@ Control the on-board heartbeat led.
 
 Access to the memory card mounted on the OBC board for telemetry
 storage.
+
+
+# ESAT_OBCClockTelecommands
+
+Telecommand handler for OBC clock-related telecommands.
+
+
+# ESAT_OBCTelemetryStorageTelecommands
+
+Telecommand handler for telemetry storage-related telecommands.
+
+
+# ESAT_OBCTelemetryTelecommands
+
+Telecommand handler for OBC telemetry-related telecommands.
