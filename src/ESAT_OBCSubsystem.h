@@ -22,6 +22,7 @@
 #define ESAT_OBCSubsystem_h
 
 #include <Arduino.h>
+#include <ESAT_CCSDSTelecommandPacketHandler.h>
 #include <ESAT_CCSDSTelemetryPacketBuilder.h>
 #include <ESAT_FlagContainer.h>
 #include "ESAT_Subsystem.h"
@@ -41,6 +42,14 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
 
     // Start the OBC.
     void begin();
+
+    // Disable the generation of the telemetry packet with the given
+    // identifier.
+    void disableTelemetry(byte identifier);
+
+    // Enable the generation of the telemetry packet with the given
+    // identifier.
+    void enableTelemetry(byte identifier);
 
     // Return the identifier of this subsystem.
     word getApplicationProcessIdentifier();
@@ -69,17 +78,6 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
     void writeTelemetry(ESAT_CCSDSPacket& packet);
 
   private:
-    // Command codes.
-    enum CommandCode
-    {
-      SET_TIME = 0x00,
-      STORE_TELEMETRY = 0x01,
-      DOWNLOAD_STORED_TELEMETRY = 0x02,
-      ERASE_STORED_TELEMETRY = 0x03,
-      ENABLE_TELEMETRY = 0x04,
-      DISABLE_TELEMETRY = 0x05,
-    };
-
     // Unique identifier of the subsystem.
     static const word APPLICATION_PROCESS_IDENTIFIER = 0;
 
@@ -88,27 +86,21 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
     static const byte MINOR_VERSION_NUMBER = 1;
     static const byte PATCH_VERSION_NUMBER = 0;
 
-    // True if we were commanded to download telemetry; false
-    // otherwise.
-    boolean downloadStoredTelemetry;
-
     // List of enabled telemetry packet identifiers.
     ESAT_FlagContainer enabledTelemetry;
 
     // List of pending telemetry packet identifiers.
     ESAT_FlagContainer pendingTelemetry;
 
+    // Telecommand packet handler.
+    ESAT_CCSDSTelecommandPacketHandler telecommandPacketHandler =
+      ESAT_CCSDSTelecommandPacketHandler(APPLICATION_PROCESS_IDENTIFIER,
+                                         MAJOR_VERSION_NUMBER,
+                                         0,
+                                         0);
+
     // Telemetry packet builder.
     ESAT_CCSDSTelemetryPacketBuilder telemetryPacketBuilder;
-
-    // Command handlers.
-    void handleSetTimeCommand(ESAT_CCSDSPacket& packet);
-    void handleSetModeCommand(ESAT_CCSDSPacket& packet);
-    void handleStoreTelemetry(ESAT_CCSDSPacket& packet);
-    void handleDownloadStoredTelemetry(ESAT_CCSDSPacket& packet);
-    void handleEraseStoredTelemetry(ESAT_CCSDSPacket& packet);
-    void handleEnableTelemetry(ESAT_CCSDSPacket& packet);
-    void handleDisableTelemetry(ESAT_CCSDSPacket& packet);
 
     // Read the next stored telemetry packet and fill the given packet buffer.
     // Return true on success; otherwise return false.
