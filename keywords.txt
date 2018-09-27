@@ -28,10 +28,13 @@
 ESAT_ADCSSubsystemClass	KEYWORD1
 ESAT_EPSSubsystemClass	KEYWORD1
 ESAT_OBCClockClass	KEYWORD1
+ESAT_OBCClockTelecommandsClass	KEYWORD1
 ESAT_OBCHousekeepingTelemetryClass	KEYWORD1
 ESAT_OBCLEDClass	KEYWORD1
 ESAT_OBCLinesTelemetryClass	KEYWORD1
 ESAT_OBCSubsystemClass	KEYWORD1
+ESAT_OBCTelemetryStorageTelecommandsClass	KEYWORD1
+ESAT_OBCTelemetryTelecommandsClass	KEYWORD1
 ESAT_OnBoardDataHandlingClass	KEYWORD1
 ESAT_Subsystem	KEYWORD1
 ESAT_TelemetryStorageClass	KEYWORD1
@@ -48,10 +51,13 @@ ESAT_WifiSubsystemClass	KEYWORD1
 ESAT_ADCSSubsystem	KEYWORD2
 ESAT_EPSSubsystem	KEYWORD2
 ESAT_OBCClock	KEYWORD2
+ESAT_OBCClockTelecommands	KEYWORD2
 ESAT_OBCHousekeepingTelemetry	KEYWORD2
 ESAT_OBCLED	KEYWORD2
 ESAT_OBCLinesTelemetry	KEYWORD2
 ESAT_OBCSubsystem	KEYWORD2
+ESAT_OBCTelemetryStorageTelecommands	KEYWORD2
+ESAT_OBCTelemetryTelecommands	KEYWORD2
 ESAT_OnBoardDataHandling	KEYWORD2
 ESAT_TelemetryStorage	KEYWORD2
 ESAT_WifiSubsystem	KEYWORD2
