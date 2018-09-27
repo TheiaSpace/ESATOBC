@@ -29,7 +29,6 @@
 
 void ESAT_OBCSubsystemClass::begin()
 {
-  downloadStoredTelemetry = false;
   storeTelemetry = false;
   telemetryPacketBuilder =
     ESAT_CCSDSTelemetryPacketBuilder(getApplicationProcessIdentifier(),
@@ -130,7 +129,6 @@ void ESAT_OBCSubsystemClass::handleDownloadStoredTelemetry(ESAT_CCSDSPacket& pac
   const ESAT_Timestamp beginTimestamp = packet.readTimestamp();
   const ESAT_Timestamp endTimestamp = packet.readTimestamp();
   ESAT_TelemetryStorage.beginReading(beginTimestamp, endTimestamp);
-  downloadStoredTelemetry = true;
 }
 
 void ESAT_OBCSubsystemClass::handleEraseStoredTelemetry(ESAT_CCSDSPacket& packet)
@@ -173,11 +171,7 @@ boolean ESAT_OBCSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
     pendingTelemetry.clear(identifier);
     return telemetryPacketBuilder.build(packet, identifier);
   }
-  if (downloadStoredTelemetry)
-  {
-    return readStoredTelemetry(packet);
-  }
-  (void) packet;
+  return readStoredTelemetry(packet);
   return false;
 }
 
@@ -187,7 +181,6 @@ boolean ESAT_OBCSubsystemClass::readStoredTelemetry(ESAT_CCSDSPacket& packet)
   if (!correctRead)
   {
     ESAT_TelemetryStorage.endReading();
-    downloadStoredTelemetry = false;
   }
   return correctRead;
 }
@@ -198,7 +191,7 @@ boolean ESAT_OBCSubsystemClass::telemetryAvailable()
   {
     return true;
   }
-  if (downloadStoredTelemetry)
+  if (ESAT_TelemetryStorage.reading())
   {
     return true;
   }
@@ -217,7 +210,7 @@ void ESAT_OBCSubsystemClass::update()
 
 void ESAT_OBCSubsystemClass::writeTelemetry(ESAT_CCSDSPacket& packet)
 {
-  if (storeTelemetry && !downloadStoredTelemetry)
+  if (storeTelemetry && !ESAT_TelemetryStorage.reading())
   {
     ESAT_TelemetryStorage.write(packet);
   }

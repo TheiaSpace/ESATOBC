@@ -29,11 +29,13 @@ void ESAT_TelemetryStorageClass::beginReading(const ESAT_Timestamp begin,
 {
   beginTimestamp = begin;
   endTimestamp = end;
+  readingInProgress = true;
 }
 
 void ESAT_TelemetryStorageClass::endReading()
 {
   file.close();
+  readingInProgress = false;
 }
 
 void ESAT_TelemetryStorageClass::erase()
@@ -47,6 +49,10 @@ void ESAT_TelemetryStorageClass::erase()
 
 boolean ESAT_TelemetryStorageClass::read(ESAT_CCSDSPacket& packet)
 {
+  if (!readingInProgress)
+  {
+    return false;
+  }
   if (!file)
   {
     file = SD.open(TELEMETRY_FILE, FILE_READ);
@@ -81,8 +87,17 @@ boolean ESAT_TelemetryStorageClass::read(ESAT_CCSDSPacket& packet)
   return false;
 }
 
+boolean ESAT_TelemetryStorageClass::reading() const
+{
+  return readingInProgress;
+}
+
 void ESAT_TelemetryStorageClass::write(ESAT_CCSDSPacket& packet)
 {
+  if (readingInProgress)
+  {
+    return;
+  }
   if (file)
   {
     error = true;

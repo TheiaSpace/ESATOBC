@@ -58,6 +58,10 @@ class ESAT_TelemetryStorageClass
     // Must be called after beginReading() and before endReading().
     boolean read(ESAT_CCSDSPacket& packet);
 
+    // Return true between beginReading() and endReading();
+    // return false the rest of the time.
+    boolean reading() const;
+
     // Write a packet to the packet store.
     // Set the error flag on failure.
     // The packet store must not be open for reading, which happens at
@@ -78,6 +82,10 @@ class ESAT_TelemetryStorageClass
 
     // Store telemetry in this file.
     File file;
+
+    // Set to true between beginReading() and endReading();
+    // false the rest of the time.
+    boolean readingInProgress = false;
 };
 
 // Global instance of the telemetry storage library.
