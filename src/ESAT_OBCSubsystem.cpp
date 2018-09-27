@@ -45,6 +45,16 @@ void ESAT_OBCSubsystemClass::begin()
   ESAT_OBCLED.begin();
 }
 
+void ESAT_OBCSubsystemClass::disableTelemetry(const byte identifier)
+{
+  enabledTelemetry.clear(identifier);
+}
+
+void ESAT_OBCSubsystemClass::enableTelemetry(const byte identifier)
+{
+  enabledTelemetry.set(identifier);
+}
+
 word ESAT_OBCSubsystemClass::getApplicationProcessIdentifier()
 {
   return APPLICATION_PROCESS_IDENTIFIER;

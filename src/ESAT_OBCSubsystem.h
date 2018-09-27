@@ -42,6 +42,14 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
     // Start the OBC.
     void begin();
 
+    // Disable the generation of the telemetry packet with the given
+    // identifier.
+    void disableTelemetry(byte identifier);
+
+    // Enable the generation of the telemetry packet with the given
+    // identifier.
+    void enableTelemetry(byte identifier);
+
     // Return the identifier of this subsystem.
     word getApplicationProcessIdentifier();
 
