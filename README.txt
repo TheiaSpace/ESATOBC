@@ -104,3 +104,13 @@ Telecommand handler for telemetry storage-related telecommands.
 # ESAT_OBCTelemetryTelecommands
 
 Telecommand handler for OBC telemetry-related telecommands.
+
+
+# ESAT_OBCHousekeepingTelemetry
+
+Fill the OBC houskeeping telemetry packet.
+
+
+# ESAT_OBCLinesTelemetry
+
+Fill the OBC lines telemetry packet.
