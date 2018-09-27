@@ -20,9 +20,12 @@
 
 #include "ESAT_OBCSubsystem.h"
 #include "ESAT_OBCClock.h"
+#include "ESAT_OBCClockTelecommands.h"
 #include "ESAT_OBCHousekeepingTelemetry.h"
 #include "ESAT_OBCLED.h"
 #include "ESAT_OBCLinesTelemetry.h"
+#include "ESAT_OBCTelemetryStorageTelecommands.h"
+#include "ESAT_OBCTelemetryTelecommands.h"
 #include "ESAT_TelemetryStorage.h"
 #include <ESAT_Timer.h>
 #include <ESAT_Timestamp.h>
@@ -42,6 +45,9 @@ void ESAT_OBCSubsystemClass::begin()
   telemetryPacketBuilder.add(ESAT_OBCLinesTelemetry);
   enabledTelemetry.set(ESAT_OBCHousekeepingTelemetry.packetIdentifier());
   enabledTelemetry.clear(ESAT_OBCLinesTelemetry.packetIdentifier());
+  telecommandPacketHandler.add(ESAT_OBCClockTelecommands);
+  telecommandPacketHandler.add(ESAT_OBCTelemetryStorageTelecommands);
+  telecommandPacketHandler.add(ESAT_OBCTelemetryTelecommands);
   ESAT_OBCLED.begin();
 }
 
@@ -62,109 +68,7 @@ word ESAT_OBCSubsystemClass::getApplicationProcessIdentifier()
 
 void ESAT_OBCSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& packet)
 {
-  packet.rewind();
-  const ESAT_CCSDSPrimaryHeader primaryHeader = packet.readPrimaryHeader();
-  if (primaryHeader.applicationProcessIdentifier
-      != getApplicationProcessIdentifier())
-  {
-    return;
-  }
-  if (primaryHeader.packetType != primaryHeader.TELECOMMAND)
-  {
-    return;
-  }
-  if (primaryHeader.packetDataLength < ESAT_CCSDSSecondaryHeader::LENGTH)
-  {
-    return;
-  }
-  const ESAT_CCSDSSecondaryHeader secondaryHeader =
-    packet.readSecondaryHeader();
-  if (secondaryHeader.majorVersionNumber < MAJOR_VERSION_NUMBER)
-  {
-    return;
-  }
-  switch (secondaryHeader.packetIdentifier)
-  {
-    case SET_TIME:
-      handleSetTimeCommand(packet);
-      break;
-    case STORE_TELEMETRY:
-      handleStoreTelemetry(packet);
-      break;
-    case DOWNLOAD_STORED_TELEMETRY:
-      handleDownloadStoredTelemetry(packet);
-      break;
-    case ERASE_STORED_TELEMETRY:
-      handleEraseStoredTelemetry(packet);
-      break;
-    case ENABLE_TELEMETRY:
-      handleEnableTelemetry(packet);
-      break;
-    case DISABLE_TELEMETRY:
-      handleDisableTelemetry(packet);
-      break;
-    default:
-      break;
-  }
-}
-
-void ESAT_OBCSubsystemClass::handleSetTimeCommand(ESAT_CCSDSPacket& packet)
-{
-  if (packet.available() < 7)
-  {
-    return;
-  }
-  ESAT_OBCClock.write(packet.readTimestamp());
-}
-
-void ESAT_OBCSubsystemClass::handleStoreTelemetry(ESAT_CCSDSPacket& packet)
-{
-  if (packet.available() < 1)
-  {
-    return;
-  }
-  const byte parameter = packet.readByte();
-  if (parameter > 0)
-  {
-    storeTelemetry = true;
-  }
-  else
-  {
-    storeTelemetry = false;
-  }
-}
-
-void ESAT_OBCSubsystemClass::handleDownloadStoredTelemetry(ESAT_CCSDSPacket& packet)
-{
-  const ESAT_Timestamp beginTimestamp = packet.readTimestamp();
-  const ESAT_Timestamp endTimestamp = packet.readTimestamp();
-  ESAT_TelemetryStorage.beginReading(beginTimestamp, endTimestamp);
-}
-
-void ESAT_OBCSubsystemClass::handleEraseStoredTelemetry(ESAT_CCSDSPacket& packet)
-{
-  (void) packet;
-  ESAT_TelemetryStorage.erase();
-}
-
-void ESAT_OBCSubsystemClass::handleEnableTelemetry(ESAT_CCSDSPacket& packet)
-{
-  if (packet.available() < 1)
-  {
-    return;
-  }
-  const byte identifier = packet.readByte();
-  enabledTelemetry.set(identifier);
-}
-
-void ESAT_OBCSubsystemClass::handleDisableTelemetry(ESAT_CCSDSPacket& packet)
-{
-  if (packet.available() < 1)
-  {
-    return;
-  }
-  const byte identifier = packet.readByte();
-  enabledTelemetry.clear(identifier);
+  (void) telecommandPacketHandler.handle(packet);
 }
 
 boolean ESAT_OBCSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
