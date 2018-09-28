@@ -22,10 +22,18 @@
 #include "ESAT_OBCSubsystem.h"
 #include "ESAT_TelemetryStorage.h"
 
+const ESAT_SemanticVersionNumber ESAT_OBCTelemetryStorageTelecommandsClass::INTERFACE_VERSION_NUMBER(4, 0, 0);
+
 boolean ESAT_OBCTelemetryStorageTelecommandsClass::consume(ESAT_CCSDSPacket packet)
 {
   const ESAT_CCSDSSecondaryHeader secondaryHeader =
     packet.readSecondaryHeader();
+  if (!INTERFACE_VERSION_NUMBER.isForwardCompatibleWith(secondaryHeader.majorVersionNumber,
+                                                        secondaryHeader.minorVersionNumber,
+                                                        secondaryHeader.patchVersionNumber))
+  {
+    return false;
+  }
   switch (secondaryHeader.packetIdentifier)
   {
     case STORE_TELEMETRY:
