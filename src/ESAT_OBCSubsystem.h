@@ -94,10 +94,7 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
 
     // Telecommand packet handler.
     ESAT_CCSDSTelecommandPacketHandler telecommandPacketHandler =
-      ESAT_CCSDSTelecommandPacketHandler(APPLICATION_PROCESS_IDENTIFIER,
-                                         MAJOR_VERSION_NUMBER,
-                                         0,
-                                         0);
+      ESAT_CCSDSTelecommandPacketHandler(APPLICATION_PROCESS_IDENTIFIER);
 
     // Telemetry packet builder.
     ESAT_CCSDSTelemetryPacketBuilder telemetryPacketBuilder;
