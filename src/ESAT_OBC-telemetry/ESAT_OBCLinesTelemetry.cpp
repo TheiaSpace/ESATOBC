@@ -19,11 +19,6 @@
  */
 
 #include "ESAT_OBC-telemetry/ESAT_OBCLinesTelemetry.h"
-#include "ESAT_OBCClock.h"
-#include "ESAT_TelemetryStorage.h"
-#include <ESAT_Timer.h>
-#include <SPI.h>
-#include <Wire.h>
 
 boolean ESAT_OBCLinesTelemetryClass::available()
 {
