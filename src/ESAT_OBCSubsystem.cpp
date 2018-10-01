@@ -38,6 +38,12 @@ void ESAT_OBCSubsystemClass::addTelecommand(ESAT_CCSDSPacketConsumer& telecomman
   telecommandPacketHandler.add(telecommand);
 }
 
+void ESAT_OBCSubsystemClass::addTelemetry(ESAT_CCSDSPacketContents& telemetry)
+{
+  telemetryPacketBuilder.add(telemetry);
+  disableTelemetry(telemetry.packetIdentifier());
+}
+
 void ESAT_OBCSubsystemClass::begin()
 {
   storeTelemetry = false;
@@ -49,10 +55,10 @@ void ESAT_OBCSubsystemClass::begin()
                                      ESAT_OBCClock);
   enabledTelemetry.clearAll();
   pendingTelemetry.clearAll();
-  telemetryPacketBuilder.add(ESAT_OBCHousekeepingTelemetry);
-  telemetryPacketBuilder.add(ESAT_OBCLinesTelemetry);
-  enabledTelemetry.set(ESAT_OBCHousekeepingTelemetry.packetIdentifier());
-  enabledTelemetry.clear(ESAT_OBCLinesTelemetry.packetIdentifier());
+  addTelemetry(ESAT_OBCHousekeepingTelemetry);
+  enableTelemetry(ESAT_OBCHousekeepingTelemetry.packetIdentifier());
+  addTelemetry(ESAT_OBCLinesTelemetry);
+  disableTelemetry(ESAT_OBCLinesTelemetry.packetIdentifier());
   addTelecommand(ESAT_OBCSetTimeTelecommand);
   addTelecommand(ESAT_OBCStoreTelemetryTelecommand);
   addTelecommand(ESAT_OBCDownloadStoredTelemetryTelecommand);
