@@ -23,11 +23,12 @@
 #include "ESAT_OBCHousekeepingTelemetry.h"
 #include "ESAT_OBCLED.h"
 #include "ESAT_OBCLinesTelemetry.h"
+#include "ESAT_OBC-telecommands/ESAT_OBCDisableTelemetryTelecommand.h"
 #include "ESAT_OBC-telecommands/ESAT_OBCDownloadStoredTelemetryTelecommand.h"
+#include "ESAT_OBC-telecommands/ESAT_OBCEnableTelemetryTelecommand.h"
 #include "ESAT_OBC-telecommands/ESAT_OBCEraseStoredTelemetryTelecommand.h"
 #include "ESAT_OBC-telecommands/ESAT_OBCSetTimeTelecommand.h"
 #include "ESAT_OBC-telecommands/ESAT_OBCStoreTelemetryTelecommand.h"
-#include "ESAT_OBCTelemetryTelecommands.h"
 #include "ESAT_TelemetryStorage.h"
 #include <ESAT_Timer.h>
 #include <ESAT_Timestamp.h>
@@ -51,7 +52,8 @@ void ESAT_OBCSubsystemClass::begin()
   telecommandPacketHandler.add(ESAT_OBCStoreTelemetryTelecommand);
   telecommandPacketHandler.add(ESAT_OBCDownloadStoredTelemetryTelecommand);
   telecommandPacketHandler.add(ESAT_OBCEraseStoredTelemetryTelecommand);
-  telecommandPacketHandler.add(ESAT_OBCTelemetryTelecommands);
+  telecommandPacketHandler.add(ESAT_OBCEnableTelemetryTelecommand);
+  telecommandPacketHandler.add(ESAT_OBCDisableTelemetryTelecommand);
   ESAT_OBCLED.begin();
 }
 

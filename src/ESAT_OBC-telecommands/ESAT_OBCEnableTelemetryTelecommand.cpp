@@ -18,37 +18,41 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESAT_OBCTelemetryTelecommands.h"
+#include "ESAT_OBC-telecommands/ESAT_OBCEnableTelemetryTelecommand.h"
 #include "ESAT_OBCSubsystem.h"
 
-const ESAT_SemanticVersionNumber ESAT_OBCTelemetryTelecommandsClass::INTERFACE_VERSION_NUMBER(4, 1, 0);
+const ESAT_SemanticVersionNumber ESAT_OBCEnableTelemetryTelecommandClass::INTERFACE_VERSION_NUMBER(4, 1, 0);
 
-boolean ESAT_OBCTelemetryTelecommandsClass::consume(ESAT_CCSDSPacket packet)
+boolean ESAT_OBCEnableTelemetryTelecommandClass::accept(const ESAT_CCSDSSecondaryHeader secondaryHeader) const
 {
-  const ESAT_CCSDSSecondaryHeader secondaryHeader =
-    packet.readSecondaryHeader();
   if (!INTERFACE_VERSION_NUMBER.isForwardCompatibleWith(secondaryHeader.majorVersionNumber,
                                                         secondaryHeader.minorVersionNumber,
                                                         secondaryHeader.patchVersionNumber))
   {
     return false;
   }
-  switch (secondaryHeader.packetIdentifier)
+  if (secondaryHeader.packetIdentifier != ENABLE_TELEMETRY)
   {
-    case ENABLE_TELEMETRY:
-      return handleEnableTelemetryTelecommand(packet);
-      break;
-    case DISABLE_TELEMETRY:
-      return handleDisableTelemetryTelecommand(packet);
-      break;
-    default:
-      return false;
-      break;
+    return false;
   }
-  return false;
+  return true;
 }
 
-boolean ESAT_OBCTelemetryTelecommandsClass::handleEnableTelemetryTelecommand(ESAT_CCSDSPacket packet)
+boolean ESAT_OBCEnableTelemetryTelecommandClass::consume(ESAT_CCSDSPacket packet)
+{
+  const ESAT_CCSDSSecondaryHeader secondaryHeader =
+    packet.readSecondaryHeader();
+  if (accept(secondaryHeader))
+  {
+    return handle(packet);
+  }
+  else
+  {
+    return false;
+  }
+}
+
+boolean ESAT_OBCEnableTelemetryTelecommandClass::handle(ESAT_CCSDSPacket packet) const
 {
   const byte identifier = packet.readByte();
   if (packet.triedToReadBeyondLength())
@@ -63,19 +67,4 @@ boolean ESAT_OBCTelemetryTelecommandsClass::handleEnableTelemetryTelecommand(ESA
   }
 }
 
-boolean ESAT_OBCTelemetryTelecommandsClass::handleDisableTelemetryTelecommand(ESAT_CCSDSPacket packet)
-{
-  const byte identifier = packet.readByte();
-  if (packet.triedToReadBeyondLength())
-  {
-    (void) identifier; // Unused;
-    return false;
-  }
-  else
-  {
-    ESAT_OBCSubsystem.disableTelemetry(identifier);
-    return true;
-  }
-}
-
-ESAT_OBCTelemetryTelecommandsClass ESAT_OBCTelemetryTelecommands;
+ESAT_OBCEnableTelemetryTelecommandClass ESAT_OBCEnableTelemetryTelecommand;

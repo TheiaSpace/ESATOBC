@@ -18,16 +18,16 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESAT_OBCTelemetryTelecommands_h
-#define ESAT_OBCTelemetryTelecommands_h
+#ifndef ESAT_OBCEnableTelemetryTelecommand_h
+#define ESAT_OBCEnableTelemetryTelecommand_h
 
 #include <Arduino.h>
 #include <ESAT_CCSDSPacketConsumer.h>
 #include <ESAT_SemanticVersionNumber.h>
 
-// Telecommand handler for OBC telemetry-related telecommands.
+// Telecommand handler for OBC ENABLE_TELEMETRY.
 // Used by ESAT_OBCSubsystem.
-class ESAT_OBCTelemetryTelecommandsClass: public ESAT_CCSDSPacketConsumer
+class ESAT_OBCEnableTelemetryTelecommandClass: public ESAT_CCSDSPacketConsumer
 {
   public:
     // Handle a telecommand packet.
@@ -35,28 +35,26 @@ class ESAT_OBCTelemetryTelecommandsClass: public ESAT_CCSDSPacketConsumer
     boolean consume(ESAT_CCSDSPacket packet);
 
   private:
-    // Command codes.
-    enum CommandCode
-    {
-      ENABLE_TELEMETRY = 0x04,
-      DISABLE_TELEMETRY = 0x05,
-    };
+    // Identifier of the OBC DOWNLOAD_STORED_TELEMETRY telecommand.
+    static const byte ENABLE_TELEMETRY = 0x04;
 
-    // Version number of the interface.
-    // This telecommand handler will only accept telecommands
     // with a version number that is backwards-compatible with
     // this version number.
     static const ESAT_SemanticVersionNumber INTERFACE_VERSION_NUMBER;
 
-    // Handle the telecommand for enabling a telemetry packet.
-    boolean handleEnableTelemetryTelecommand(ESAT_CCSDSPacket packet);
+    // Return true if this telecommand handler accepts the
+    // packet with the given secondary header; otherwise
+    // return false.
+    boolean accept(ESAT_CCSDSSecondaryHeader secondaryHeader) const;
 
-    // Handle the telecommand for disabling a telemetry packet.
-    boolean handleDisableTelemetryTelecommand(ESAT_CCSDSPacket packet);
+    // Handle the telecommand packet (given with the read/write pointer
+    // at the start of the user data field).
+    // Return true on success; otherwise return false.
+    boolean handle(ESAT_CCSDSPacket packet) const;
 };
 
-// Global instance of ESAT_OBCTelemetryTelecommandsClass.
+// Global instance of ESAT_OBCEnableTelemetryTelecommandClass.
 // Used by ESAT_OBCSubsystem.
-extern ESAT_OBCTelemetryTelecommandsClass ESAT_OBCTelemetryTelecommands;
+extern ESAT_OBCEnableTelemetryTelecommandClass ESAT_OBCEnableTelemetryTelecommand;
 
-#endif /* ESAT_OBCTelemetryTelecommands_h */
+#endif /* ESAT_OBCEnableTelemetryTelecommand_h */
