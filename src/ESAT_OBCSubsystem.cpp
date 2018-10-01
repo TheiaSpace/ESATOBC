@@ -20,7 +20,6 @@
 
 #include "ESAT_OBCSubsystem.h"
 #include "ESAT_OBCClock.h"
-#include "ESAT_OBCHousekeepingTelemetry.h"
 #include "ESAT_OBCLED.h"
 #include "ESAT_OBCLinesTelemetry.h"
 #include "ESAT_OBC-telecommands/ESAT_OBCDisableTelemetryTelecommand.h"
@@ -29,6 +28,7 @@
 #include "ESAT_OBC-telecommands/ESAT_OBCEraseStoredTelemetryTelecommand.h"
 #include "ESAT_OBC-telecommands/ESAT_OBCSetTimeTelecommand.h"
 #include "ESAT_OBC-telecommands/ESAT_OBCStoreTelemetryTelecommand.h"
+#include "ESAT_OBC-telemetry/ESAT_OBCHousekeepingTelemetry.h"
 #include "ESAT_TelemetryStorage.h"
 #include <ESAT_Timer.h>
 #include <ESAT_Timestamp.h>
