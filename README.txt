@@ -96,11 +96,6 @@ storage.
 This directory contains telecommand handlers used by ESAT_OBCSubsystem.
 
 
-# ESAT_OBCHousekeepingTelemetry
+# ESAT_OBC-telemetry directory
 
-Fill the OBC houskeeping telemetry packet.
-
-
-# ESAT_OBCLinesTelemetry
-
-Fill the OBC lines telemetry packet.
+This directory contains telemetry packets used by ESAT_OBCSubsystem.
