@@ -33,6 +33,11 @@
 #include <ESAT_Timer.h>
 #include <ESAT_Timestamp.h>
 
+void ESAT_OBCSubsystemClass::addTelecommand(ESAT_CCSDSPacketConsumer& telecommand)
+{
+  telecommandPacketHandler.add(telecommand);
+}
+
 void ESAT_OBCSubsystemClass::begin()
 {
   storeTelemetry = false;
@@ -48,12 +53,12 @@ void ESAT_OBCSubsystemClass::begin()
   telemetryPacketBuilder.add(ESAT_OBCLinesTelemetry);
   enabledTelemetry.set(ESAT_OBCHousekeepingTelemetry.packetIdentifier());
   enabledTelemetry.clear(ESAT_OBCLinesTelemetry.packetIdentifier());
-  telecommandPacketHandler.add(ESAT_OBCSetTimeTelecommand);
-  telecommandPacketHandler.add(ESAT_OBCStoreTelemetryTelecommand);
-  telecommandPacketHandler.add(ESAT_OBCDownloadStoredTelemetryTelecommand);
-  telecommandPacketHandler.add(ESAT_OBCEraseStoredTelemetryTelecommand);
-  telecommandPacketHandler.add(ESAT_OBCEnableTelemetryTelecommand);
-  telecommandPacketHandler.add(ESAT_OBCDisableTelemetryTelecommand);
+  addTelecommand(ESAT_OBCSetTimeTelecommand);
+  addTelecommand(ESAT_OBCStoreTelemetryTelecommand);
+  addTelecommand(ESAT_OBCDownloadStoredTelemetryTelecommand);
+  addTelecommand(ESAT_OBCEraseStoredTelemetryTelecommand);
+  addTelecommand(ESAT_OBCEnableTelemetryTelecommand);
+  addTelecommand(ESAT_OBCDisableTelemetryTelecommand);
   ESAT_OBCLED.begin();
 }
 
