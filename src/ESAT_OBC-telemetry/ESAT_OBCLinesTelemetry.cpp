@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESAT_OBCLinesTelemetry.h"
+#include "ESAT_OBC-telemetry/ESAT_OBCLinesTelemetry.h"
 #include "ESAT_OBCClock.h"
 #include "ESAT_OBCSubsystem.h"
 #include "ESAT_TelemetryStorage.h"
