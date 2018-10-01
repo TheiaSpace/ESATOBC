@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESAT_ADCSSubsystem.h"
+#include "ESAT_OBC-subsystems/ESAT_ADCSSubsystem.h"
 
 #ifdef ESAT_ADCS_CODE_RUNNING_IN_ADCS
 #include <ESAT_I2CMaster.h>
