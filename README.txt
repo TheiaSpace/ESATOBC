@@ -35,8 +35,8 @@ version 3.2.0 or a newer 3.x.y version.
 See the example OBC program (examples/OBC/OBC.ino).  This program uses
 the modules of the OBC library.
 
-The src/ directory contains the OBC library, which consists of the
-following modules:
+The src/ directory contains the OBC library (ESAT_OnBoardDataHandling)
+as well as several subdirectories:
 
 
 # ESAT_OnBoardDataHandling
