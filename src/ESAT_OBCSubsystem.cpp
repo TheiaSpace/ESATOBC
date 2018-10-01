@@ -20,15 +20,23 @@
 
 #include "ESAT_OBCSubsystem.h"
 #include "ESAT_OBCClock.h"
-#include "ESAT_OBCClockTelecommands.h"
 #include "ESAT_OBCHousekeepingTelemetry.h"
 #include "ESAT_OBCLED.h"
 #include "ESAT_OBCLinesTelemetry.h"
-#include "ESAT_OBCTelemetryStorageTelecommands.h"
-#include "ESAT_OBCTelemetryTelecommands.h"
+#include "ESAT_OBC-telecommands/ESAT_OBCDisableTelemetryTelecommand.h"
+#include "ESAT_OBC-telecommands/ESAT_OBCDownloadStoredTelemetryTelecommand.h"
+#include "ESAT_OBC-telecommands/ESAT_OBCEnableTelemetryTelecommand.h"
+#include "ESAT_OBC-telecommands/ESAT_OBCEraseStoredTelemetryTelecommand.h"
+#include "ESAT_OBC-telecommands/ESAT_OBCSetTimeTelecommand.h"
+#include "ESAT_OBC-telecommands/ESAT_OBCStoreTelemetryTelecommand.h"
 #include "ESAT_TelemetryStorage.h"
 #include <ESAT_Timer.h>
 #include <ESAT_Timestamp.h>
+
+void ESAT_OBCSubsystemClass::addTelecommand(ESAT_CCSDSPacketConsumer& telecommand)
+{
+  telecommandPacketHandler.add(telecommand);
+}
 
 void ESAT_OBCSubsystemClass::begin()
 {
@@ -45,9 +53,12 @@ void ESAT_OBCSubsystemClass::begin()
   telemetryPacketBuilder.add(ESAT_OBCLinesTelemetry);
   enabledTelemetry.set(ESAT_OBCHousekeepingTelemetry.packetIdentifier());
   enabledTelemetry.clear(ESAT_OBCLinesTelemetry.packetIdentifier());
-  telecommandPacketHandler.add(ESAT_OBCClockTelecommands);
-  telecommandPacketHandler.add(ESAT_OBCTelemetryStorageTelecommands);
-  telecommandPacketHandler.add(ESAT_OBCTelemetryTelecommands);
+  addTelecommand(ESAT_OBCSetTimeTelecommand);
+  addTelecommand(ESAT_OBCStoreTelemetryTelecommand);
+  addTelecommand(ESAT_OBCDownloadStoredTelemetryTelecommand);
+  addTelecommand(ESAT_OBCEraseStoredTelemetryTelecommand);
+  addTelecommand(ESAT_OBCEnableTelemetryTelecommand);
+  addTelecommand(ESAT_OBCDisableTelemetryTelecommand);
   ESAT_OBCLED.begin();
 }
 

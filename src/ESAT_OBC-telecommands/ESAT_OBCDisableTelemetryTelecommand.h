@@ -18,16 +18,16 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESAT_OBCTelemetryStorageTelecommands_h
-#define ESAT_OBCTelemetryStorageTelecommands_h
+#ifndef ESAT_OBCDisableTelemetryTelecommand_h
+#define ESAT_OBCDisableTelemetryTelecommand_h
 
 #include <Arduino.h>
 #include <ESAT_CCSDSPacketConsumer.h>
 #include <ESAT_SemanticVersionNumber.h>
 
-// Telecommand handler for telemetry storage-related commands.
+// Telecommand handler for OBC_DISABLE_TELEMETRY.
 // Used by ESAT_OBCSubsystem.
-class ESAT_OBCTelemetryStorageTelecommandsClass: public ESAT_CCSDSPacketConsumer
+class ESAT_OBCDisableTelemetryTelecommandClass: public ESAT_CCSDSPacketConsumer
 {
   public:
     // Handle a telecommand packet.
@@ -35,36 +35,26 @@ class ESAT_OBCTelemetryStorageTelecommandsClass: public ESAT_CCSDSPacketConsumer
     boolean consume(ESAT_CCSDSPacket packet);
 
   private:
-    // Command codes.
-    enum CommandCode
-    {
-      STORE_TELEMETRY = 0x01,
-      DOWNLOAD_STORED_TELEMETRY = 0x02,
-      ERASE_STORED_TELEMETRY = 0x03,
-    };
+    // Identifier of the OBC_DOWNLOAD_STORED_TELEMETRY telecommand.
+    static const byte OBC_DISABLE_TELEMETRY = 0x05;
 
-    // Version number of the interface.
-    // This telecommand handler will only accept telecommands
     // with a version number that is backwards-compatible with
     // this version number.
     static const ESAT_SemanticVersionNumber INTERFACE_VERSION_NUMBER;
 
-    // Handle the telecommand for enabling or disabling the storage of
-    // telemetry.
-    // Return true on success; otherwise return false.
-    boolean handleStoreTelemetryTelecommand(ESAT_CCSDSPacket packet);
+    // Return true if this telecommand handler accepts the
+    // packet with the given secondary header; otherwise
+    // return false.
+    boolean accept(ESAT_CCSDSSecondaryHeader secondaryHeader) const;
 
-    // Handle the telecommand for downloading stored telemetry.
+    // Handle the telecommand packet (given with the read/write pointer
+    // at the start of the user data field).
     // Return true on success; otherwise return false.
-    boolean handleDownloadStoredTelemetryTelecommand(ESAT_CCSDSPacket packet);
-
-    // Handle the telecommand for erasing the stored telemetry.
-    // Return true on success; otherwise return false.
-    boolean handleEraseStoredTelemetryTelecommand(ESAT_CCSDSPacket packet);
+    boolean handle(ESAT_CCSDSPacket packet) const;
 };
 
-// Global instance of ESAT_OBCTelemetryStorageTelecommandsClass.
+// Global instance of ESAT_OBCDisableTelemetryTelecommandClass.
 // Used by ESAT_OBCSubsystem.
-extern ESAT_OBCTelemetryStorageTelecommandsClass ESAT_OBCTelemetryStorageTelecommands;
+extern ESAT_OBCDisableTelemetryTelecommandClass ESAT_OBCDisableTelemetryTelecommand;
 
-#endif /* ESAT_OBCTelemetryStorageTelecommands_h */
+#endif /* ESAT_OBCDisableTelemetryTelecommand_h */

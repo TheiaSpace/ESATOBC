@@ -18,46 +18,53 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESAT_OBCClockTelecommands.h"
-#include "ESAT_OBCClock.h"
+#include "ESAT_OBC-telecommands/ESAT_OBCDownloadStoredTelemetryTelecommand.h"
+#include "ESAT_TelemetryStorage.h"
 
-const ESAT_SemanticVersionNumber ESAT_OBCClockTelecommandsClass::INTERFACE_VERSION_NUMBER(4, 0, 0);
+const ESAT_SemanticVersionNumber ESAT_OBCDownloadStoredTelemetryTelecommandClass::INTERFACE_VERSION_NUMBER(4, 0, 0);
 
-boolean ESAT_OBCClockTelecommandsClass::consume(ESAT_CCSDSPacket packet)
+boolean ESAT_OBCDownloadStoredTelemetryTelecommandClass::accept(const ESAT_CCSDSSecondaryHeader secondaryHeader) const
 {
-  const ESAT_CCSDSSecondaryHeader secondaryHeader =
-    packet.readSecondaryHeader();
   if (!INTERFACE_VERSION_NUMBER.isForwardCompatibleWith(secondaryHeader.majorVersionNumber,
                                                         secondaryHeader.minorVersionNumber,
                                                         secondaryHeader.patchVersionNumber))
   {
     return false;
   }
-  switch (secondaryHeader.packetIdentifier)
+  if (secondaryHeader.packetIdentifier != OBC_DOWNLOAD_STORED_TELEMETRY)
   {
-    case SET_TIME:
-      return handleSetTimeTelecommand(packet);
-      break;
-    default:
-      return false;
-      break;
+    return false;
   }
-  return false;
+  return true;
 }
 
-boolean ESAT_OBCClockTelecommandsClass::handleSetTimeTelecommand(ESAT_CCSDSPacket packet)
+boolean ESAT_OBCDownloadStoredTelemetryTelecommandClass::consume(ESAT_CCSDSPacket packet)
 {
-  const ESAT_Timestamp timestamp = packet.readTimestamp();
+  const ESAT_CCSDSSecondaryHeader secondaryHeader =
+    packet.readSecondaryHeader();
+  if (accept(secondaryHeader))
+  {
+    return handle(packet);
+  }
+  else
+  {
+    return false;
+  }
+}
+
+boolean ESAT_OBCDownloadStoredTelemetryTelecommandClass::handle(ESAT_CCSDSPacket packet) const
+{
+  const ESAT_Timestamp beginTimestamp = packet.readTimestamp();
+  const ESAT_Timestamp endTimestamp = packet.readTimestamp();
   if (packet.triedToReadBeyondLength())
   {
-    (void) timestamp; // Unused.
     return false;
   }
   else
   {
-    ESAT_OBCClock.write(timestamp);
+    ESAT_TelemetryStorage.beginReading(beginTimestamp, endTimestamp);
     return true;
   }
 }
 
-ESAT_OBCClockTelecommandsClass ESAT_OBCClockTelecommands;
+ESAT_OBCDownloadStoredTelemetryTelecommandClass ESAT_OBCDownloadStoredTelemetryTelecommand;

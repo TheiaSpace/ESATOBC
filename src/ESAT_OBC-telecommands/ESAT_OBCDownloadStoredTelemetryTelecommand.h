@@ -18,16 +18,16 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESAT_OBCClockTelecommands_h
-#define ESAT_OBCClockTelecommands_h
+#ifndef ESAT_OBCDownloadStoredTelemetryTelecommand_h
+#define ESAT_OBCDownloadStoredTelemetryTelecommand_h
 
 #include <Arduino.h>
 #include <ESAT_CCSDSPacketConsumer.h>
 #include <ESAT_SemanticVersionNumber.h>
 
-// Telecommand handler for OBC clock-related commands.
+// Telecommand handler for OBC_DOWNLOAD_STORED_TELEMETRY.
 // Used by ESAT_OBCSubsystem.
-class ESAT_OBCClockTelecommandsClass: public ESAT_CCSDSPacketConsumer
+class ESAT_OBCDownloadStoredTelemetryTelecommandClass: public ESAT_CCSDSPacketConsumer
 {
   public:
     // Handle a telecommand packet.
@@ -35,25 +35,26 @@ class ESAT_OBCClockTelecommandsClass: public ESAT_CCSDSPacketConsumer
     boolean consume(ESAT_CCSDSPacket packet);
 
   private:
-    // Command codes.
-    enum CommandCode
-    {
-      SET_TIME = 0x00,
-    };
+    // Identifier of the OBC_DOWNLOAD_STORED_TELEMETRY telecommand.
+    static const byte OBC_DOWNLOAD_STORED_TELEMETRY = 0x02;
 
-    // Version number of the interface.
-    // This telecommand handler will only accept telecommands
     // with a version number that is backwards-compatible with
     // this version number.
     static const ESAT_SemanticVersionNumber INTERFACE_VERSION_NUMBER;
 
-    // Handle the telecommand for setting the time of the OBC clock.
+    // Return true if this telecommand handler accepts the
+    // packet with the given secondary header; otherwise
+    // return false.
+    boolean accept(ESAT_CCSDSSecondaryHeader secondaryHeader) const;
+
+    // Handle the telecommand packet (given with the read/write pointer
+    // at the start of the user data field).
     // Return true on success; otherwise return false.
-    boolean handleSetTimeTelecommand(ESAT_CCSDSPacket packet);
+    boolean handle(ESAT_CCSDSPacket packet) const;
 };
 
-// Global instance of ESAT_OBCClockTelecommandsClass.
+// Global instance of ESAT_OBCDownloadStoredTelemetryTelecommandClass.
 // Used by ESAT_OBCSubsystem.
-extern ESAT_OBCClockTelecommandsClass ESAT_OBCClockTelecommands;
+extern ESAT_OBCDownloadStoredTelemetryTelecommandClass ESAT_OBCDownloadStoredTelemetryTelecommand;
 
-#endif /* ESAT_OBCClockTelecommands_h */
+#endif /* ESAT_OBCDownloadStoredTelemetryTelecommand_h */
