@@ -23,6 +23,7 @@
 
 #include <Arduino.h>
 #include <ESAT_CCSDSPacketConsumer.h>
+#include <ESAT_SemanticVersionNumber.h>
 
 // Telecommand handler for telemetry storage-related commands.
 // Used by ESAT_OBCSubsystem.
@@ -41,6 +42,12 @@ class ESAT_OBCTelemetryStorageTelecommandsClass: public ESAT_CCSDSPacketConsumer
       DOWNLOAD_STORED_TELEMETRY = 0x02,
       ERASE_STORED_TELEMETRY = 0x03,
     };
+
+    // Version number of the interface.
+    // This telecommand handler will only accept telecommands
+    // with a version number that is backwards-compatible with
+    // this version number.
+    static const ESAT_SemanticVersionNumber INTERFACE_VERSION_NUMBER;
 
     // Handle the telecommand for enabling or disabling the storage of
     // telemetry.

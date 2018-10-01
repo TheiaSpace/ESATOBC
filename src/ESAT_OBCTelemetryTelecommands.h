@@ -23,6 +23,7 @@
 
 #include <Arduino.h>
 #include <ESAT_CCSDSPacketConsumer.h>
+#include <ESAT_SemanticVersionNumber.h>
 
 // Telecommand handler for OBC telemetry-related telecommands.
 // Used by ESAT_OBCSubsystem.
@@ -40,6 +41,12 @@ class ESAT_OBCTelemetryTelecommandsClass: public ESAT_CCSDSPacketConsumer
       ENABLE_TELEMETRY = 0x04,
       DISABLE_TELEMETRY = 0x05,
     };
+
+    // Version number of the interface.
+    // This telecommand handler will only accept telecommands
+    // with a version number that is backwards-compatible with
+    // this version number.
+    static const ESAT_SemanticVersionNumber INTERFACE_VERSION_NUMBER;
 
     // Handle the telecommand for enabling a telemetry packet.
     boolean handleEnableTelemetryTelecommand(ESAT_CCSDSPacket packet);
