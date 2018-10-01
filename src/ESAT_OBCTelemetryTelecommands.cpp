@@ -21,10 +21,18 @@
 #include "ESAT_OBCTelemetryTelecommands.h"
 #include "ESAT_OBCSubsystem.h"
 
+const ESAT_SemanticVersionNumber ESAT_OBCTelemetryTelecommandsClass::INTERFACE_VERSION_NUMBER(4, 1, 0);
+
 boolean ESAT_OBCTelemetryTelecommandsClass::consume(ESAT_CCSDSPacket packet)
 {
   const ESAT_CCSDSSecondaryHeader secondaryHeader =
     packet.readSecondaryHeader();
+  if (!INTERFACE_VERSION_NUMBER.isForwardCompatibleWith(secondaryHeader.majorVersionNumber,
+                                                        secondaryHeader.minorVersionNumber,
+                                                        secondaryHeader.patchVersionNumber))
+  {
+    return false;
+  }
   switch (secondaryHeader.packetIdentifier)
   {
     case ENABLE_TELEMETRY:
