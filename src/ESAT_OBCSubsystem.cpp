@@ -19,8 +19,8 @@
  */
 
 #include "ESAT_OBCSubsystem.h"
-#include "ESAT_OBCClock.h"
 #include "ESAT_OBCLED.h"
+#include "ESAT_OBC-peripherals/ESAT_OBCClock.h"
 #include "ESAT_OBC-telecommands/ESAT_OBCDisableTelemetryTelecommand.h"
 #include "ESAT_OBC-telecommands/ESAT_OBCDownloadStoredTelemetryTelecommand.h"
 #include "ESAT_OBC-telecommands/ESAT_OBCEnableTelemetryTelecommand.h"
