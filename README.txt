@@ -75,20 +75,10 @@ On-Board Computer subsystem.
 Wifi communications subsystem.  Communicates with the Wifi board.
 
 
-# ESAT_OBCClock
+# ESAT_OBC-peripherals directory
 
-Access to the real-time clock mounted on the OBC board.
-
-
-# ESAT_OBCLED
-
-Control the on-board heartbeat led.
-
-
-# ESAT_TelemetryStorage
-
-Access to the memory card mounted on the OBC board for telemetry
-storage.
+This directory contains drivers for the peripherals of the ESAT OBC
+board used by ESAT_OBCSubsystem.
 
 
 # ESAT_OBC-telecommands directory
