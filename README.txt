@@ -45,34 +45,9 @@ On-Board Data Handling (OBDH), which is the main function of the OBC.
 This library provides the general OBDH library functionality.
 
 
-# ESAT_Subsystem
+# ESAT_OBC-subsystems directory
 
-The OBDH library manages subsystems by means of objects that implement
-the ESAT_Subsystem interface.
-
-
-# ESAT_ADCSSubsystem
-
-Attitude Determination and Control Subsystem.  Either communicates
-with the ADCS board (option ADCS=ADCS, for using together with newer
-ADCS boards with a standalone microprocessor) or wraps the ESAT_ADCS
-library (option ADCS=OBC, for using together with legacy ADCS boards
-controlled by the OBC board).
-
-
-# ESAT_EPSSubsystem
-
-Electrical Power Subsystem.  Communicates with the EPS board.
-
-
-# ESAT_OBCSubsystem
-
-On-Board Computer subsystem.
-
-
-# ESAT_WifiSubsystem
-
-Wifi communications subsystem.  Communicates with the Wifi board.
+Subsystems managed with ESAT_OnBoardDataHandling.
 
 
 # ESAT_OBC-peripherals directory
