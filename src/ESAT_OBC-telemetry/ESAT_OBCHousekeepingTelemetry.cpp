@@ -21,7 +21,7 @@
 #include "ESAT_OBC-telemetry/ESAT_OBCHousekeepingTelemetry.h"
 #include "ESAT_OBC-peripherals/ESAT_OBCClock.h"
 #include "ESAT_OBC-peripherals/ESAT_TelemetryStorage.h"
-#include "ESAT_OBCSubsystem.h"
+#include "ESAT_OBC-subsystems/ESAT_OBCSubsystem.h"
 #include <ESAT_Timer.h>
 
 boolean ESAT_OBCHousekeepingTelemetryClass::available()

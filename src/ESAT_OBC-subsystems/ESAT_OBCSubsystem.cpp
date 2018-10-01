@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESAT_OBCSubsystem.h"
+#include "ESAT_OBC-subsystems/ESAT_OBCSubsystem.h"
 #include "ESAT_OBC-peripherals/ESAT_OBCClock.h"
 #include "ESAT_OBC-peripherals/ESAT_OBCLED.h"
 #include "ESAT_OBC-peripherals/ESAT_TelemetryStorage.h"

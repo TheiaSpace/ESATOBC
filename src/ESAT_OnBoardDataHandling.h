@@ -25,7 +25,7 @@
 #include <ESAT_CCSDSPacket.h>
 #include <ESAT_CCSDSPacketFromKISSFrameReader.h>
 #include <ESAT_CCSDSPacketToKISSFrameWriter.h>
-#include "ESAT_Subsystem.h"
+#include "ESAT_OBC-subsystems/ESAT_Subsystem.h"
 
 // On-board data handling library.
 // ESAT_OnBoardDataHandling operates on the subsystems (which

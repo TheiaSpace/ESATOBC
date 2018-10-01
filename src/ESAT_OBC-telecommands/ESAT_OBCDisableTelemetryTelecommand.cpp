@@ -19,7 +19,7 @@
  */
 
 #include "ESAT_OBC-telecommands/ESAT_OBCDisableTelemetryTelecommand.h"
-#include "ESAT_OBCSubsystem.h"
+#include "ESAT_OBC-subsystems/ESAT_OBCSubsystem.h"
 
 const ESAT_SemanticVersionNumber ESAT_OBCDisableTelemetryTelecommandClass::INTERFACE_VERSION_NUMBER(4, 1, 0);
 

@@ -16,13 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <ESAT_ADCSSubsystem.h>
-#include <ESAT_EPSSubsystem.h>
 #include <ESAT_I2CMaster.h>
 #include <ESAT_KISSStream.h>
-#include <ESAT_OBCSubsystem.h>
-#include <ESAT_WifiSubsystem.h>
 #include <ESAT_OnBoardDataHandling.h>
+#include <ESAT_OBC-subsystems/ESAT_ADCSSubsystem.h>
+#include <ESAT_OBC-subsystems/ESAT_EPSSubsystem.h>
+#include <ESAT_OBC-subsystems/ESAT_OBCSubsystem.h>
+#include <ESAT_OBC-subsystems/ESAT_WifiSubsystem.h>
 #include <ESAT_Timer.h>
 #include <SD.h>
 #include <Wire.h>
