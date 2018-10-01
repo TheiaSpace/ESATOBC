@@ -19,7 +19,7 @@
  */
 
 #include "ESAT_WifiSubsystem.h"
-#include "ESAT_OBCClock.h"
+#include "ESAT_OBC-peripherals/ESAT_OBCClock.h"
 
 void ESAT_WifiSubsystemClass::begin(byte buffer[],
                                     const unsigned long bufferLength)
