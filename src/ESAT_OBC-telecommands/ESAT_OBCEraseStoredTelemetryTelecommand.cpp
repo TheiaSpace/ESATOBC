@@ -19,7 +19,7 @@
  */
 
 #include "ESAT_OBC-telecommands/ESAT_OBCEraseStoredTelemetryTelecommand.h"
-#include "ESAT_TelemetryStorage.h"
+#include "ESAT_OBC-peripherals/ESAT_TelemetryStorage.h"
 
 const ESAT_SemanticVersionNumber ESAT_OBCEraseStoredTelemetryTelecommandClass::INTERFACE_VERSION_NUMBER(4, 0, 0);
 
