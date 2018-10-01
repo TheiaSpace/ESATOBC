@@ -64,8 +64,8 @@ class ESAT_TelemetryStorageClass
 
     // Write a packet to the packet store.
     // Set the error flag on failure.
-    // The packet store must not be open for reading, which happens at
-    // the first read() call after beginReading().
+    // This function does nothing when the packet store is open for
+    // reading, which happens between beginReading() and endReading().
     void write(ESAT_CCSDSPacket& packet);
 
   private:
