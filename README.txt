@@ -91,19 +91,9 @@ Access to the memory card mounted on the OBC board for telemetry
 storage.
 
 
-# ESAT_OBCClockTelecommands
+# ESAT_OBC-telecommands directory
 
-Telecommand handler for OBC clock-related telecommands.
-
-
-# ESAT_OBCTelemetryStorageTelecommands
-
-Telecommand handler for telemetry storage-related telecommands.
-
-
-# ESAT_OBCTelemetryTelecommands
-
-Telecommand handler for OBC telemetry-related telecommands.
+This directory contains telecommand handlers used by ESAT_OBCSubsystem.
 
 
 # ESAT_OBCHousekeepingTelemetry
