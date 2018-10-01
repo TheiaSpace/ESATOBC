@@ -23,6 +23,7 @@
 
 #include <Arduino.h>
 #include <ESAT_CCSDSPacketConsumer.h>
+#include <ESAT_SemanticVersionNumber.h>
 
 // Telecommand handler for OBC clock-related commands.
 // Used by ESAT_OBCSubsystem.
@@ -39,6 +40,12 @@ class ESAT_OBCClockTelecommandsClass: public ESAT_CCSDSPacketConsumer
     {
       SET_TIME = 0x00,
     };
+
+    // Version number of the interface.
+    // This telecommand handler will only accept telecommands
+    // with a version number that is backwards-compatible with
+    // this version number.
+    static const ESAT_SemanticVersionNumber INTERFACE_VERSION_NUMBER;
 
     // Handle the telecommand for setting the time of the OBC clock.
     // Return true on success; otherwise return false.

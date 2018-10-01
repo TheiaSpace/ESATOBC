@@ -21,10 +21,18 @@
 #include "ESAT_OBCClockTelecommands.h"
 #include "ESAT_OBCClock.h"
 
+const ESAT_SemanticVersionNumber ESAT_OBCClockTelecommandsClass::INTERFACE_VERSION_NUMBER(4, 0, 0);
+
 boolean ESAT_OBCClockTelecommandsClass::consume(ESAT_CCSDSPacket packet)
 {
   const ESAT_CCSDSSecondaryHeader secondaryHeader =
     packet.readSecondaryHeader();
+  if (!INTERFACE_VERSION_NUMBER.isForwardCompatibleWith(secondaryHeader.majorVersionNumber,
+                                                        secondaryHeader.minorVersionNumber,
+                                                        secondaryHeader.patchVersionNumber))
+  {
+    return false;
+  }
   switch (secondaryHeader.packetIdentifier)
   {
     case SET_TIME:
