@@ -25,7 +25,7 @@
 #include <ESAT_CCSDSTelecommandPacketHandler.h>
 #include <ESAT_CCSDSTelemetryPacketBuilder.h>
 #include <ESAT_FlagContainer.h>
-#include "ESAT_Subsystem.h"
+#include "ESAT_OBC-subsystems/ESAT_Subsystem.h"
 
 // Interface to the OBC (on-board computer subsystem) from the point
 // of view of the on-board data handling subsystem.  There is a global

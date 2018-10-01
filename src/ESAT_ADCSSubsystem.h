@@ -22,7 +22,7 @@
 #define ESAT_ADCSSubsystem_h
 
 #include <Arduino.h>
-#include "ESAT_Subsystem.h"
+#include "ESAT_OBC-subsystems/ESAT_Subsystem.h"
 
 // Interface to the ADCS (attitude determination and control
 // subsystem) from the point of view of the on-board data handling

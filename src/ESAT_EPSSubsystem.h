@@ -22,7 +22,7 @@
 #define ESAT_EPSSubsystem_h
 
 #include <Arduino.h>
-#include "ESAT_Subsystem.h"
+#include "ESAT_OBC-subsystems/ESAT_Subsystem.h"
 
 // Interface to the EPS (electrical power subsystem) from the point of
 // view of the on-board data handling subsystem.  There is a global
