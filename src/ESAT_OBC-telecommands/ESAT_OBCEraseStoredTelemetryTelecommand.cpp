@@ -31,7 +31,7 @@ boolean ESAT_OBCEraseStoredTelemetryTelecommandClass::accept(const ESAT_CCSDSSec
   {
     return false;
   }
-  if (secondaryHeader.packetIdentifier != ERASE_STORED_TELEMETRY)
+  if (secondaryHeader.packetIdentifier != OBC_ERASE_STORED_TELEMETRY)
   {
     return false;
   }

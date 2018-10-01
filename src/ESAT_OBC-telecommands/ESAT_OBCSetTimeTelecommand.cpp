@@ -31,7 +31,7 @@ boolean ESAT_OBCSetTimeTelecommandClass::accept(const ESAT_CCSDSSecondaryHeader 
   {
     return false;
   }
-  if (secondaryHeader.packetIdentifier != SET_TIME)
+  if (secondaryHeader.packetIdentifier != OBC_SET_TIME)
   {
     return false;
   }

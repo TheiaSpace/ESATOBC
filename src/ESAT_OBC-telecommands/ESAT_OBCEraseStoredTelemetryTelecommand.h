@@ -25,7 +25,7 @@
 #include <ESAT_CCSDSPacketConsumer.h>
 #include <ESAT_SemanticVersionNumber.h>
 
-// Telecommand handler for OBC ERASE_STORED_TELEMETRY.
+// Telecommand handler for OBC_ERASE_STORED_TELEMETRY.
 // Used by ESAT_OBCSubsystem.
 class ESAT_OBCEraseStoredTelemetryTelecommandClass: public ESAT_CCSDSPacketConsumer
 {
@@ -35,8 +35,8 @@ class ESAT_OBCEraseStoredTelemetryTelecommandClass: public ESAT_CCSDSPacketConsu
     boolean consume(ESAT_CCSDSPacket packet);
 
   private:
-    // Identifier of the OBC ERASE_STORED_TELEMETRY telecommand.
-    static const byte ERASE_STORED_TELEMETRY = 0x03;
+    // Identifier of the OBC_ERASE_STORED_TELEMETRY telecommand.
+    static const byte OBC_ERASE_STORED_TELEMETRY = 0x03;
 
     // with a version number that is backwards-compatible with
     // this version number.

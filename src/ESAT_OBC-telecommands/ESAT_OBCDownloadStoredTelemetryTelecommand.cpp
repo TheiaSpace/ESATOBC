@@ -31,7 +31,7 @@ boolean ESAT_OBCDownloadStoredTelemetryTelecommandClass::accept(const ESAT_CCSDS
   {
     return false;
   }
-  if (secondaryHeader.packetIdentifier != DOWNLOAD_STORED_TELEMETRY)
+  if (secondaryHeader.packetIdentifier != OBC_DOWNLOAD_STORED_TELEMETRY)
   {
     return false;
   }

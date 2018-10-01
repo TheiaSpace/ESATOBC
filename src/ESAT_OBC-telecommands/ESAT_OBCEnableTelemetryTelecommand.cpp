@@ -31,7 +31,7 @@ boolean ESAT_OBCEnableTelemetryTelecommandClass::accept(const ESAT_CCSDSSecondar
   {
     return false;
   }
-  if (secondaryHeader.packetIdentifier != ENABLE_TELEMETRY)
+  if (secondaryHeader.packetIdentifier != OBC_ENABLE_TELEMETRY)
   {
     return false;
   }

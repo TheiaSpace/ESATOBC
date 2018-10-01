@@ -25,7 +25,7 @@
 #include <ESAT_CCSDSPacketConsumer.h>
 #include <ESAT_SemanticVersionNumber.h>
 
-// Telecommand handler for OBC SET_TIME.
+// Telecommand handler for OBC_SET_TIME.
 // Used by ESAT_OBCSubsystem.
 class ESAT_OBCSetTimeTelecommandClass: public ESAT_CCSDSPacketConsumer
 {
@@ -35,8 +35,8 @@ class ESAT_OBCSetTimeTelecommandClass: public ESAT_CCSDSPacketConsumer
     boolean consume(ESAT_CCSDSPacket packet);
 
   private:
-    // Identifier of the OBC SET_TIME telecommand.
-    static const byte SET_TIME = 0x00;
+    // Identifier of the OBC_SET_TIME telecommand.
+    static const byte OBC_SET_TIME = 0x00;
 
     // Version number of the interface.
     // This telecommand handler will only accept telecommands

@@ -25,7 +25,7 @@
 #include <ESAT_CCSDSPacketConsumer.h>
 #include <ESAT_SemanticVersionNumber.h>
 
-// Telecommand handler for OBC DISABLE_TELEMETRY.
+// Telecommand handler for OBC_DISABLE_TELEMETRY.
 // Used by ESAT_OBCSubsystem.
 class ESAT_OBCDisableTelemetryTelecommandClass: public ESAT_CCSDSPacketConsumer
 {
@@ -35,8 +35,8 @@ class ESAT_OBCDisableTelemetryTelecommandClass: public ESAT_CCSDSPacketConsumer
     boolean consume(ESAT_CCSDSPacket packet);
 
   private:
-    // Identifier of the OBC DOWNLOAD_STORED_TELEMETRY telecommand.
-    static const byte DISABLE_TELEMETRY = 0x05;
+    // Identifier of the OBC_DOWNLOAD_STORED_TELEMETRY telecommand.
+    static const byte OBC_DISABLE_TELEMETRY = 0x05;
 
     // with a version number that is backwards-compatible with
     // this version number.
