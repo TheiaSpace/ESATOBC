@@ -70,7 +70,9 @@ class ESAT_WifiSubsystemClass: public ESAT_Subsystem
     // Otherwise return false.
     boolean telemetryAvailable();
 
-    // Update the subsystem.
+    // If ESAT_WifiSubsystem.begin() was called with the optional
+    // packet data buffer, ask the ESAT Wifi board for a new series of
+    // telemetry packets.
     void update();
 
    // Send a telemetry packet to this subsystem.
