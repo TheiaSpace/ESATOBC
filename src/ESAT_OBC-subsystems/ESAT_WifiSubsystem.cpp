@@ -21,11 +21,16 @@
 #include "ESAT_OBC-subsystems/ESAT_WifiSubsystem.h"
 #include "ESAT_OBC-peripherals/ESAT_OBCClock.h"
 
-void ESAT_WifiSubsystemClass::begin(byte buffer[],
-                                    const unsigned long bufferLength)
+void ESAT_WifiSubsystemClass::begin(byte wifiReaderBuffer[],
+                                    const unsigned long wifiReaderBufferLength,
+                                    byte packetDataBuffer[],
+                                    const unsigned long packetDataBufferLength)
 {
   beginConnectionSensor();
-  beginWifiBridge(buffer, bufferLength);
+  beginWifiBridge(wifiReaderBuffer,
+                  wifiReaderBufferLength,
+                  packetDataBuffer,
+                  packetDataBufferLength);
   connect();
 }
 
@@ -34,13 +39,17 @@ void ESAT_WifiSubsystemClass::beginConnectionSensor()
   pinMode(NOT_CONNECTED_SIGNAL_PIN, INPUT_PULLUP);
 }
 
-void ESAT_WifiSubsystemClass::beginWifiBridge(byte buffer[],
-                                              const unsigned long bufferLength)
+void ESAT_WifiSubsystemClass::beginWifiBridge(byte wifiReaderBuffer[],
+                                              const unsigned long wifiReaderBufferLength,
+                                              byte packetDataBuffer[],
+                                              const unsigned long packetDataBufferLength)
 {
   wifiReader = ESAT_CCSDSPacketFromKISSFrameReader(SerialWifi,
-                                                   buffer,
-                                                   bufferLength);
+                                                   wifiReaderBuffer,
+                                                   wifiReaderBufferLength);
   wifiWriter = ESAT_CCSDSPacketToKISSFrameWriter(SerialWifi);
+  bufferedPacket = ESAT_CCSDSPacket(packetDataBuffer,
+                                    packetDataBufferLength);
 }
 
 void ESAT_WifiSubsystemClass::connect()
@@ -93,19 +102,34 @@ boolean ESAT_WifiSubsystemClass::isConnected()
 
 boolean ESAT_WifiSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
 {
-  const boolean gotPacket = wifiReader.read(packet);
-  if (!gotPacket)
+  // If a telecommand packet is already buffered, use it.
+  if (telecommandAlreadyBuffered())
   {
-    return false;
+    const boolean gotPacket = bufferedPacket.copyTo(packet);
+    bufferedPacket.flush();
+    return gotPacket;
   }
-  const ESAT_CCSDSPrimaryHeader primaryHeader = packet.readPrimaryHeader();
-  if (primaryHeader.packetType == primaryHeader.TELECOMMAND)
-  {
-    return true;
-  }
+  // If there isn't a buffered telecommand packet, read a new packet.
   else
   {
-    return false;
+    const boolean gotPacket = wifiReader.read(packet);
+    if (!gotPacket)
+    {
+      return false;
+    }
+    const ESAT_CCSDSPrimaryHeader primaryHeader = packet.readPrimaryHeader();
+    // If we got a telecommand packet, report success.
+    if (primaryHeader.packetType == primaryHeader.TELECOMMAND)
+    {
+      return true;
+    }
+    // If we got a telemetry packet, save it to the buffered packet
+    // and report failure.
+    else
+    {
+      (void) packet.copyTo(bufferedPacket);
+      return false;
+    }
   }
 }
 
@@ -118,6 +142,21 @@ boolean ESAT_WifiSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
 boolean ESAT_WifiSubsystemClass::telemetryAvailable()
 {
   return false;
+}
+
+boolean ESAT_WifiSubsystemClass::telecommandAlreadyBuffered() const
+{
+  const ESAT_CCSDSPrimaryHeader primaryHeader =
+    bufferedPacket.readPrimaryHeader();
+  if ((primaryHeader.packetType == primaryHeader.TELEMETRY)
+      && (primaryHeader.packetDataLength > 0))
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
 }
 
 void ESAT_WifiSubsystemClass::update()

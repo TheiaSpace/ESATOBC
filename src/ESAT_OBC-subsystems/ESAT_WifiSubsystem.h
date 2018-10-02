@@ -37,9 +37,16 @@ class ESAT_WifiSubsystemClass: public ESAT_Subsystem
   public:
     // Start the communications subsystem.
     // Connect to the network and ground segment server.
-    // Use the buffer to accumulate incoming telecommands from
-    // main loop cycle to main loop cycle.
-    void begin(byte buffer[], unsigned long bufferLength);
+    // Use the Wifi reader buffer to accumulate incoming
+    // packets from main loop cycle to main loop cycle.
+    // Use the optional packet data buffer to store a the
+    // packet data field of a full packet, so that it is
+    // possible to accumulate one packet in the Wifi reader
+    // buffer while there is another packet ready for use.
+    void begin(byte wifiReaderBuffer[],
+               unsigned long wifiReaderBufferLength,
+               byte packetDataBuffer[] = nullptr,
+               unsigned long packetDataBufferLength = 0);
 
     // Return the identifier of this subsystem.
     word getApplicationProcessIdentifier();
@@ -89,6 +96,13 @@ class ESAT_WifiSubsystemClass: public ESAT_Subsystem
     // board.
     static const byte RESET_TELEMETRY_QUEUE_SIGNAL_PIN = ESP_SLEEP;
 
+    // Use this to store packets temporarily.
+    // If we receive a telemetry packet during a call to readTelecommand(),
+    // the telemetry packet will go here.
+    // If we receive a telecommand packet during a call to readTelemetry(),
+    // the telecommand packet will go here.
+    ESAT_CCSDSPacket bufferedPacket;
+
     // Use this to read packets from the Wifi boad.
     ESAT_CCSDSPacketFromKISSFrameReader wifiReader;
 
@@ -99,8 +113,14 @@ class ESAT_WifiSubsystemClass: public ESAT_Subsystem
     void beginConnectionSensor();
 
     // Configure the CCSDS-to-KISS bridge with the Wifi board.
-    // Specify a buffer to accumulate the incomming telecommands.
-    void beginWifiBridge(byte buffer[], unsigned long bufferLength);
+    // Specify a buffer to accumulate incoming packets
+    // and an additional buffer to store the received packet
+    // so that it is possible to accumulate an incoming packet
+    // while another one is stored.
+    void beginWifiBridge(byte wifiReaderBuffer[],
+                         unsigned long wifiReaderBufferLength,
+                         byte packetDataBuffer[],
+                         unsigned long packetDataBufferLength);
 
     // Command the Wifi module to connect to the network and ground
     // segment server.
@@ -109,6 +129,10 @@ class ESAT_WifiSubsystemClass: public ESAT_Subsystem
     // Return true if the Wifi board is connected to the server;
     // otherwise return false.
     boolean isConnected();
+
+    // Return true if the buffered packet already contains a
+    // telecommand packet; otherwise return false;
+    boolean telecommandAlreadyBuffered() const;
 };
 
 // Global instance of ESAT_WifiSubsystemClass.  Register WifiSubsystem
