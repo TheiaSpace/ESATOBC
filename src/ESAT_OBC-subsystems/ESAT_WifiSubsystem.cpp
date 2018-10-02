@@ -21,15 +21,15 @@
 #include "ESAT_OBC-subsystems/ESAT_WifiSubsystem.h"
 #include "ESAT_OBC-peripherals/ESAT_OBCClock.h"
 
-void ESAT_WifiSubsystemClass::begin(byte wifiReaderBuffer[],
-                                    const unsigned long wifiReaderBufferLength,
+void ESAT_WifiSubsystemClass::begin(byte readerBuffer[],
+                                    const unsigned long readerBufferLength,
                                     byte packetDataBuffer[],
                                     const unsigned long packetDataBufferLength)
 {
   readingTelemetry = false;
   beginControlLines();
-  beginWifiBridge(wifiReaderBuffer,
-                  wifiReaderBufferLength,
+  beginWifiBridge(readerBuffer,
+                  readerBufferLength,
                   packetDataBuffer,
                   packetDataBufferLength);
   connect();
@@ -51,14 +51,14 @@ void ESAT_WifiSubsystemClass::beginReadingTelemetry()
   readingTelemetry = true;
 }
 
-void ESAT_WifiSubsystemClass::beginWifiBridge(byte wifiReaderBuffer[],
-                                              const unsigned long wifiReaderBufferLength,
+void ESAT_WifiSubsystemClass::beginWifiBridge(byte readerBuffer[],
+                                              const unsigned long readerBufferLength,
                                               byte packetDataBuffer[],
                                               const unsigned long packetDataBufferLength)
 {
   wifiReader = ESAT_CCSDSPacketFromKISSFrameReader(SerialWifi,
-                                                   wifiReaderBuffer,
-                                                   wifiReaderBufferLength);
+                                                   readerBuffer,
+                                                   readerBufferLength);
   wifiWriter = ESAT_CCSDSPacketToKISSFrameWriter(SerialWifi);
   bufferedPacket = ESAT_CCSDSPacket(packetDataBuffer,
                                     packetDataBufferLength);
