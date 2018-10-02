@@ -41,6 +41,15 @@ void ESAT_WifiSubsystemClass::beginControlLines()
   pinMode(RESET_TELEMETRY_QUEUE_SIGNAL_PIN, OUTPUT);
 }
 
+void ESAT_WifiSubsystemClass::beginReadingTelemetry()
+{
+  digitalWrite(RESET_TELEMETRY_QUEUE_SIGNAL_PIN, LOW);
+  delayMicroseconds(TELEMETRY_QUEUE_RESET_DELAY);
+  digitalWrite(RESET_TELEMETRY_QUEUE_SIGNAL_PIN, HIGH);
+  delayMicroseconds(TELEMETRY_QUEUE_RESET_DELAY);
+  readingTelemetry = true;
+}
+
 void ESAT_WifiSubsystemClass::beginWifiBridge(byte wifiReaderBuffer[],
                                               const unsigned long wifiReaderBufferLength,
                                               byte packetDataBuffer[],
@@ -138,12 +147,13 @@ boolean ESAT_WifiSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
 boolean ESAT_WifiSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
 {
   (void) packet;
+  readingTelemetry = false;
   return false;
 }
 
 boolean ESAT_WifiSubsystemClass::telemetryAvailable()
 {
-  return false;
+  return readingTelemetry;
 }
 
 boolean ESAT_WifiSubsystemClass::telecommandAlreadyBuffered() const
@@ -163,6 +173,7 @@ boolean ESAT_WifiSubsystemClass::telecommandAlreadyBuffered() const
 
 void ESAT_WifiSubsystemClass::update()
 {
+  beginReadingTelemetry();
 }
 
 void ESAT_WifiSubsystemClass::writeTelemetry(ESAT_CCSDSPacket& packet)

@@ -96,12 +96,23 @@ class ESAT_WifiSubsystemClass: public ESAT_Subsystem
     // board.
     static const byte RESET_TELEMETRY_QUEUE_SIGNAL_PIN = ESP_SLEEP;
 
+    // Number of microseconds to wait for the telemetry queue reset
+    // condition to propagate.
+    static const byte TELEMETRY_QUEUE_RESET_DELAY = 100;
+
     // Use this to store packets temporarily.
     // If we receive a telemetry packet during a call to readTelecommand(),
     // the telemetry packet will go here.
     // If we receive a telecommand packet during a call to readTelemetry(),
     // the telecommand packet will go here.
     ESAT_CCSDSPacket bufferedPacket;
+
+    // Set to true while we are receiving telemetry from the Wifi
+    // board (after a call to beginReadingTelemetry()); set to false
+    // when we aren't receiving telemetry from the Wifi board (before
+    // the first call to beginReadingTelemetry() and after a failed
+    // readTelemetry()).
+    boolean readingTelemetry;
 
     // Use this to read packets from the Wifi boad.
     ESAT_CCSDSPacketFromKISSFrameReader wifiReader;
@@ -111,6 +122,10 @@ class ESAT_WifiSubsystemClass: public ESAT_Subsystem
 
     // Set up the Wifi board control lines.
     void beginControlLines();
+
+    // Start the reception of a new series of telemetry packets from
+    // the Wifi board.
+    void beginReadingTelemetry();
 
     // Configure the CCSDS-to-KISS bridge with the Wifi board.
     // Specify a buffer to accumulate incoming packets
