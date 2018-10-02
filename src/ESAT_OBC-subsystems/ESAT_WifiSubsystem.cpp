@@ -160,6 +160,7 @@ boolean ESAT_WifiSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
     const boolean gotPacket = wifiReader.read(packet);
     if (!gotPacket)
     {
+      readingTelemetry = false;
       return false;
     }
     const ESAT_CCSDSPrimaryHeader primaryHeader = packet.readPrimaryHeader();
