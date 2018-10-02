@@ -125,6 +125,7 @@ boolean ESAT_WifiSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
   else
   {
     const boolean gotPacket = wifiReader.read(packet);
+    // If didn't get any packet, report failure.
     if (!gotPacket)
     {
       return false;
