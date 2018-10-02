@@ -187,7 +187,7 @@ boolean ESAT_WifiSubsystemClass::telecommandAlreadyBuffered() const
 {
   const ESAT_CCSDSPrimaryHeader primaryHeader =
     bufferedPacket.readPrimaryHeader();
-  if ((primaryHeader.packetType == primaryHeader.TELEMETRY)
+  if ((primaryHeader.packetType == primaryHeader.TELECOMMAND)
       && (primaryHeader.packetDataLength > 0))
   {
     return true;
