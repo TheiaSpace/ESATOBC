@@ -85,6 +85,10 @@ class ESAT_WifiSubsystemClass: public ESAT_Subsystem
     // connected to the server.
     static const byte NOT_CONNECTED_SIGNAL_PIN = ESP0;
 
+    // Pull down this line to reset the telemetry queue of the Wifi
+    // board.
+    static const byte RESET_TELEMETRY_QUEUE_SIGNAL_PIN = ESP_SLEEP;
+
     // Use this to read packets from the Wifi boad.
     ESAT_CCSDSPacketFromKISSFrameReader wifiReader;
 
