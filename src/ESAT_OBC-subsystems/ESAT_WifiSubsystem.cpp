@@ -26,6 +26,7 @@ void ESAT_WifiSubsystemClass::begin(byte wifiReaderBuffer[],
                                     byte packetDataBuffer[],
                                     const unsigned long packetDataBufferLength)
 {
+  readingTelemetry = false;
   beginControlLines();
   beginWifiBridge(wifiReaderBuffer,
                   wifiReaderBufferLength,
