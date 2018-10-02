@@ -73,7 +73,7 @@ class ESAT_WifiSubsystemClass: public ESAT_Subsystem
 
     // Version number of the subsystem's interface.
     static const byte MAJOR_VERSION_NUMBER = 2;
-    static const byte MINOR_VERSION_NUMBER = 0;
+    static const byte MINOR_VERSION_NUMBER = 1;
     static const byte PATCH_VERSION_NUMBER = 0;
 
     // Command code sent for connecting to the wireless network and
