@@ -123,7 +123,11 @@ const word WHOLE_PACKET_BUFFER_LENGTH =
 byte usbTelecommandBuffer[WHOLE_PACKET_BUFFER_LENGTH];
 
 // Accumulate incoming Wifi telecommands in this buffer.
-byte wifiTelecommandBuffer[WHOLE_PACKET_BUFFER_LENGTH];
+byte wifiReaderBuffer[WHOLE_PACKET_BUFFER_LENGTH];
+
+// Accumulate the packet data field of a full packet coming
+// from the Wifi board in this buffer.
+byte wifiPacketDataBuffer[PACKET_DATA_BUFFER_LENGTH];
 
 // Start peripherals and do the initial bookkeeping here:
 // - Activate the reception of telecommands from the USB interface.
@@ -145,8 +149,10 @@ void setup()
   ESAT_OBCSubsystem.begin();
   ESAT_EPSSubsystem.begin();
   ESAT_ADCSSubsystem.begin();
-  ESAT_WifiSubsystem.begin(wifiTelecommandBuffer,
-                           sizeof(wifiTelecommandBuffer));
+  ESAT_WifiSubsystem.begin(wifiReaderBuffer,
+                           sizeof(wifiReaderBuffer),
+                           wifiPacketDataBuffer,
+                           sizeof(wifiPacketDataBuffer));
   ESAT_ExampleSubsystem.begin();
   ESAT_OnBoardDataHandling.enableUSBTelecommands(usbTelecommandBuffer,
                                                  sizeof(usbTelecommandBuffer));
