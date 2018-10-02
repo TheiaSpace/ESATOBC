@@ -109,8 +109,8 @@ class ESAT_WifiSubsystemClass: public ESAT_Subsystem
     // Use this to write packets to the Wifi board.
     ESAT_CCSDSPacketToKISSFrameWriter wifiWriter;
 
-    // Set up the connection sensor line.
-    void beginConnectionSensor();
+    // Set up the Wifi board control lines.
+    void beginControlLines();
 
     // Configure the CCSDS-to-KISS bridge with the Wifi board.
     // Specify a buffer to accumulate incoming packets

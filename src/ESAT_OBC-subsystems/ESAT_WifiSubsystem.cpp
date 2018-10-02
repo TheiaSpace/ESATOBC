@@ -26,7 +26,7 @@ void ESAT_WifiSubsystemClass::begin(byte wifiReaderBuffer[],
                                     byte packetDataBuffer[],
                                     const unsigned long packetDataBufferLength)
 {
-  beginConnectionSensor();
+  beginControlLines();
   beginWifiBridge(wifiReaderBuffer,
                   wifiReaderBufferLength,
                   packetDataBuffer,
@@ -34,9 +34,11 @@ void ESAT_WifiSubsystemClass::begin(byte wifiReaderBuffer[],
   connect();
 }
 
-void ESAT_WifiSubsystemClass::beginConnectionSensor()
+void ESAT_WifiSubsystemClass::beginControlLines()
 {
   pinMode(NOT_CONNECTED_SIGNAL_PIN, INPUT_PULLUP);
+  digitalWrite(RESET_TELEMETRY_QUEUE_SIGNAL_PIN, HIGH);
+  pinMode(RESET_TELEMETRY_QUEUE_SIGNAL_PIN, OUTPUT);
 }
 
 void ESAT_WifiSubsystemClass::beginWifiBridge(byte wifiReaderBuffer[],
