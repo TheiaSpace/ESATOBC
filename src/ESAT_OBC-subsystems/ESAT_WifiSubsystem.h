@@ -43,6 +43,8 @@ class ESAT_WifiSubsystemClass: public ESAT_Subsystem
     // packet data field of a full packet, so that it is
     // possible to accumulate one packet in the Wifi reader
     // buffer while there is another packet ready for use.
+    // The optional packet data buffer is necessary to receive
+    // telemetry from the Wifi board.
     void begin(byte wifiReaderBuffer[],
                unsigned long wifiReaderBufferLength,
                byte packetDataBuffer[] = nullptr,

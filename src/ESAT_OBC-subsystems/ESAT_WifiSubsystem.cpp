@@ -217,7 +217,10 @@ boolean ESAT_WifiSubsystemClass::telemetryAlreadyBuffered() const
 
 void ESAT_WifiSubsystemClass::update()
 {
-  beginReadingTelemetry();
+  if (bufferedPacket.capacity() > 0)
+  {
+    beginReadingTelemetry();
+  }
 }
 
 void ESAT_WifiSubsystemClass::writeTelemetry(ESAT_CCSDSPacket& packet)
