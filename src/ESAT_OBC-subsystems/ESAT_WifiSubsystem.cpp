@@ -146,9 +146,36 @@ boolean ESAT_WifiSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
 
 boolean ESAT_WifiSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
 {
-  (void) packet;
-  readingTelemetry = false;
-  return false;
+  // If a telemetry packet is already buffered, use it.
+  if (telemetryAlreadyBuffered())
+  {
+    const boolean gotPacket = bufferedPacket.copyTo(packet);
+    bufferedPacket.flush();
+    return gotPacket;
+  }
+  // If there isn't a buffered telemetry packet, read a new packet.
+  else
+  {
+    const boolean gotPacket = wifiReader.read(packet);
+    if (!gotPacket)
+    {
+      return false;
+    }
+    const ESAT_CCSDSPrimaryHeader primaryHeader = packet.readPrimaryHeader();
+    // If we got a telemetry packet, report success.
+    if (primaryHeader.packetType == primaryHeader.TELEMETRY)
+    {
+      return true;
+    }
+    // If we got a telecommand packet, save it to the buffered packet,
+    // stop reading telemetry and report failure.
+    else
+    {
+      (void) packet.copyTo(bufferedPacket);
+      readingTelemetry = false;
+      return false;
+    }
+  }
 }
 
 boolean ESAT_WifiSubsystemClass::telemetryAvailable()
@@ -157,6 +184,21 @@ boolean ESAT_WifiSubsystemClass::telemetryAvailable()
 }
 
 boolean ESAT_WifiSubsystemClass::telecommandAlreadyBuffered() const
+{
+  const ESAT_CCSDSPrimaryHeader primaryHeader =
+    bufferedPacket.readPrimaryHeader();
+  if ((primaryHeader.packetType == primaryHeader.TELEMETRY)
+      && (primaryHeader.packetDataLength > 0))
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
+
+boolean ESAT_WifiSubsystemClass::telemetryAlreadyBuffered() const
 {
   const ESAT_CCSDSPrimaryHeader primaryHeader =
     bufferedPacket.readPrimaryHeader();

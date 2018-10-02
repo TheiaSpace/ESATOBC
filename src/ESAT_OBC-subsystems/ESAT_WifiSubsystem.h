@@ -148,6 +148,10 @@ class ESAT_WifiSubsystemClass: public ESAT_Subsystem
     // Return true if the buffered packet already contains a
     // telecommand packet; otherwise return false;
     boolean telecommandAlreadyBuffered() const;
+
+    // Return true if the buffered packet already contains a
+    // telemetry packet; otherwise return false;
+    boolean telemetryAlreadyBuffered() const;
 };
 
 // Global instance of ESAT_WifiSubsystemClass.  Register WifiSubsystem
