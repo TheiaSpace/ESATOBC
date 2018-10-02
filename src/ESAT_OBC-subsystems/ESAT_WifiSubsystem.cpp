@@ -158,6 +158,8 @@ boolean ESAT_WifiSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
   else
   {
     const boolean gotPacket = wifiReader.read(packet);
+    // If didn't get any packet, stop reading telemetry and report
+    // failure.
     if (!gotPacket)
     {
       readingTelemetry = false;
