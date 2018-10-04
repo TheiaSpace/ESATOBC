@@ -40,22 +40,19 @@ class ESAT_OBCSetTimeTelecommandClass: public ESAT_CCSDSTelecommandPacketHandler
     // ESAT_CCSDSTelecommandPacketDispatcher objects pass telecommand
     // packets to a handler object only when the packet identifiers
     // match.
-    byte packetIdentifier();
+    byte packetIdentifier()
+    {
+      return 0x00;
+    }
 
     // Return the version number of this telecommand handler.
     // ESAT_CCSDSTelecommandPacketDispatcher objects pass telecommand
     // packets to a handler object only when the packet version number
     // is backward-compatible with the handler version number.
-    ESAT_SemanticVersionNumber versionNumber();
-
-  private:
-    // Version number of this telecommand handler.
-    static const byte MAJOR_VERSION_NUMBER = 4;
-    static const byte MINOR_VERSION_NUMBER = 0;
-    static const byte PATCH_VERSION_NUMBER = 0;
-
-    // Identifier of the this telecommand handler.
-    static const byte PACKET_IDENTIFIER = 0x00;
+    ESAT_SemanticVersionNumber versionNumber()
+    {
+      return ESAT_SemanticVersionNumber(4, 0, 0);
+    }
 };
 
 // Global instance of ESAT_OBCSetTimeTelecommandClass.
