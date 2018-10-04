@@ -21,38 +21,7 @@
 #include "ESAT_OBC-telecommands/ESAT_OBCDownloadStoredTelemetryTelecommand.h"
 #include "ESAT_OBC-peripherals/ESAT_TelemetryStorage.h"
 
-const ESAT_SemanticVersionNumber ESAT_OBCDownloadStoredTelemetryTelecommandClass::INTERFACE_VERSION_NUMBER(4, 0, 0);
-
-boolean ESAT_OBCDownloadStoredTelemetryTelecommandClass::accept(const ESAT_CCSDSSecondaryHeader secondaryHeader) const
-{
-  if (!INTERFACE_VERSION_NUMBER.isForwardCompatibleWith(secondaryHeader.majorVersionNumber,
-                                                        secondaryHeader.minorVersionNumber,
-                                                        secondaryHeader.patchVersionNumber))
-  {
-    return false;
-  }
-  if (secondaryHeader.packetIdentifier != OBC_DOWNLOAD_STORED_TELEMETRY)
-  {
-    return false;
-  }
-  return true;
-}
-
-boolean ESAT_OBCDownloadStoredTelemetryTelecommandClass::consume(ESAT_CCSDSPacket packet)
-{
-  const ESAT_CCSDSSecondaryHeader secondaryHeader =
-    packet.readSecondaryHeader();
-  if (accept(secondaryHeader))
-  {
-    return handle(packet);
-  }
-  else
-  {
-    return false;
-  }
-}
-
-boolean ESAT_OBCDownloadStoredTelemetryTelecommandClass::handle(ESAT_CCSDSPacket packet) const
+boolean ESAT_OBCDownloadStoredTelemetryTelecommandClass::handleUserData(ESAT_CCSDSPacket packet)
 {
   const ESAT_Timestamp beginTimestamp = packet.readTimestamp();
   const ESAT_Timestamp endTimestamp = packet.readTimestamp();
@@ -65,6 +34,18 @@ boolean ESAT_OBCDownloadStoredTelemetryTelecommandClass::handle(ESAT_CCSDSPacket
     ESAT_TelemetryStorage.beginReading(beginTimestamp, endTimestamp);
     return true;
   }
+}
+
+byte ESAT_OBCDownloadStoredTelemetryTelecommandClass::packetIdentifier()
+{
+  return PACKET_IDENTIFIER;
+}
+
+ESAT_SemanticVersionNumber ESAT_OBCDownloadStoredTelemetryTelecommandClass::versionNumber()
+{
+  return ESAT_SemanticVersionNumber(MAJOR_VERSION_NUMBER,
+                                    MINOR_VERSION_NUMBER,
+                                    PATCH_VERSION_NUMBER);
 }
 
 ESAT_OBCDownloadStoredTelemetryTelecommandClass ESAT_OBCDownloadStoredTelemetryTelecommand;

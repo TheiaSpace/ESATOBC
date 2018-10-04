@@ -22,7 +22,7 @@
 #define ESAT_OBCSubsystem_h
 
 #include <Arduino.h>
-#include <ESAT_CCSDSTelecommandPacketHandler.h>
+#include <ESAT_CCSDSTelecommandPacketDispatcher.h>
 #include <ESAT_CCSDSTelemetryPacketBuilder.h>
 #include <ESAT_FlagContainer.h>
 #include "ESAT_OBC-subsystems/ESAT_Subsystem.h"
@@ -41,7 +41,7 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
     boolean storeTelemetry;
 
     // Register a telecommand packet handler.
-    void addTelecommand(ESAT_CCSDSPacketConsumer& telecommand);
+    void addTelecommand(ESAT_CCSDSTelecommandPacketHandler& telecommand);
 
     // Register a telemetry packet.
     // The telemetry packet will be disabled by default;
@@ -100,9 +100,9 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
     // List of pending telemetry packet identifiers.
     ESAT_FlagContainer pendingTelemetry;
 
-    // Telecommand packet handler.
-    ESAT_CCSDSTelecommandPacketHandler telecommandPacketHandler =
-      ESAT_CCSDSTelecommandPacketHandler(APPLICATION_PROCESS_IDENTIFIER);
+    // Telecommand packet dispatcher.
+    ESAT_CCSDSTelecommandPacketDispatcher telecommandPacketDispatcher =
+      ESAT_CCSDSTelecommandPacketDispatcher(APPLICATION_PROCESS_IDENTIFIER);
 
     // Telemetry packet builder.
     ESAT_CCSDSTelemetryPacketBuilder telemetryPacketBuilder;

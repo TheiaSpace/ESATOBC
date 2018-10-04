@@ -22,35 +22,40 @@
 #define ESAT_OBCEraseStoredTelemetryTelecommand_h
 
 #include <Arduino.h>
-#include <ESAT_CCSDSPacketConsumer.h>
+#include <ESAT_CCSDSTelecommandPacketHandler.h>
 #include <ESAT_SemanticVersionNumber.h>
 
 // Telecommand handler for OBC_ERASE_STORED_TELEMETRY.
 // Used by ESAT_OBCSubsystem.
-class ESAT_OBCEraseStoredTelemetryTelecommandClass: public ESAT_CCSDSPacketConsumer
+class ESAT_OBCEraseStoredTelemetryTelecommandClass: public ESAT_CCSDSTelecommandPacketHandler
 {
   public:
     // Handle a telecommand packet.
+    // The read/write pointer of the packet is at the start of the
+    // user data field.
     // Return true on success; otherwise return false.
-    boolean consume(ESAT_CCSDSPacket packet);
+    boolean handleUserData(ESAT_CCSDSPacket packet);
+
+    // Return the packet identifier of this telecommand handler.
+    // ESAT_CCSDSTelecommandPacketDispatcher objects pass telecommand
+    // packets to a handler object only when the packet identifiers
+    // match.
+    byte packetIdentifier();
+
+    // Return the version number of this telecommand handler.
+    // ESAT_CCSDSTelecommandPacketDispatcher objects pass telecommand
+    // packets to a handler object only when the packet version number
+    // is backward-compatible with the handler version number.
+    ESAT_SemanticVersionNumber versionNumber();
 
   private:
-    // Identifier of the OBC_ERASE_STORED_TELEMETRY telecommand.
-    static const byte OBC_ERASE_STORED_TELEMETRY = 0x03;
+    // Version number of this telecommand handler.
+    static const byte MAJOR_VERSION_NUMBER = 4;
+    static const byte MINOR_VERSION_NUMBER = 0;
+    static const byte PATCH_VERSION_NUMBER = 0;
 
-    // with a version number that is backwards-compatible with
-    // this version number.
-    static const ESAT_SemanticVersionNumber INTERFACE_VERSION_NUMBER;
-
-    // Return true if this telecommand handler accepts the
-    // packet with the given secondary header; otherwise
-    // return false.
-    boolean accept(ESAT_CCSDSSecondaryHeader secondaryHeader) const;
-
-    // Handle the telecommand packet (given with the read/write pointer
-    // at the start of the user data field).
-    // Return true on success; otherwise return false.
-    boolean handle(ESAT_CCSDSPacket packet) const;
+    // Identifier of the this telecommand handler.
+    static const byte PACKET_IDENTIFIER = 0x03;
 };
 
 // Global instance of ESAT_OBCEraseStoredTelemetryTelecommandClass.
