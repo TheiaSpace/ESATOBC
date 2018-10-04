@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESAT_OBC-peripherals/ESAT_OBCLED.h"
+#include "ESAT_OBC-hardware/ESAT_OBCLED.h"
 
 void ESAT_OBCLEDClass::begin()
 {

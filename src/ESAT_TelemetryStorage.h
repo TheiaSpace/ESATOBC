@@ -19,5 +19,5 @@
  */
 
 #ifndef ESAT_TelemetryStorage_h
-#include "ESAT_OBC-peripherals/ESAT_TelemetryStorage.h"
+#include "ESAT_OBC-hardware/ESAT_TelemetryStorage.h"
 #endif /* ESAT_TelemetryStorage_h */

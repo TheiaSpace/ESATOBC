@@ -40,7 +40,7 @@ This includes ESAT_OBC-subsystems/ESAT_EPSSubsystem.h
 
 # ESAT_OBCClock.h
 
-This includes ESAT_OBC-peripherals/ESAT_OBCClock.h
+This includes ESAT_OBC-hardware/ESAT_OBCClock.h
 
 
 # ESAT_OBCSubsystem.h
@@ -55,7 +55,7 @@ This includes ESAT_OBC-subsystems/ESAT_Subsystem.h
 
 # ESAT_TelemetryStorage.h
 
-This includes ESAT_OBC-peripherals/ESAT_TelemetryStorage.h
+This includes ESAT_OBC-hardware/ESAT_TelemetryStorage.h
 
 
 # ESAT_WifiSubsystem.h
