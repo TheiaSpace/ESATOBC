@@ -29,11 +29,9 @@
 class ESAT_OBCHousekeepingTelemetryClass: public ESAT_CCSDSTelemetryPacketContents
 {
   public:
-    // Return true: the OBC housekeeping packet is always available.
-    boolean available()
-    {
-      return true;
-    }
+    // Return true when a new telemetry packet is available;
+    // otherwise return false.
+    boolean available();
 
     // Return the packet identifier.
     byte packetIdentifier()
