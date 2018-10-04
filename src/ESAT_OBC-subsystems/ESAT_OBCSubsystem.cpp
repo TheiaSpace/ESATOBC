@@ -38,7 +38,7 @@ void ESAT_OBCSubsystemClass::addTelecommand(ESAT_CCSDSTelecommandPacketHandler& 
   telecommandPacketDispatcher.add(telecommand);
 }
 
-void ESAT_OBCSubsystemClass::addTelemetry(ESAT_CCSDSPacketContents& telemetry)
+void ESAT_OBCSubsystemClass::addTelemetry(ESAT_CCSDSTelemetryPacketContents& telemetry)
 {
   telemetryPacketBuilder.add(telemetry);
   disableTelemetry(telemetry.packetIdentifier());
