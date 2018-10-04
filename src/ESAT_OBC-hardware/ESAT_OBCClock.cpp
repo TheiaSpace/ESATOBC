@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESAT_OBC-peripherals/ESAT_OBCClock.h"
+#include "ESAT_OBC-hardware/ESAT_OBCClock.h"
 #include <ESAT_Util.h>
 #include <Wire.h>
 

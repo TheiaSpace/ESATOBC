@@ -19,5 +19,5 @@
  */
 
 #ifndef ESAT_OBCClock_h
-#include "ESAT_OBC-peripherals/ESAT_OBCClock.h"
+#include "ESAT_OBC-hardware/ESAT_OBCClock.h"
 #endif /* ESAT_OBCClock_h */

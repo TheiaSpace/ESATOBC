@@ -19,7 +19,7 @@
  */
 
 #include "ESAT_OBC-telecommands/ESAT_OBCEraseStoredTelemetryTelecommand.h"
-#include "ESAT_OBC-peripherals/ESAT_TelemetryStorage.h"
+#include "ESAT_OBC-hardware/ESAT_TelemetryStorage.h"
 
 boolean ESAT_OBCEraseStoredTelemetryTelecommandClass::handleUserData(const ESAT_CCSDSPacket packet)
 {

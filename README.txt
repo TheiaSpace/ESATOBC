@@ -50,7 +50,7 @@ This library provides the general OBDH library functionality.
 Subsystems managed with ESAT_OnBoardDataHandling.
 
 
-# ESAT_OBC-peripherals directory
+# ESAT_OBC-hardware directory
 
 This directory contains drivers for the peripherals of the ESAT OBC
 board used by ESAT_OBCSubsystem.

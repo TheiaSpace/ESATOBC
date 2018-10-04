@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESAT_OBC-peripherals/ESAT_TelemetryStorage.h"
+#include "ESAT_OBC-hardware/ESAT_TelemetryStorage.h"
 #include <ESAT_CCSDSPacketFromKISSFrameReader.h>
 #include <ESAT_CCSDSPacketToKISSFrameWriter.h>
 
