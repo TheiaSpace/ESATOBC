@@ -21,38 +21,7 @@
 #include "ESAT_OBC-telecommands/ESAT_OBCEnableTelemetryTelecommand.h"
 #include "ESAT_OBC-subsystems/ESAT_OBCSubsystem.h"
 
-const ESAT_SemanticVersionNumber ESAT_OBCEnableTelemetryTelecommandClass::INTERFACE_VERSION_NUMBER(4, 1, 0);
-
-boolean ESAT_OBCEnableTelemetryTelecommandClass::accept(const ESAT_CCSDSSecondaryHeader secondaryHeader) const
-{
-  if (!INTERFACE_VERSION_NUMBER.isForwardCompatibleWith(secondaryHeader.majorVersionNumber,
-                                                        secondaryHeader.minorVersionNumber,
-                                                        secondaryHeader.patchVersionNumber))
-  {
-    return false;
-  }
-  if (secondaryHeader.packetIdentifier != OBC_ENABLE_TELEMETRY)
-  {
-    return false;
-  }
-  return true;
-}
-
-boolean ESAT_OBCEnableTelemetryTelecommandClass::consume(ESAT_CCSDSPacket packet)
-{
-  const ESAT_CCSDSSecondaryHeader secondaryHeader =
-    packet.readSecondaryHeader();
-  if (accept(secondaryHeader))
-  {
-    return handle(packet);
-  }
-  else
-  {
-    return false;
-  }
-}
-
-boolean ESAT_OBCEnableTelemetryTelecommandClass::handle(ESAT_CCSDSPacket packet) const
+boolean ESAT_OBCEnableTelemetryTelecommandClass::handleUserData(ESAT_CCSDSPacket packet)
 {
   const byte identifier = packet.readByte();
   if (packet.triedToReadBeyondLength())
@@ -65,6 +34,18 @@ boolean ESAT_OBCEnableTelemetryTelecommandClass::handle(ESAT_CCSDSPacket packet)
     ESAT_OBCSubsystem.enableTelemetry(identifier);
     return true;
   }
+}
+
+byte ESAT_OBCEnableTelemetryTelecommandClass::packetIdentifier()
+{
+  return PACKET_IDENTIFIER;
+}
+
+ESAT_SemanticVersionNumber ESAT_OBCEnableTelemetryTelecommandClass::versionNumber()
+{
+  return ESAT_SemanticVersionNumber(MAJOR_VERSION_NUMBER,
+                                    MINOR_VERSION_NUMBER,
+                                    PATCH_VERSION_NUMBER);
 }
 
 ESAT_OBCEnableTelemetryTelecommandClass ESAT_OBCEnableTelemetryTelecommand;

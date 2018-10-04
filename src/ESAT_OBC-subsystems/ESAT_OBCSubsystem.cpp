@@ -33,9 +33,9 @@
 #include <ESAT_Timer.h>
 #include <ESAT_Timestamp.h>
 
-void ESAT_OBCSubsystemClass::addTelecommand(ESAT_CCSDSPacketConsumer& telecommand)
+void ESAT_OBCSubsystemClass::addTelecommand(ESAT_CCSDSTelecommandPacketHandler& telecommand)
 {
-  telecommandPacketHandler.add(telecommand);
+  telecommandPacketDispatcher.add(telecommand);
 }
 
 void ESAT_OBCSubsystemClass::addTelemetry(ESAT_CCSDSPacketContents& telemetry)
@@ -85,7 +85,7 @@ word ESAT_OBCSubsystemClass::getApplicationProcessIdentifier()
 
 void ESAT_OBCSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& packet)
 {
-  (void) telecommandPacketHandler.handle(packet);
+  (void) telecommandPacketDispatcher.dispatch(packet);
 }
 
 boolean ESAT_OBCSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)

@@ -21,38 +21,7 @@
 #include "ESAT_OBC-telecommands/ESAT_OBCSetTimeTelecommand.h"
 #include "ESAT_OBC-peripherals/ESAT_OBCClock.h"
 
-const ESAT_SemanticVersionNumber ESAT_OBCSetTimeTelecommandClass::INTERFACE_VERSION_NUMBER(4, 0, 0);
-
-boolean ESAT_OBCSetTimeTelecommandClass::accept(const ESAT_CCSDSSecondaryHeader secondaryHeader) const
-{
-  if (!INTERFACE_VERSION_NUMBER.isForwardCompatibleWith(secondaryHeader.majorVersionNumber,
-                                                        secondaryHeader.minorVersionNumber,
-                                                        secondaryHeader.patchVersionNumber))
-  {
-    return false;
-  }
-  if (secondaryHeader.packetIdentifier != OBC_SET_TIME)
-  {
-    return false;
-  }
-  return true;
-}
-
-boolean ESAT_OBCSetTimeTelecommandClass::consume(ESAT_CCSDSPacket packet)
-{
-  const ESAT_CCSDSSecondaryHeader secondaryHeader =
-    packet.readSecondaryHeader();
-  if (accept(secondaryHeader))
-  {
-    return handle(packet);
-  }
-  else
-  {
-    return false;
-  }
-}
-
-boolean ESAT_OBCSetTimeTelecommandClass::handle(ESAT_CCSDSPacket packet) const
+boolean ESAT_OBCSetTimeTelecommandClass::handleUserData(ESAT_CCSDSPacket packet)
 {
   const ESAT_Timestamp timestamp = packet.readTimestamp();
   if (packet.triedToReadBeyondLength())
@@ -65,6 +34,18 @@ boolean ESAT_OBCSetTimeTelecommandClass::handle(ESAT_CCSDSPacket packet) const
     ESAT_OBCClock.write(timestamp);
     return true;
   }
+}
+
+byte ESAT_OBCSetTimeTelecommandClass::packetIdentifier()
+{
+  return PACKET_IDENTIFIER;
+}
+
+ESAT_SemanticVersionNumber ESAT_OBCSetTimeTelecommandClass::versionNumber()
+{
+  return ESAT_SemanticVersionNumber(MAJOR_VERSION_NUMBER,
+                                    MINOR_VERSION_NUMBER,
+                                    PATCH_VERSION_NUMBER);
 }
 
 ESAT_OBCSetTimeTelecommandClass ESAT_OBCSetTimeTelecommand;
