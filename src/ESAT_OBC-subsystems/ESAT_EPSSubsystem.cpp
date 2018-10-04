@@ -21,8 +21,6 @@
 #include "ESAT_OBC-subsystems/ESAT_EPSSubsystem.h"
 #include "ESAT_OBCClock.h"
 #include <ESAT_I2CMaster.h>
-#include <Wire.h>
-#include <USBSerial.h>
 
 void ESAT_EPSSubsystemClass::begin()
 {
