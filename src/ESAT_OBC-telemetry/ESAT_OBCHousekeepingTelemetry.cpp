@@ -24,16 +24,6 @@
 #include "ESAT_OBC-subsystems/ESAT_OBCSubsystem.h"
 #include <ESAT_Timer.h>
 
-boolean ESAT_OBCHousekeepingTelemetryClass::available()
-{
-  return true;
-}
-
-byte ESAT_OBCHousekeepingTelemetryClass::packetIdentifier()
-{
-  return PACKET_IDENTIFIER;
-}
-
 boolean ESAT_OBCHousekeepingTelemetryClass::fillUserData(ESAT_CCSDSPacket& packet)
 {
   packet.writeByte(ESAT_Timer.load());

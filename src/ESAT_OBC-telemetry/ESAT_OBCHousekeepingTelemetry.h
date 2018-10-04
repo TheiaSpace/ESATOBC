@@ -30,20 +30,22 @@ class ESAT_OBCHousekeepingTelemetryClass: public ESAT_CCSDSPacketContents
 {
   public:
     // Return true: the OBC housekeeping packet is always available.
-    boolean available();
+    boolean available()
+    {
+      return true;
+    }
 
     // Return the packet identifier.
-    byte packetIdentifier();
+    byte packetIdentifier()
+    {
+      return 0x00;
+    }
 
     // Fill the user data field of the given packet.
     // The write pointer of the packet is already at the start
     // of the user data field.
     // Return true on success; otherwise return false.
     boolean fillUserData(ESAT_CCSDSPacket& packet);
-
-  private:
-    // OBC housekeeping packet identifier.
-    static const byte PACKET_IDENTIFIER = 0;
 };
 
 // Global instance of ESAT_OBCHousekeepingTelemetry.  ESAT_OBCSubsystem uses this
