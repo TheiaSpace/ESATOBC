@@ -20,6 +20,11 @@
 
 #include "ESAT_OBC-telemetry/ESAT_OBCLinesTelemetry.h"
 
+boolean ESAT_OBCLinesTelemetryClass::available()
+{
+  return true;
+}
+
 boolean ESAT_OBCLinesTelemetryClass::fillUserData(ESAT_CCSDSPacket& packet)
 {
   packet.writeWord(analogRead(ADC12));
