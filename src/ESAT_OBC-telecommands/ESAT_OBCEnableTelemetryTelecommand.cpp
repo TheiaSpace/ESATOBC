@@ -36,16 +36,4 @@ boolean ESAT_OBCEnableTelemetryTelecommandClass::handleUserData(ESAT_CCSDSPacket
   }
 }
 
-byte ESAT_OBCEnableTelemetryTelecommandClass::packetIdentifier()
-{
-  return PACKET_IDENTIFIER;
-}
-
-ESAT_SemanticVersionNumber ESAT_OBCEnableTelemetryTelecommandClass::versionNumber()
-{
-  return ESAT_SemanticVersionNumber(MAJOR_VERSION_NUMBER,
-                                    MINOR_VERSION_NUMBER,
-                                    PATCH_VERSION_NUMBER);
-}
-
 ESAT_OBCEnableTelemetryTelecommandClass ESAT_OBCEnableTelemetryTelecommand;

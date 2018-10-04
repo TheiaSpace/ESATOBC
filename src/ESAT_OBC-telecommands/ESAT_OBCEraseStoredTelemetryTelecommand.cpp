@@ -28,16 +28,4 @@ boolean ESAT_OBCEraseStoredTelemetryTelecommandClass::handleUserData(const ESAT_
   return true;
 }
 
-byte ESAT_OBCEraseStoredTelemetryTelecommandClass::packetIdentifier()
-{
-  return PACKET_IDENTIFIER;
-}
-
-ESAT_SemanticVersionNumber ESAT_OBCEraseStoredTelemetryTelecommandClass::versionNumber()
-{
-  return ESAT_SemanticVersionNumber(MAJOR_VERSION_NUMBER,
-                                    MINOR_VERSION_NUMBER,
-                                    PATCH_VERSION_NUMBER);
-}
-
 ESAT_OBCEraseStoredTelemetryTelecommandClass ESAT_OBCEraseStoredTelemetryTelecommand;
