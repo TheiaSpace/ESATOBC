@@ -22,11 +22,11 @@
 #define ESAT_OBCHousekeepingTelemetry_h
 
 #include <Arduino.h>
-#include <ESAT_CCSDSPacketContents.h>
+#include <ESAT_CCSDSTelemetryPacketContents.h>
 
 // OBC (On-Board Computer) housekeeping telemetry packet contents.
 // ESAT_OBCSubsystem uses this.
-class ESAT_OBCHousekeepingTelemetryClass: public ESAT_CCSDSPacketContents
+class ESAT_OBCHousekeepingTelemetryClass: public ESAT_CCSDSTelemetryPacketContents
 {
   public:
     // Return true: the OBC housekeeping packet is always available.

@@ -22,11 +22,11 @@
 #define ESAT_OBCLinesTelemetry_h
 
 #include <Arduino.h>
-#include <ESAT_CCSDSPacketContents.h>
+#include <ESAT_CCSDSTelemetryPacketContents.h>
 
 // OBC (On-Board Computer) lines telemetry packet contents.
 // ESAT_OBCSubsystem uses this.
-class ESAT_OBCLinesTelemetryClass: public ESAT_CCSDSPacketContents
+class ESAT_OBCLinesTelemetryClass: public ESAT_CCSDSTelemetryPacketContents
 {
   public:
     // Return true: the OBC lines packet is always available.
