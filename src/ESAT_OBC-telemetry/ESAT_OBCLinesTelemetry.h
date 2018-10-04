@@ -30,20 +30,22 @@ class ESAT_OBCLinesTelemetryClass: public ESAT_CCSDSPacketContents
 {
   public:
     // Return true: the OBC lines packet is always available.
-    boolean available();
+    boolean available()
+    {
+      return true;
+    }
 
     // Return the packet identifier.
-    byte packetIdentifier();
+    byte packetIdentifier()
+    {
+      return 0x01;
+    }
 
     // Fill the user data field of the given packet.
     // The write pointer of the packet is already at the start
     // of the user data field.
     // Return true on success; otherwise return false.
     boolean fillUserData(ESAT_CCSDSPacket& packet);
-
-  private:
-    // OBC lines packet identifier.
-    static const byte PACKET_IDENTIFIER = 1;
 };
 
 // Global instance of ESAT_OBCLinesTelemetry.  ESAT_OBCSubsystem uses this
