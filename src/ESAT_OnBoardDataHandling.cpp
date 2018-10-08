@@ -83,6 +83,15 @@ boolean ESAT_OnBoardDataHandlingClass::readTelecommand(ESAT_CCSDSPacket& packet)
 
 boolean ESAT_OnBoardDataHandlingClass::readSubsystemsTelemetry(ESAT_CCSDSPacket& packet)
 {
+  // Subsystems are visited in a first-in, first-out basis, from the
+  // first subsystem to the last subsystem.
+  // The main program calls this method many times on each on-board
+  // data handling cycle, so it is neccessary to keep track of the
+  // currently-visited subsystem with telemetrySubsystem.
+  // Each subsystem is asked for new telemetry packets as long as its
+  // telemetryAvailable() method returns true.
+  // The packet is rewound after the subsystem fills it so that
+  // the main program can use it directly.
   while (telemetrySubsystem != nullptr)
   {
     if (telemetrySubsystem->telemetryAvailable())
