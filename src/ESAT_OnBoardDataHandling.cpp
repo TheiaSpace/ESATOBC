@@ -62,6 +62,10 @@ void ESAT_OnBoardDataHandlingClass::dispatchTelecommand(ESAT_CCSDSPacket& packet
 void ESAT_OnBoardDataHandlingClass::enableUSBTelecommands(byte buffer[],
                                                           const unsigned long bufferLength)
 {
+  // A non-empty CCSDS-packet-from-KISS-frame reader can produce
+  // packets from its input Stream, so a way to enable USB
+  // telecommands is to make the USB reader a non-empty
+  // CCSDS-packet-from-KISS-frame reader.
   usbReader = ESAT_CCSDSPacketFromKISSFrameReader(Serial,
                                                   buffer,
                                                   bufferLength);
