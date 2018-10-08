@@ -64,6 +64,19 @@ void ESAT_OnBoardDataHandlingClass::enableUSBTelemetry()
 
 boolean ESAT_OnBoardDataHandlingClass::readTelecommand(ESAT_CCSDSPacket& packet)
 {
+  // Subsystems are visited in a first-in, first-out basis, from the
+  // first subsystem to the last subsystem.
+  // The main program calls this method many times on each on-board
+  // data handling cycle, so it is neccessary to keep track of the
+  // currently-visited subsystem with telecommandSubsystem.
+  // Each subsystem is asked for new telecommand packets until
+  // it fails to produce a new telecommand packet; then it's the turn
+  // of the next subsystem.
+  // After the last subsystem has been visited, it's time to read
+  // telecommands from the USB interface.  The USB reader will fail
+  // to produce a telecommand if USB telecommands are disabled, so
+  // it is correct to always ask it for a telecommand and let it
+  // decide what to do.
   while (telecommandSubsystem != nullptr)
   {
     const bool successfulRead =
