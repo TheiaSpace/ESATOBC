@@ -118,25 +118,20 @@ boolean ESAT_OnBoardDataHandlingClass::readSubsystemsTelemetry(ESAT_CCSDSPacket&
   // The main program calls this method many times on each on-board
   // data handling cycle, so it is neccessary to keep track of the
   // currently-visited subsystem with telemetrySubsystem.
-  // Each subsystem is asked for new telemetry packets as long as its
-  // telemetryAvailable() method returns true.
+  // Each subsystem is asked for new telemetry packets until it fails
+  // to produce a new telemetry packet; then it's the turn of the next
+  // subsystem.
   // The packet is rewound after the subsystem fills it so that
   // the main program can use it directly.
   while (telemetrySubsystem != nullptr)
   {
-    if (telemetrySubsystem->telemetryAvailable())
+    packet.flush();
+    const boolean successfulRead =
+      telemetrySubsystem->readTelemetry(packet);
+    packet.rewind();
+    if (successfulRead)
     {
-      packet.flush();
-      const boolean successfulRead =
-        telemetrySubsystem->readTelemetry(packet);
-      packet.rewind();
-      const ESAT_CCSDSPrimaryHeader primaryHeader =
-        packet.readPrimaryHeader();
-      if (successfulRead
-          && (primaryHeader.packetType == primaryHeader.TELEMETRY))
-      {
-        return true;
-      }
+      return true;
     }
     else
     {
