@@ -22,16 +22,26 @@
 
 void ESAT_OnBoardDataHandlingClass::disableUSBTelecommands()
 {
+  // An empty CCSDS-packet-from-KISS-frame reader just fails to produce
+  // packets, so a way to disable USB telecommands is to make the USB
+  // reader an empty CCSDS-packet-from-KISS-frame reader.
   usbReader = ESAT_CCSDSPacketFromKISSFrameReader();
 }
 
 void ESAT_OnBoardDataHandlingClass::disableUSBTelemetry()
 {
+  // An empty CCSDS-packet-to-KISS-frame writer just fails to write
+  // packets, so a way to disable USB telemetry is to make the USB
+  // writer an empty CCSDS-packet-from-KISS-frame writer.
   usbWriter = ESAT_CCSDSPacketToKISSFrameWriter();
 }
 
 void ESAT_OnBoardDataHandlingClass::dispatchTelecommand(ESAT_CCSDSPacket& packet)
 {
+  // Send the telecommand packet to the first subsystem that matches
+  // its application process identifier.  No two subsystems should
+  // have the same application process identifier, so sending the packet
+  // to the first match means sending it to the only match.
   packet.rewind();
   const ESAT_CCSDSPrimaryHeader primaryHeader = packet.readPrimaryHeader();
   for (ESAT_Subsystem* subsystem = firstSubsystem;
@@ -52,6 +62,10 @@ void ESAT_OnBoardDataHandlingClass::dispatchTelecommand(ESAT_CCSDSPacket& packet
 void ESAT_OnBoardDataHandlingClass::enableUSBTelecommands(byte buffer[],
                                                           const unsigned long bufferLength)
 {
+  // A non-empty CCSDS-packet-from-KISS-frame reader can produce
+  // packets from its input Stream, so a way to enable USB
+  // telecommands is to make the USB reader a non-empty
+  // CCSDS-packet-from-KISS-frame reader.
   usbReader = ESAT_CCSDSPacketFromKISSFrameReader(Serial,
                                                   buffer,
                                                   bufferLength);
@@ -59,11 +73,27 @@ void ESAT_OnBoardDataHandlingClass::enableUSBTelecommands(byte buffer[],
 
 void ESAT_OnBoardDataHandlingClass::enableUSBTelemetry()
 {
+  // A non-empty CCSDS-packet-from-KISS-frame writer can write packets
+  // to its input Stream, so a way to enable USB telemetry is to make
+  // the USB writer a non-empty CCSDS-packet-from-KISS-frame writer.
   usbWriter = ESAT_CCSDSPacketToKISSFrameWriter(Serial);
 }
 
 boolean ESAT_OnBoardDataHandlingClass::readTelecommand(ESAT_CCSDSPacket& packet)
 {
+  // Subsystems are visited in a first-in, first-out basis, from the
+  // first subsystem to the last subsystem.
+  // The main program calls this method many times on each on-board
+  // data handling cycle, so it is neccessary to keep track of the
+  // currently-visited subsystem with telecommandSubsystem.
+  // Each subsystem is asked for new telecommand packets until
+  // it fails to produce a new telecommand packet; then it's the turn
+  // of the next subsystem.
+  // After the last subsystem has been visited, it's time to read
+  // telecommands from the USB interface.  The USB reader will fail
+  // to produce a telecommand if USB telecommands are disabled, so
+  // it is correct to always ask it for a telecommand and let it
+  // decide what to do.
   while (telecommandSubsystem != nullptr)
   {
     const bool successfulRead =
@@ -83,6 +113,15 @@ boolean ESAT_OnBoardDataHandlingClass::readTelecommand(ESAT_CCSDSPacket& packet)
 
 boolean ESAT_OnBoardDataHandlingClass::readSubsystemsTelemetry(ESAT_CCSDSPacket& packet)
 {
+  // Subsystems are visited in a first-in, first-out basis, from the
+  // first subsystem to the last subsystem.
+  // The main program calls this method many times on each on-board
+  // data handling cycle, so it is neccessary to keep track of the
+  // currently-visited subsystem with telemetrySubsystem.
+  // Each subsystem is asked for new telemetry packets as long as its
+  // telemetryAvailable() method returns true.
+  // The packet is rewound after the subsystem fills it so that
+  // the main program can use it directly.
   while (telemetrySubsystem != nullptr)
   {
     if (telemetrySubsystem->telemetryAvailable())
@@ -109,6 +148,11 @@ boolean ESAT_OnBoardDataHandlingClass::readSubsystemsTelemetry(ESAT_CCSDSPacket&
 
 void ESAT_OnBoardDataHandlingClass::registerSubsystem(ESAT_Subsystem& subsystem)
 {
+  // Subsystems are appended to the end of the list so that it is easy
+  // to visit them in a first-in, first-out basis.
+  // If the list is empty, then it is necessary to assign both the
+  // first subsystem pointer and the last subsystem pointer; otherwise
+  // it is necessary to update the last subsystem pointer.
   if (lastSubsystem == nullptr)
   {
     firstSubsystem = &subsystem;
@@ -123,6 +167,12 @@ void ESAT_OnBoardDataHandlingClass::registerSubsystem(ESAT_Subsystem& subsystem)
 
 void ESAT_OnBoardDataHandlingClass::updateSubsystems()
 {
+  // Subsystems are updated in a first-in, first-out basis, from the
+  // first subsystem to the last subsystem.
+  // After that, the currently-visited subsystems of readTelecommand()
+  // and readTelemetry() are assigned to the first subsystem so that
+  // the next series of calls to those methods can work from the
+  // start of the list.
   for (ESAT_Subsystem* subsystem = firstSubsystem;
        subsystem != nullptr;
        subsystem = subsystem->nextSubsystem)
@@ -135,6 +185,14 @@ void ESAT_OnBoardDataHandlingClass::updateSubsystems()
 
 void ESAT_OnBoardDataHandlingClass::writeTelemetry(ESAT_CCSDSPacket& packet)
 {
+  // The telemetry packe is written to the subsystems and to the USB
+  // packet writer.  The packet is passed to the subsystems as a
+  // reference, so the subsystems can modify the read/write pointer;
+  // to ensure that it is at the start of the packet data, the packet
+  // is rewound before passing it to each subsystem.
+  // The USB writer will just drop the packet if USB telemetry output
+  // is disabled, so it is correct to always pass it the packet and
+  // let it decide what to do.
   for (ESAT_Subsystem* subsystem = firstSubsystem;
        subsystem != nullptr;
        subsystem = subsystem->nextSubsystem)
