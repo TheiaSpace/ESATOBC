@@ -109,6 +109,11 @@ boolean ESAT_OnBoardDataHandlingClass::readSubsystemsTelemetry(ESAT_CCSDSPacket&
 
 void ESAT_OnBoardDataHandlingClass::registerSubsystem(ESAT_Subsystem& subsystem)
 {
+  // Subsystems are appended to the end of the list so that it is easy
+  // to visit them in a first-in, first-out basis.
+  // If the list is empty, then it is necessary to assign both the
+  // first subsystem pointer and the last subsystem pointer; otherwise
+  // it is necessary to update the last subsystem pointer.
   if (lastSubsystem == nullptr)
   {
     firstSubsystem = &subsystem;
