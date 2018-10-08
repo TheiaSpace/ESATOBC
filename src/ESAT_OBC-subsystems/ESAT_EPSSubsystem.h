@@ -54,8 +54,9 @@ class ESAT_EPSSubsystemClass: public ESAT_Subsystem
     // otherwise return false.
     boolean readTelemetry(ESAT_CCSDSPacket& telemetry);
 
+    // Deprecated method; don't use it.
     // Return true if a new telemetry packet is available.
-    boolean telemetryAvailable();
+    boolean telemetryAvailable() __attribute__((deprecated));
 
     // Update the subsystem.
     void update();
