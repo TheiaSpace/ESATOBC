@@ -66,9 +66,10 @@ class ESAT_WifiSubsystemClass: public ESAT_Subsystem
     // otherwise return false.
     boolean readTelemetry(ESAT_CCSDSPacket& packet);
 
+    // Deprecated method; don't use it.
     // Return true if there is new telemetry available;
     // Otherwise return false.
-    boolean telemetryAvailable();
+    boolean telemetryAvailable() __attribute__((deprecated));
 
     // If ESAT_WifiSubsystem.begin() was called with the optional
     // packet data buffer, ask the ESAT Wifi board for a new series of

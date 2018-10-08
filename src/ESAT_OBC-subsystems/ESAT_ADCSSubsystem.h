@@ -57,9 +57,10 @@ class ESAT_ADCSSubsystemClass: public ESAT_Subsystem
     // otherwise return false.
     boolean readTelemetry(ESAT_CCSDSPacket& packet);
 
+    // Deprecated method; don't use it.
     // Return true if there is new telemetry available;
     // Otherwise return false.
-    boolean telemetryAvailable();
+    boolean telemetryAvailable() __attribute__((deprecated));
 
     // Update the subsystem.
     void update();

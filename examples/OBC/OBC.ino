@@ -84,14 +84,6 @@ class ESAT_ExampleSubsystemClass: public ESAT_Subsystem
       return false;
     }
 
-    // Return true if there is new telemetry available;
-    // Otherwise return false.
-    // Called from ESAT_OnBoardDataHandling.readSubsystemsTelemetry().
-    boolean telemetryAvailable()
-    {
-      return false;
-    }
-
     // Update the subsystem.
     // Called from OnBoardDataHandling.updateSubsystems().
     void update()
