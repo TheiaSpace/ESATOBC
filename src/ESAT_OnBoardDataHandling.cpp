@@ -30,6 +30,9 @@ void ESAT_OnBoardDataHandlingClass::disableUSBTelecommands()
 
 void ESAT_OnBoardDataHandlingClass::disableUSBTelemetry()
 {
+  // An empty CCSDS-packet-to-KISS-frame writer just fails to write
+  // packets, so a way to disable USB telemetry is to make the USB
+  // writer an empty CCSDS-packet-from-KISS-frame writer.
   usbWriter = ESAT_CCSDSPacketToKISSFrameWriter();
 }
 
