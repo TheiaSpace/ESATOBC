@@ -32,6 +32,10 @@ void ESAT_OnBoardDataHandlingClass::disableUSBTelemetry()
 
 void ESAT_OnBoardDataHandlingClass::dispatchTelecommand(ESAT_CCSDSPacket& packet)
 {
+  // Send the telecommand packet to the first subsystem that matches
+  // its application process identifier.  No two subsystems should
+  // have the same application process identifier, so sending the packet
+  // to the first match means sending it to the only match.
   packet.rewind();
   const ESAT_CCSDSPrimaryHeader primaryHeader = packet.readPrimaryHeader();
   for (ESAT_Subsystem* subsystem = firstSubsystem;
