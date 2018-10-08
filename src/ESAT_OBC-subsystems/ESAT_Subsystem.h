@@ -71,11 +71,6 @@ class ESAT_Subsystem
     // Called from ESAT_OnBoardDataHandling.readSubsystemsTelemetry().
     virtual boolean readTelemetry(ESAT_CCSDSPacket& packet) = 0;
 
-    // Return true if there is new telemetry available;
-    // Otherwise return false.
-    // Called from ESAT_OnBoardDataHandling.readSubsystemsTelemetry().
-    virtual boolean telemetryAvailable() = 0;
-
     // Update the subsystem.
     // Called from ESAT_OnBoardDataHandling.updateSubsystems().
     virtual void update() = 0;
