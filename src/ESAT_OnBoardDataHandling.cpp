@@ -128,6 +128,12 @@ void ESAT_OnBoardDataHandlingClass::registerSubsystem(ESAT_Subsystem& subsystem)
 
 void ESAT_OnBoardDataHandlingClass::updateSubsystems()
 {
+  // Subsystems are updated in a first-in, first-out basis, from the
+  // first subsystem to the last subsystem.
+  // After that, the currently-visited subsystems of readTelecommand()
+  // and readTelemetry() are assigned to the first subsystem so that
+  // the next series of calls to those methods can work from the
+  // start of the list.
   for (ESAT_Subsystem* subsystem = firstSubsystem;
        subsystem != nullptr;
        subsystem = subsystem->nextSubsystem)
