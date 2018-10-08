@@ -73,6 +73,9 @@ void ESAT_OnBoardDataHandlingClass::enableUSBTelecommands(byte buffer[],
 
 void ESAT_OnBoardDataHandlingClass::enableUSBTelemetry()
 {
+  // A non-empty CCSDS-packet-from-KISS-frame writer can write packets
+  // to its input Stream, so a way to enable USB telemetry is to make
+  // the USB writer a non-empty CCSDS-packet-from-KISS-frame writer.
   usbWriter = ESAT_CCSDSPacketToKISSFrameWriter(Serial);
 }
 
