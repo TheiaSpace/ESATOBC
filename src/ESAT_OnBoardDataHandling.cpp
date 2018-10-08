@@ -22,6 +22,9 @@
 
 void ESAT_OnBoardDataHandlingClass::disableUSBTelecommands()
 {
+  // An empty CCSDS-packet-from-KISS-frame reader just fails to produce
+  // packets, so a way to disable USB telecommands is to make the USB
+  // reader an empty CCSDS-packet-from-KISS-frame reader.
   usbReader = ESAT_CCSDSPacketFromKISSFrameReader();
 }
 
