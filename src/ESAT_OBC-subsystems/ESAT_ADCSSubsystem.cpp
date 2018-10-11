@@ -20,6 +20,14 @@
 
 #include "ESAT_OBC-subsystems/ESAT_ADCSSubsystem.h"
 
+// This subsystem either communicates with the ADCS board through the
+// I2C bus or wraps around ESAT_ADCS from the ESATADCS library.  The
+// implementation used depends on the definition of
+// ESAT_ADCS_CODE_RUNNING_IN_ADCS: if it is defined, the I2C code is
+// generated; otherwise, the library wrapper code is generated.
+// ESAT_ADCS_CODE_RUNNING_IN_ADCS is defined when the option ADCS=ADCS
+// is passed to Arduino ("ADCS code running in: ADCS").
+
 #ifdef ESAT_ADCS_CODE_RUNNING_IN_ADCS
 #include <ESAT_I2CMaster.h>
 #else

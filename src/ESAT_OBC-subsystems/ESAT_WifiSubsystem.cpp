@@ -56,6 +56,7 @@ void ESAT_WifiSubsystemClass::beginWifiBridge(byte readerBuffer[],
                                               byte packetDataBuffer[],
                                               const unsigned long packetDataBufferLength)
 {
+  // We pass packets around in KISS frames.
   wifiReader = ESAT_CCSDSPacketFromKISSFrameReader(SerialWifi,
                                                    readerBuffer,
                                                    readerBufferLength);
@@ -114,6 +115,9 @@ boolean ESAT_WifiSubsystemClass::isConnected()
 
 boolean ESAT_WifiSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
 {
+  // This is more complicated than it could be because we buffer
+  // incoming packets to be able to read telecommands and telemetry
+  // at different stages.
   // If a telecommand packet is already buffered, use it.
   if (telecommandAlreadyBuffered())
   {
@@ -148,6 +152,9 @@ boolean ESAT_WifiSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
 
 boolean ESAT_WifiSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
 {
+  // This is more complicated than it could be because we buffer
+  // incoming packets to be able to read telecommands and telemetry
+  // at different stages.
   // If a telemetry packet is already buffered, use it.
   if (telemetryAlreadyBuffered())
   {
@@ -220,6 +227,8 @@ boolean ESAT_WifiSubsystemClass::telemetryAlreadyBuffered() const
 
 void ESAT_WifiSubsystemClass::update()
 {
+  // We want to start reading a new series of telemetry packets on
+  // each cycle, but only if we have a buffer for storing them.
   if (bufferedPacket.capacity() > 0)
   {
     beginReadingTelemetry();
@@ -228,6 +237,15 @@ void ESAT_WifiSubsystemClass::update()
 
 void ESAT_WifiSubsystemClass::writeTelemetry(ESAT_CCSDSPacket& packet)
 {
+  // The Wifi board is generally responsive, but it may block when
+  // trying to connect to the ground station server.  The serial
+  // buffer of the Wifi board has limited capacity and, if we start
+  // writing telemetry packets while the Wifi board is blocking, we
+  // could overload it and make it drop packets, making it impossible
+  // to command.  We need to have spare buffer capacity to be able to
+  // command the Wifi board, so that's why we will only write
+  // telemetry packets if the Wifi board is connected and therefore
+  // not blocking.
   if (!isConnected())
   {
     return;

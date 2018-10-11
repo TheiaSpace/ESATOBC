@@ -26,17 +26,22 @@
 
 boolean ESAT_OBCHousekeepingTelemetryClass::available()
 {
+  // The OBC housekeeping telemetry packet is always available.
   return true;
 }
 
 boolean ESAT_OBCHousekeepingTelemetryClass::fillUserData(ESAT_CCSDSPacket& packet)
 {
+  // This packet contains the state of some error flags.
+  // We must reset those error flags after use.
   packet.writeByte(ESAT_Timer.load());
   packet.writeBoolean(ESAT_OBCSubsystem.storeTelemetry);
   packet.writeBoolean(ESAT_TelemetryStorage.error);
   ESAT_TelemetryStorage.error = false;
   packet.writeBoolean(ESAT_OBCClock.error);
   ESAT_OBCClock.error = false;
+  // This packet is valid in general, except when it is truncated
+  // because its capacity was too small.
   if (packet.triedToWriteBeyondCapacity())
   {
     return false;

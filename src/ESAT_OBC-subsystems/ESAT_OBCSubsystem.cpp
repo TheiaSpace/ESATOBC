@@ -85,17 +85,23 @@ word ESAT_OBCSubsystemClass::getApplicationProcessIdentifier()
 
 void ESAT_OBCSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& packet)
 {
+  // A telecommand packet dispatcher hides the complexity of dispatching
+  // and handling telecommands.
   (void) telecommandPacketDispatcher.dispatch(packet);
 }
 
 boolean ESAT_OBCSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
 {
+  // The OBC subsystem doesn't produce telecommands at this moment.
   (void) packet;
   return false;
 }
 
 boolean ESAT_OBCSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
 {
+  // The OBC subsystem produces telemetry of two kinds:
+  // - its own telemetry;
+  // - stored telemetry.
   if (pendingTelemetry.available() > 0)
   {
     const byte identifier = byte(pendingTelemetry.readNext());
@@ -109,6 +115,8 @@ boolean ESAT_OBCSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
 boolean ESAT_OBCSubsystemClass::readStoredTelemetry(ESAT_CCSDSPacket& packet)
 {
   const boolean correctRead = ESAT_TelemetryStorage.read(packet);
+  // If there aren't more stored telemetry packets to be read,
+  // we must ensure that the telemetry storage module is free.
   if (!correctRead)
   {
     ESAT_TelemetryStorage.endReading();
@@ -118,6 +126,9 @@ boolean ESAT_OBCSubsystemClass::readStoredTelemetry(ESAT_CCSDSPacket& packet)
 
 boolean ESAT_OBCSubsystemClass::telemetryAvailable()
 {
+  // The OBC subsystem produces telemetry of two kinds:
+  // - its own telemetry;
+  // - stored telemetry.
   if (pendingTelemetry.available() > 0)
   {
     return true;
@@ -131,6 +142,9 @@ boolean ESAT_OBCSubsystemClass::telemetryAvailable()
 
 void ESAT_OBCSubsystemClass::update()
 {
+  // The OBC has a few periodic tasks that it must do on each cycle:
+  // - reset the list of pending telemetry packets;
+  // - toggle the on-board heartbeat LED.
   const ESAT_FlagContainer availableTelemetry =
     telemetryPacketBuilder.available();
   const ESAT_FlagContainer availableAndEnabledTelemetry =

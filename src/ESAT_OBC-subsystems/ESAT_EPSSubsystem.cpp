@@ -24,6 +24,10 @@
 
 void ESAT_EPSSubsystemClass::begin()
 {
+  // The (deprecated) telemetryAvailable() method will return false
+  // at the start.
+  // In addition, we want to start with the EPS clock in sync with the
+  // OBC clock.
   newTelemetryPacket = false;
   setTime();
 }
@@ -35,6 +39,8 @@ word ESAT_EPSSubsystemClass::getApplicationProcessIdentifier()
 
 void ESAT_EPSSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& packet)
 {
+  // We pass telecommand packets to the EPS board with our
+  // CCSDS-Space-Packet-over-I2C protocol.
   packet.rewind();
   const ESAT_CCSDSPrimaryHeader primaryHeader = packet.readPrimaryHeader();
   if (primaryHeader.packetType != primaryHeader.TELECOMMAND)
@@ -53,6 +59,7 @@ void ESAT_EPSSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& packet)
 
 boolean ESAT_EPSSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
 {
+  // The EPS board doesn't produce telecommands at this moment.
   (void) packet;
   return false;
 }
@@ -81,6 +88,8 @@ boolean ESAT_EPSSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
 
 void ESAT_EPSSubsystemClass::setTime()
 {
+  // To set the time of the EPS board, we send it the telecommand to
+  // do so with our CCSDS-Space-Packet-over-I2C protocol.
   const byte packetDataBufferLength =
     ESAT_CCSDSSecondaryHeader::LENGTH + 7;
   byte packetDataBuffer[packetDataBufferLength];
@@ -126,6 +135,7 @@ void ESAT_EPSSubsystemClass::update()
 
 void ESAT_EPSSubsystemClass::writeTelemetry(ESAT_CCSDSPacket& packet)
 {
+  // The EPS board doesn't receive telemetry packets at this moment.
   (void) packet;
 }
 

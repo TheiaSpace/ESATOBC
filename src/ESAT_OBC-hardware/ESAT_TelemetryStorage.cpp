@@ -22,6 +22,8 @@
 #include <ESAT_CCSDSPacketFromKISSFrameReader.h>
 #include <ESAT_CCSDSPacketToKISSFrameWriter.h>
 
+// The filename of the telemetry archive cannot exceed 8 characters
+// due to filesystem limitations.
 const char ESAT_TelemetryStorageClass::TELEMETRY_FILE[] = "telem_db";
 
 void ESAT_TelemetryStorageClass::beginReading(const ESAT_Timestamp begin,
@@ -34,12 +36,18 @@ void ESAT_TelemetryStorageClass::beginReading(const ESAT_Timestamp begin,
 
 void ESAT_TelemetryStorageClass::endReading()
 {
+  // We must close the telemetry archive when we are finished with
+  // reading it so that it can be used for a new reading session
+  // or for writing new packets.
   file.close();
   readingInProgress = false;
 }
 
 void ESAT_TelemetryStorageClass::erase()
 {
+  // Erasing the stored telemetry is as simple as removing the
+  // telemetry archive.
+  // A failure to remove the telemetry archive is a hardware error.
   const boolean correctRemoval = SD.remove((char*) TELEMETRY_FILE);
   if (!correctRemoval)
   {
@@ -49,19 +57,29 @@ void ESAT_TelemetryStorageClass::erase()
 
 boolean ESAT_TelemetryStorageClass::read(ESAT_CCSDSPacket& packet)
 {
+
+  // If we didn't call beginReading(), we aren't ready to read
+  // telemetry, but this in itself isn't a hardware error, so we don't
+  // set the error flag.
   if (!readingInProgress)
   {
     return false;
   }
+  // We must open the telemetry archive if it isn't already open.
   if (!file)
   {
     file = SD.open(TELEMETRY_FILE, FILE_READ);
+    // A failure to open it is indicative of a real hardware error,
+    // so in this case we need to set the error flag.
     if (!file)
     {
       error = true;
       return false;
     }
   }
+  // If everything went well, we can try to read the next packet.
+  // Instead of naked packets, we store them in KISS frames, so
+  // we must extract packets from frames.
   const unsigned long bufferLength =
     ESAT_CCSDSPrimaryHeader::LENGTH + packet.capacity();
   byte buffer[bufferLength];
@@ -94,21 +112,35 @@ boolean ESAT_TelemetryStorageClass::reading() const
 
 void ESAT_TelemetryStorageClass::write(ESAT_CCSDSPacket& packet)
 {
+  // We cannot write telemetry packets to the telemetry archive while
+  // we are reading it.
   if (readingInProgress)
   {
     return;
   }
+  // The file shouldn't be open.
   if (file)
   {
     error = true;
     return;
   }
+  // We open and close the telemetry archive every time we write a new
+  // packet.  This is simpler than tracking the state of the file from
+  // call to call.
+  // A failure to open the file is a hardware error.
   file = SD.open(TELEMETRY_FILE, FILE_APPEND);
   if (!file)
   {
     error = true;
     return;
   }
+  // We don't store naked packets, but KISS frames containing the
+  // packets.  This helps when there is a small data corruption: if we
+  // stored naked packets and the packet data length field of one
+  // packet didn't match the actually stored packet data length, all
+  // subsequent packets would be affected and couldn't be read, so
+  // they would be as good as lost; with KISS frames, we limit the
+  // data loss to the affected packet.
   ESAT_CCSDSPacketToKISSFrameWriter writer(file);
   const boolean correctWrite = writer.unbufferedWrite(packet);
   if (!correctWrite)
