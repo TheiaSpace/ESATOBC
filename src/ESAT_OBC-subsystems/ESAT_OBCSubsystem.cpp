@@ -46,8 +46,6 @@ void ESAT_OBCSubsystemClass::addTelemetry(ESAT_CCSDSTelemetryPacketContents& tel
 void ESAT_OBCSubsystemClass::begin()
 {
   storeTelemetry = false;
-  enabledTelemetry.clearAll();
-  pendingTelemetry.clearAll();
   addTelemetry(ESAT_OBCHousekeepingTelemetry);
   enableTelemetry(ESAT_OBCHousekeepingTelemetry.packetIdentifier());
   addTelemetry(ESAT_OBCLinesTelemetry);
