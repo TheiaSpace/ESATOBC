@@ -114,6 +114,15 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
                                        PATCH_VERSION_NUMBER,
                                        ESAT_OBCClock);
 
+    // Configure the hardware modules used by the OBC subsystem.
+    void beginHardware();
+
+    // Configure the telecommand handlers of the OBC subsystem.
+    void beginTelecommands();
+
+    // Configure the telemetry packets of the OBC subsystem.
+    void beginTelemetry();
+
     // Read the next stored telemetry packet and fill the given packet buffer.
     // Return true on success; otherwise return false.
     // Set downloadTelemetry to false on unsuccessful read.
