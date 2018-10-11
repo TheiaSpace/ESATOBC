@@ -110,6 +110,11 @@ class ESAT_OnBoardDataHandlingClass
     // Read a telecommand packet form the USB interface.  Return true
     // on success; otherwise return false.
     boolean readTelecommandFromUSB(ESAT_CCSDSPacket& packet);
+
+    // Read a telemetry packet from a subsystem.  Return true on
+    // success; otherwise return false.
+    boolean readTelemetryFromSubsystem(ESAT_CCSDSPacket& packet,
+                                       ESAT_Subsystem& subsystem);
 };
 
 // Global instance of the on-board data handling library.

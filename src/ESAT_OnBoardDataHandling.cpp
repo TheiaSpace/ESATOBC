@@ -143,6 +143,23 @@ boolean ESAT_OnBoardDataHandlingClass::readTelecommandFromUSB(ESAT_CCSDSPacket& 
   }
 }
 
+boolean ESAT_OnBoardDataHandlingClass::readTelemetryFromSubsystem(ESAT_CCSDSPacket& packet,
+                                                                  ESAT_Subsystem& subsystem)
+{
+  packet.flush();
+  const boolean gotPacket = subsystem.readTelemetry(packet);
+  if (gotPacket && packet.isTelemetry())
+  {
+    packet.rewind();
+    return true;
+  }
+  else
+  {
+    packet.flush();
+    return false;
+  }
+}
+
 boolean ESAT_OnBoardDataHandlingClass::readSubsystemsTelemetry(ESAT_CCSDSPacket& packet)
 {
   // Subsystems are visited in a first-in, first-out basis, from the
@@ -157,11 +174,9 @@ boolean ESAT_OnBoardDataHandlingClass::readSubsystemsTelemetry(ESAT_CCSDSPacket&
   // the main program can use it directly.
   while (telemetrySubsystem != nullptr)
   {
-    packet.flush();
-    const boolean successfulRead =
-      telemetrySubsystem->readTelemetry(packet);
-    packet.rewind();
-    if (successfulRead)
+    const boolean gotTelemetry =
+      readTelemetryFromSubsystem(packet, *telemetrySubsystem);
+    if (gotTelemetry)
     {
       return true;
     }
