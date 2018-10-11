@@ -31,6 +31,13 @@ void ESAT_TelemetryStorageClass::beginReading(const ESAT_Timestamp begin,
 {
   beginTimestamp = begin;
   endTimestamp = end;
+  // We must open the telemetry archive in read mode.
+  // Close it first if it is already open.
+  if (file)
+  {
+    file.close();
+  }
+  file = SD.open(TELEMETRY_FILE, FILE_READ);
   readingInProgress = true;
 }
 
@@ -65,17 +72,11 @@ boolean ESAT_TelemetryStorageClass::read(ESAT_CCSDSPacket& packet)
   {
     return false;
   }
-  // We must open the telemetry archive if it isn't already open.
+  // It is a hardware error if we couldn't open the telemetry archive.
   if (!file)
   {
-    file = SD.open(TELEMETRY_FILE, FILE_READ);
-    // A failure to open it is indicative of a real hardware error,
-    // so in this case we need to set the error flag.
-    if (!file)
-    {
-      error = true;
-      return false;
-    }
+    error = true;
+    return false;
   }
   // If everything went well, we can try to read the next packet.
   // Instead of naked packets, we store them in KISS frames, so
@@ -121,7 +122,6 @@ void ESAT_TelemetryStorageClass::write(ESAT_CCSDSPacket& packet)
   // The file shouldn't be open.
   if (file)
   {
-    error = true;
     return;
   }
   // We open and close the telemetry archive every time we write a new
