@@ -19,7 +19,6 @@
  */
 
 #include "ESAT_OBC-subsystems/ESAT_OBCSubsystem.h"
-#include "ESAT_OBC-hardware/ESAT_OBCClock.h"
 #include "ESAT_OBC-hardware/ESAT_OBCLED.h"
 #include "ESAT_OBC-hardware/ESAT_TelemetryStorage.h"
 #include "ESAT_OBC-telecommands/ESAT_OBCDisableTelemetryTelecommand.h"
@@ -46,26 +45,33 @@ void ESAT_OBCSubsystemClass::addTelemetry(ESAT_CCSDSTelemetryPacketContents& tel
 
 void ESAT_OBCSubsystemClass::begin()
 {
+  beginTelemetry();
+  beginTelecommands();
+  beginHardware();
+}
+
+void ESAT_OBCSubsystemClass::beginHardware()
+{
   storeTelemetry = false;
-  telemetryPacketBuilder =
-    ESAT_CCSDSTelemetryPacketBuilder(getApplicationProcessIdentifier(),
-                                     MAJOR_VERSION_NUMBER,
-                                     MINOR_VERSION_NUMBER,
-                                     PATCH_VERSION_NUMBER,
-                                     ESAT_OBCClock);
-  enabledTelemetry.clearAll();
-  pendingTelemetry.clearAll();
+  ESAT_OBCLED.begin();
+}
+
+void ESAT_OBCSubsystemClass::beginTelemetry()
+{
   addTelemetry(ESAT_OBCHousekeepingTelemetry);
   enableTelemetry(ESAT_OBCHousekeepingTelemetry.packetIdentifier());
   addTelemetry(ESAT_OBCLinesTelemetry);
   disableTelemetry(ESAT_OBCLinesTelemetry.packetIdentifier());
+}
+
+void ESAT_OBCSubsystemClass::beginTelecommands()
+{
   addTelecommand(ESAT_OBCSetTimeTelecommand);
   addTelecommand(ESAT_OBCStoreTelemetryTelecommand);
   addTelecommand(ESAT_OBCDownloadStoredTelemetryTelecommand);
   addTelecommand(ESAT_OBCEraseStoredTelemetryTelecommand);
   addTelecommand(ESAT_OBCEnableTelemetryTelecommand);
   addTelecommand(ESAT_OBCDisableTelemetryTelecommand);
-  ESAT_OBCLED.begin();
 }
 
 void ESAT_OBCSubsystemClass::disableTelemetry(const byte identifier)
