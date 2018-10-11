@@ -235,6 +235,10 @@ void ESAT_OnBoardDataHandlingClass::writeTelemetry(ESAT_CCSDSPacket& packet)
   // The USB writer will just drop the packet if USB telemetry output
   // is disabled, so it is correct to always pass it the packet and
   // let it decide what to do.
+  if (!packet.isTelemetry())
+  {
+    return;
+  }
   for (ESAT_Subsystem* subsystem = firstSubsystem;
        subsystem != nullptr;
        subsystem = subsystem->nextSubsystem)
