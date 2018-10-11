@@ -22,11 +22,17 @@
 
 boolean ESAT_OBCLinesTelemetryClass::available()
 {
+  // The OBC lines telemetry packet is always available.
   return true;
 }
 
 boolean ESAT_OBCLinesTelemetryClass::fillUserData(ESAT_CCSDSPacket& packet)
 {
+  // This packet contains readings of all lines with the exception of
+  // those managed by hardware communication device peripherals (the
+  // I2C, serial and SPI interfaces), which cannot be read directly
+  // without invalidating the state of the communication device
+  // peripherals.
   packet.writeWord(analogRead(ADC12));
   packet.writeWord(analogRead(ADC13));
   packet.writeWord(analogRead(ADC14));
@@ -55,6 +61,8 @@ boolean ESAT_OBCLinesTelemetryClass::fillUserData(ESAT_CCSDSPacket& packet)
   packet.writeBoolean(boolean(digitalRead(LED_O)));
   packet.writeWord(analogRead(TEMPSENSOR));
   packet.writeWord(analogRead(VCC_2));
+  // This packet is valid in general, except when it is truncated
+  // because its capacity was too small.
   if (packet.triedToWriteBeyondCapacity())
   {
     return false;
