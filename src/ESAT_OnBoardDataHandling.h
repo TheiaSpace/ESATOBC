@@ -101,6 +101,20 @@ class ESAT_OnBoardDataHandlingClass
 
     // Use this to write packets to the USB interface.
     ESAT_CCSDSPacketToKISSFrameWriter usbWriter;
+
+    // Read a telecommand packet from a subsystem.  Return true on
+    // success; otherwise return false.
+    boolean readTelecommandFromSubsystem(ESAT_CCSDSPacket& packet,
+                                         ESAT_Subsystem& subsystem);
+
+    // Read a telecommand packet form the USB interface.  Return true
+    // on success; otherwise return false.
+    boolean readTelecommandFromUSB(ESAT_CCSDSPacket& packet);
+
+    // Read a telemetry packet from a subsystem.  Return true on
+    // success; otherwise return false.
+    boolean readTelemetryFromSubsystem(ESAT_CCSDSPacket& packet,
+                                       ESAT_Subsystem& subsystem);
 };
 
 // Global instance of the on-board data handling library.

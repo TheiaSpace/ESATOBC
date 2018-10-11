@@ -41,17 +41,6 @@ void ESAT_EPSSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& packet)
 {
   // We pass telecommand packets to the EPS board with our
   // CCSDS-Space-Packet-over-I2C protocol.
-  packet.rewind();
-  const ESAT_CCSDSPrimaryHeader primaryHeader = packet.readPrimaryHeader();
-  if (primaryHeader.packetType != primaryHeader.TELECOMMAND)
-  {
-    return;
-  }
-  if (primaryHeader.applicationProcessIdentifier
-      != getApplicationProcessIdentifier())
-  {
-    return;
-  }
   (void) ESAT_I2CMaster.writePacket(packet,
                                     ADDRESS,
                                     MICROSECONDS_BETWEEN_CHUNKS);

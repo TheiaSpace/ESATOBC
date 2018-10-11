@@ -87,17 +87,6 @@ word ESAT_WifiSubsystemClass::getApplicationProcessIdentifier()
 
 void ESAT_WifiSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& packet)
 {
-  packet.rewind();
-  const ESAT_CCSDSPrimaryHeader primaryHeader = packet.readPrimaryHeader();
-  if (primaryHeader.packetType != primaryHeader.TELECOMMAND)
-  {
-    return;
-  }
-  if (primaryHeader.applicationProcessIdentifier
-      != getApplicationProcessIdentifier())
-  {
-    return;
-  }
   (void) wifiWriter.unbufferedWrite(packet);
 }
 
@@ -134,9 +123,8 @@ boolean ESAT_WifiSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
     {
       return false;
     }
-    const ESAT_CCSDSPrimaryHeader primaryHeader = packet.readPrimaryHeader();
     // If we got a telecommand packet, report success.
-    if (primaryHeader.packetType == primaryHeader.TELECOMMAND)
+    if (packet.isTelecommand())
     {
       return true;
     }
@@ -173,9 +161,8 @@ boolean ESAT_WifiSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
       readingTelemetry = false;
       return false;
     }
-    const ESAT_CCSDSPrimaryHeader primaryHeader = packet.readPrimaryHeader();
     // If we got a telemetry packet, report success.
-    if (primaryHeader.packetType == primaryHeader.TELEMETRY)
+    if (packet.isTelemetry())
     {
       return true;
     }
@@ -197,10 +184,8 @@ boolean ESAT_WifiSubsystemClass::telemetryAvailable()
 
 boolean ESAT_WifiSubsystemClass::telecommandAlreadyBuffered() const
 {
-  const ESAT_CCSDSPrimaryHeader primaryHeader =
-    bufferedPacket.readPrimaryHeader();
-  if ((primaryHeader.packetType == primaryHeader.TELECOMMAND)
-      && (primaryHeader.packetDataLength > 0))
+  if (bufferedPacket.isTelecommand()
+      && (bufferedPacket.packetDataLength() > 0))
   {
     return true;
   }
@@ -212,10 +197,8 @@ boolean ESAT_WifiSubsystemClass::telecommandAlreadyBuffered() const
 
 boolean ESAT_WifiSubsystemClass::telemetryAlreadyBuffered() const
 {
-  const ESAT_CCSDSPrimaryHeader primaryHeader =
-    bufferedPacket.readPrimaryHeader();
-  if ((primaryHeader.packetType == primaryHeader.TELEMETRY)
-      && (primaryHeader.packetDataLength > 0))
+  if (bufferedPacket.isTelemetry()
+      && (bufferedPacket.packetDataLength() > 0))
   {
     return true;
   }
@@ -247,12 +230,6 @@ void ESAT_WifiSubsystemClass::writeTelemetry(ESAT_CCSDSPacket& packet)
   // telemetry packets if the Wifi board is connected and therefore
   // not blocking.
   if (!isConnected())
-  {
-    return;
-  }
-  packet.rewind();
-  const ESAT_CCSDSPrimaryHeader primaryHeader = packet.readPrimaryHeader();
-  if (primaryHeader.packetType != primaryHeader.TELEMETRY)
   {
     return;
   }

@@ -55,12 +55,6 @@ word ESAT_ADCSSubsystemClass::getApplicationProcessIdentifier()
 void ESAT_ADCSSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& packet)
 {
 #ifdef ESAT_ADCS_CODE_RUNNING_IN_ADCS
-  packet.rewind();
-  const ESAT_CCSDSPrimaryHeader primaryHeader = packet.readPrimaryHeader();
-  if (primaryHeader.packetType != primaryHeader.TELECOMMAND)
-  {
-    return;
-  }
   (void) ESAT_I2CMaster.writePacket(packet, ADDRESS);
 #else
   ESAT_ADCS.handleTelecommand(packet);
