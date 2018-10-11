@@ -25,6 +25,7 @@
 #include <ESAT_CCSDSTelecommandPacketDispatcher.h>
 #include <ESAT_CCSDSTelemetryPacketBuilder.h>
 #include <ESAT_FlagContainer.h>
+#include "ESAT_OBC-hardware/ESAT_OBCClock.h"
 #include "ESAT_OBC-subsystems/ESAT_Subsystem.h"
 
 // Interface to the OBC (on-board computer subsystem) from the point
@@ -106,7 +107,12 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
       ESAT_CCSDSTelecommandPacketDispatcher(APPLICATION_PROCESS_IDENTIFIER);
 
     // Telemetry packet builder.
-    ESAT_CCSDSTelemetryPacketBuilder telemetryPacketBuilder;
+    ESAT_CCSDSTelemetryPacketBuilder telemetryPacketBuilder =
+      ESAT_CCSDSTelemetryPacketBuilder(getApplicationProcessIdentifier(),
+                                       MAJOR_VERSION_NUMBER,
+                                       MINOR_VERSION_NUMBER,
+                                       PATCH_VERSION_NUMBER,
+                                       ESAT_OBCClock);
 
     // Read the next stored telemetry packet and fill the given packet buffer.
     // Return true on success; otherwise return false.
