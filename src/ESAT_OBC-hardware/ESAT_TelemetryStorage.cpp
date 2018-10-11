@@ -122,7 +122,6 @@ void ESAT_TelemetryStorageClass::write(ESAT_CCSDSPacket& packet)
   // The file shouldn't be open.
   if (file)
   {
-    error = true;
     return;
   }
   // We open and close the telemetry archive every time we write a new
