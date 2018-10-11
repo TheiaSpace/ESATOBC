@@ -96,11 +96,10 @@ boolean ESAT_OnBoardDataHandlingClass::readTelecommand(ESAT_CCSDSPacket& packet)
   // decide what to do.
   while (telecommandSubsystem != nullptr)
   {
-    const bool successfulRead =
-      telecommandSubsystem->readTelecommand(packet);
-    if (successfulRead)
+    const boolean gotTelecommand =
+      readTelecommandFromSubsystem(packet, *telecommandSubsystem);
+    if (gotTelecommand)
     {
-      packet.rewind();
       return true;
     }
     else
@@ -108,7 +107,40 @@ boolean ESAT_OnBoardDataHandlingClass::readTelecommand(ESAT_CCSDSPacket& packet)
       telecommandSubsystem = telecommandSubsystem->nextSubsystem;
     }
   }
-  return usbReader.read(packet);
+  return readTelecommandFromUSB(packet);
+}
+
+boolean ESAT_OnBoardDataHandlingClass::readTelecommandFromSubsystem(ESAT_CCSDSPacket& packet,
+                                                                    ESAT_Subsystem& subsystem)
+{
+  packet.flush();
+  const boolean gotPacket = subsystem.readTelecommand(packet);
+  if (gotPacket && packet.isTelecommand())
+  {
+    packet.rewind();
+    return true;
+  }
+  else
+  {
+    packet.flush();
+    return false;
+  }
+}
+
+boolean ESAT_OnBoardDataHandlingClass::readTelecommandFromUSB(ESAT_CCSDSPacket& packet)
+{
+  packet.flush();
+  const boolean gotPacket = usbReader.read(packet);
+  if (gotPacket && packet.isTelecommand())
+  {
+    packet.rewind();
+    return true;
+  }
+  else
+  {
+    packet.flush();
+    return false;
+  }
 }
 
 boolean ESAT_OnBoardDataHandlingClass::readSubsystemsTelemetry(ESAT_CCSDSPacket& packet)
