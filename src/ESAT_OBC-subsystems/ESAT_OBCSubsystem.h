@@ -45,8 +45,8 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
     void addTelecommand(ESAT_CCSDSTelecommandPacketHandler& telecommand);
 
     // Register a telemetry packet.
-    // The telemetry packet will be disabled by default;
-    // enable it with enableTelemetry().
+    // The telemetry packet will be enabled by default;
+    // it can be disabled with disableTelemetry().
     void addTelemetry(ESAT_CCSDSTelemetryPacketContents& telemetry);
 
     // Start the OBC.
