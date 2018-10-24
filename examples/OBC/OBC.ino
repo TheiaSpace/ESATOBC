@@ -135,6 +135,7 @@ byte wifiPacketDataBuffer[PACKET_DATA_BUFFER_LENGTH];
 // once.
 void setup()
 {
+  ESAT_OBCLED.begin();
   Serial.begin();
   SerialWifi.begin(9600);
   Wire.begin();
