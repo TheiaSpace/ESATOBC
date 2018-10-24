@@ -19,7 +19,6 @@
  */
 
 #include "ESAT_OBC-subsystems/ESAT_OBCSubsystem.h"
-#include "ESAT_OBC-hardware/ESAT_OBCLED.h"
 #include "ESAT_OBC-hardware/ESAT_TelemetryStorage.h"
 #include "ESAT_OBC-telecommands/ESAT_OBCDisableTelemetryTelecommand.h"
 #include "ESAT_OBC-telecommands/ESAT_OBCDownloadStoredTelemetryTelecommand.h"
@@ -53,7 +52,6 @@ void ESAT_OBCSubsystemClass::begin()
 void ESAT_OBCSubsystemClass::beginHardware()
 {
   storeTelemetry = false;
-  ESAT_OBCLED.begin();
 }
 
 void ESAT_OBCSubsystemClass::beginTelemetry()
@@ -149,14 +147,12 @@ boolean ESAT_OBCSubsystemClass::telemetryAvailable()
 void ESAT_OBCSubsystemClass::update()
 {
   // The OBC has a few periodic tasks that it must do on each cycle:
-  // - reset the list of pending telemetry packets;
-  // - toggle the on-board heartbeat LED.
+  // - reset the list of pending telemetry packets.
   const ESAT_FlagContainer availableTelemetry =
     telemetryPacketBuilder.available();
   const ESAT_FlagContainer availableAndEnabledTelemetry =
     availableTelemetry & enabledTelemetry;
   pendingTelemetry = availableAndEnabledTelemetry;
-  ESAT_OBCLED.toggle();
 }
 
 void ESAT_OBCSubsystemClass::writeTelemetry(ESAT_CCSDSPacket& packet)
