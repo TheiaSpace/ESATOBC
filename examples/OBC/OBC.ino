@@ -19,6 +19,7 @@
 #include <ESAT_I2CMaster.h>
 #include <ESAT_KISSStream.h>
 #include <ESAT_OnBoardDataHandling.h>
+#include <ESAT_OBC-hardware/ESAT_OBCLED.h>
 #include <ESAT_OBC-subsystems/ESAT_ADCSSubsystem.h>
 #include <ESAT_OBC-subsystems/ESAT_EPSSubsystem.h>
 #include <ESAT_OBC-subsystems/ESAT_OBCSubsystem.h>
@@ -128,6 +129,8 @@ byte wifiPacketDataBuffer[PACKET_DATA_BUFFER_LENGTH];
 //   handling module.
 // - Begin the subsystems.
 // - Begin the timer that keeps a precise timing of the main loop.
+// - Begin the OBC LED, which can be used to prove that the OBC
+//   board is working.
 // This is the first function of the program to be run at it runs only
 // once.
 void setup()
@@ -155,6 +158,7 @@ void setup()
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_WifiSubsystem);
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ExampleSubsystem);
   ESAT_Timer.begin(PERIOD);
+  ESAT_OBCLED.begin();
 }
 
 // Body of the main loop of the program:
@@ -165,6 +169,7 @@ void setup()
 // - Forward the retrieved telemetry packets to the subsystems so that
 //   they can use them (for example, a subsystem may send telemetry
 //   packets to the ground station or it can store them for later use).
+// - Toggle the OBC LED to prove that the OBC board is working.
 // This function is run in an infinite loop that starts after setup().
 void loop()
 {
@@ -180,4 +185,5 @@ void loop()
   {
     ESAT_OnBoardDataHandling.writeTelemetry(packet);
   }
+  ESAT_OBCLED.toggle();
 }
