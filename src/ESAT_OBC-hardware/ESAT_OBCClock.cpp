@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2017, 2018 Theia Space, Universidad Politécnica de Madrid
+ *
  * This file is part of Theia Space's ESAT OBC library.
  *
  * Theia Space's ESAT OBC library is free software: you can
@@ -16,12 +18,25 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESAT_OBCClock.h"
+#include "ESAT_OBC-hardware/ESAT_OBCClock.h"
 #include <ESAT_Util.h>
 #include <Wire.h>
 
 ESAT_Timestamp ESAT_OBCClockClass::read()
 {
+  // The on-board real-time clock stores the time in seven consecutive
+  // registers starting at TIME_REGISTER in the following order:
+  // - seconds (from 0 to 59);
+  // - minutes (from 0 to 59);
+  // - hours (from 0 to 23);
+  // - day of week (we ignore it);
+  // - day of month (from 1 to 31);
+  // - month (from 1 to 12);
+  // - year (from 0 to 99).
+  // As this code was written during the first quarter of the XXI century,
+  // we assume that the actual year goes from 2000 to 2099.  For a more
+  // extended range of years, we would need to store the extra information
+  // elsewhere.
   Wire.beginTransmission(ADDRESS);
   Wire.write(TIME_REGISTER);
   const byte errorCode = Wire.endTransmission();
@@ -41,6 +56,7 @@ ESAT_Timestamp ESAT_OBCClockClass::read()
   const byte minutes = Wire.read();
   const byte hours = Wire.read();
   const byte weekDay = Wire.read();
+  (void) weekDay; // Unused.
   const byte day = Wire.read();
   const byte month = Wire.read();
   const byte year = Wire.read();
@@ -54,6 +70,19 @@ ESAT_Timestamp ESAT_OBCClockClass::read()
 
 void ESAT_OBCClockClass::write(ESAT_Timestamp timestamp)
 {
+  // The on-board real-time clock stores the time in seven consecutive
+  // registers starting at TIME_REGISTER in the following order:
+  // - seconds (from 0 to 59);
+  // - minutes (from 0 to 59);
+  // - hours (from 0 to 23);
+  // - day of week (we don't use it, so we write a dummy value);
+  // - day of month (from 1 to 31);
+  // - month (from 1 to 12);
+  // - year (from 0 to 99).
+  // As this code was written during the first quarter of the XXI century,
+  // we assume that the actual year goes from 2000 to 2099.  For a more
+  // extended range of years, we would need to store the extra information
+  // elsewhere.
   Wire.beginTransmission(ADDRESS);
   Wire.write(TIME_REGISTER);
   Wire.write(ESAT_Util.encodeBinaryCodedDecimalByte(timestamp.seconds));

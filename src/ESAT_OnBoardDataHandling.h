@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2017, 2018 Theia Space, Universidad Politécnica de Madrid
+ *
  * This file is part of Theia Space's ESAT OBC library.
  *
  * Theia Space's ESAT OBC library is free software: you can
@@ -21,8 +23,9 @@
 
 #include <Arduino.h>
 #include <ESAT_CCSDSPacket.h>
-#include <ESAT_KISSStream.h>
-#include "ESAT_Subsystem.h"
+#include <ESAT_CCSDSPacketFromKISSFrameReader.h>
+#include <ESAT_CCSDSPacketToKISSFrameWriter.h>
+#include "ESAT_OBC-subsystems/ESAT_Subsystem.h"
 
 // On-board data handling library.
 // ESAT_OnBoardDataHandling operates on the subsystems (which
@@ -81,34 +84,37 @@ class ESAT_OnBoardDataHandlingClass
     void writeTelemetry(ESAT_CCSDSPacket& packet);
 
   private:
-    static const byte MAXIMUM_NUMBER_OF_SUBSYSTEMS = 16;
-    ESAT_Subsystem* subsystems[MAXIMUM_NUMBER_OF_SUBSYSTEMS];
-    byte numberOfSubsystems;
-    byte telecommandIndex;
-    byte telemetryIndex;
+    // Head of the list of subsystems visited by readTelecommand().
+    ESAT_Subsystem* telecommandSubsystem;
 
-    // Store incoming USB telecommands in this buffer.
-    byte* usbTelecommandBuffer;
+    // Head of the list of subsystems visited by readTelemetry().
+    ESAT_Subsystem* telemetrySubsystem;
 
-    // Length of the USB telecommand buffer.
-    unsigned long usbTelecommandBufferLength;
+    // First subsystem of the list of registered subsystems.
+    ESAT_Subsystem* firstSubsystem;
 
-    // Decode USB KISS frames with telecommands with this stream.
-    ESAT_KISSStream usbTelecommandDecoder;
+    // Last subsystem of the list of registered subsystems.
+    ESAT_Subsystem* lastSubsystem;
 
-    // True if the reception of telecommands from the USB interface is
-    // enabled; false otherwise.
-    boolean usbTelecommandsEnabled;
+    // Use this to read packets from the USB interface.
+    ESAT_CCSDSPacketFromKISSFrameReader usbReader;
 
-    // True if the emission of telemetry through the USB interface is
-    // enabled; false otherwise.
-    boolean usbTelemetryEnabled;
+    // Use this to write packets to the USB interface.
+    ESAT_CCSDSPacketToKISSFrameWriter usbWriter;
 
-    // Read a telecommand from the USB interface.
+    // Read a telecommand packet from a subsystem.  Return true on
+    // success; otherwise return false.
+    boolean readTelecommandFromSubsystem(ESAT_CCSDSPacket& packet,
+                                         ESAT_Subsystem& subsystem);
+
+    // Read a telecommand packet form the USB interface.  Return true
+    // on success; otherwise return false.
     boolean readTelecommandFromUSB(ESAT_CCSDSPacket& packet);
 
-    // Write a telemetry packet to the USB interface.
-    void writeTelemetryToUSB(ESAT_CCSDSPacket& packet);
+    // Read a telemetry packet from a subsystem.  Return true on
+    // success; otherwise return false.
+    boolean readTelemetryFromSubsystem(ESAT_CCSDSPacket& packet,
+                                       ESAT_Subsystem& subsystem);
 };
 
 // Global instance of the on-board data handling library.

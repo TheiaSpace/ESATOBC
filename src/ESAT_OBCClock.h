@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2018 Theia Space, Universidad Politécnica de Madrid
+ *
  * This file is part of Theia Space's ESAT OBC library.
  *
  * Theia Space's ESAT OBC library is free software: you can
@@ -16,45 +18,6 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESAT_Clock_h
-#define ESAT_Clock_h
-
-#include <Arduino.h>
-#include <ESAT_Timestamp.h>
-
-// Real-time clock.
-// The underlying hardware is the DS1338 serial real-time clock
-// mounted on the ESAT OBC board.
-// Communications are done through the OBC I2C bus.
-// Use the global instance ESAT_OBCClock.
-class ESAT_OBCClockClass
-{
-  public:
-    // True on communication error.  Must be reset manually.
-    boolean error;
-
-    // Read the current time.
-    // Return the date and time in ISO 8601 format.
-    // Set the error flag on error.
-    ESAT_Timestamp read();
-
-    // Set the current time.
-    // Pass the date and time in ISO 8601 format.
-    // Set the error flag on error.
-    void write(ESAT_Timestamp time);
-
-  private:
-    static const byte ADDRESS = 0x68;
-    static const byte TIME_REGISTER = 0;
-
-    // BCD to binary conversion.
-    byte BCDToBinary(byte value);
-
-    // Binary to BCD conversion.
-    byte binaryToBCD(byte value);
-};
-
-// Global instance of the OBC clock library.
-extern ESAT_OBCClockClass ESAT_OBCClock;
-
+#ifndef ESAT_OBCClock_h
+#include "ESAT_OBC-hardware/ESAT_OBCClock.h"
 #endif /* ESAT_OBCClock_h */

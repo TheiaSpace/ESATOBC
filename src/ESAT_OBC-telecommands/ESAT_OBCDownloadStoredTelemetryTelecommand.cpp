@@ -18,6 +18,22 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESAT_ADCSSubsystem_h
-#include "ESAT_OBC-subsystems/ESAT_ADCSSubsystem.h"
-#endif /* ESAT_ADCSSubsystem_h */
+#include "ESAT_OBC-telecommands/ESAT_OBCDownloadStoredTelemetryTelecommand.h"
+#include "ESAT_OBC-hardware/ESAT_TelemetryStorage.h"
+
+boolean ESAT_OBCDownloadStoredTelemetryTelecommandClass::handleUserData(ESAT_CCSDSPacket packet)
+{
+  const ESAT_Timestamp beginTimestamp = packet.readTimestamp();
+  const ESAT_Timestamp endTimestamp = packet.readTimestamp();
+  if (packet.triedToReadBeyondLength())
+  {
+    return false;
+  }
+  else
+  {
+    ESAT_TelemetryStorage.beginReading(beginTimestamp, endTimestamp);
+    return true;
+  }
+}
+
+ESAT_OBCDownloadStoredTelemetryTelecommandClass ESAT_OBCDownloadStoredTelemetryTelecommand;

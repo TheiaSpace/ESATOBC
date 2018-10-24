@@ -18,6 +18,14 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESAT_ADCSSubsystem_h
-#include "ESAT_OBC-subsystems/ESAT_ADCSSubsystem.h"
-#endif /* ESAT_ADCSSubsystem_h */
+#include "ESAT_OBC-telecommands/ESAT_OBCEraseStoredTelemetryTelecommand.h"
+#include "ESAT_OBC-hardware/ESAT_TelemetryStorage.h"
+
+boolean ESAT_OBCEraseStoredTelemetryTelecommandClass::handleUserData(const ESAT_CCSDSPacket packet)
+{
+  (void) packet;
+  ESAT_TelemetryStorage.erase();
+  return true;
+}
+
+ESAT_OBCEraseStoredTelemetryTelecommandClass ESAT_OBCEraseStoredTelemetryTelecommand;

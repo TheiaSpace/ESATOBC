@@ -1,4 +1,7 @@
 /*
+ * ESAT OBC Main Program version 4.1.0
+ * Copyright (C) 2017, 2018 Theia Space, Universidad Politécnica de Madrid
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,14 +16,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <ESAT_ADCSSubsystem.h>
-#include <ESAT_EPSSubsystem.h>
+#include <ESAT_I2CMaster.h>
 #include <ESAT_KISSStream.h>
-#include <ESAT_OBCSubsystem.h>
-#include <ESAT_WifiSubsystem.h>
 #include <ESAT_OnBoardDataHandling.h>
+#include <ESAT_OBC-hardware/ESAT_OBCLED.h>
+#include <ESAT_OBC-subsystems/ESAT_ADCSSubsystem.h>
+#include <ESAT_OBC-subsystems/ESAT_EPSSubsystem.h>
+#include <ESAT_OBC-subsystems/ESAT_OBCSubsystem.h>
+#include <ESAT_OBC-subsystems/ESAT_WifiSubsystem.h>
 #include <ESAT_Timer.h>
-#include <USBSerial.h>
 #include <SD.h>
 #include <Wire.h>
 
@@ -38,6 +42,7 @@ class ESAT_ExampleSubsystemClass: public ESAT_Subsystem
 {
   public:
     // Start the subsystem.
+    // This will be called once, during setup().
     void begin()
     {
     }
@@ -58,36 +63,49 @@ class ESAT_ExampleSubsystemClass: public ESAT_Subsystem
     // getApplicationProcessIdentifier().
     void handleTelecommand(ESAT_CCSDSPacket& packet)
     {
+      (void) packet;
     }
 
     // Fill a packet with the next telecommand packet available.
     // Return true if the operation was successful;
     // otherwise return false.
     // Called from ESAT_OnBoardDataHandling.readTelecommand().
+    // This function will be called at least once on each loop() cycle
+    // and again and again as long as it returns true, so make sure to
+    // return false when there are no telecommand packets ready: for
+    // example, if there is only one telecommand packet per cycle, the
+    // first call to readTelecommand() has to return true to signal
+    // that there was a packet and the next call has to return false
+    // to signal that there were no more packets.
     boolean readTelecommand(ESAT_CCSDSPacket& packet)
     {
+      (void) packet;
       return false;
     }
 
     // Fill a packet with the next telemetry packet available.
     // Return true if the operation was successful; otherwise return
-    // false.  Called from
-    // ESAT_OnBoardDataHandling.readSubsystemsTelemetry().
+    // false.
+    // Called from ESAT_OnBoardDataHandling.readSubsystemsTelemetry().
+    // This function will be called at least once on each loop() cycle
+    // and again and again as long as it returns true, so make sure
+    // to return false when there are no telemetry packets ready: for
+    // example, if there is only one telemetry packet per cycle, the
+    // first call to readTelemetry() has to return true to signal that
+    // there was a packet and the next call has to return false to
+    // signal that there were no more packets.
     boolean readTelemetry(ESAT_CCSDSPacket& packet)
     {
-      return false;
-    }
-
-    // Return true if there is new telemetry available;
-    // Otherwise return false.
-    // Called from ESAT_OnBoardDataHandling.readSubsystemsTelemetry().
-    boolean telemetryAvailable()
-    {
+      (void) packet;
       return false;
     }
 
     // Update the subsystem.
     // Called from OnBoardDataHandling.updateSubsystems().
+    // This function will be called once per loop() cycle.
+    // If this subsystem has counters for keeping track of packets
+    // pending to be read with readTelecommand() or readTelemetry(),
+    // this is a good place to reset them.
     void update()
     {
     }
@@ -96,6 +114,7 @@ class ESAT_ExampleSubsystemClass: public ESAT_Subsystem
     // Called from ESAT_OnBoardDataHandling.writeTelemetry().
     void writeTelemetry(ESAT_CCSDSPacket& packet)
     {
+      (void) packet;
     }
 };
 
@@ -116,7 +135,11 @@ const word WHOLE_PACKET_BUFFER_LENGTH =
 byte usbTelecommandBuffer[WHOLE_PACKET_BUFFER_LENGTH];
 
 // Accumulate incoming Wifi telecommands in this buffer.
-byte wifiTelecommandBuffer[WHOLE_PACKET_BUFFER_LENGTH];
+byte wifiReaderBuffer[WHOLE_PACKET_BUFFER_LENGTH];
+
+// Accumulate the packet data field of a full packet coming
+// from the Wifi board in this buffer.
+byte wifiPacketDataBuffer[PACKET_DATA_BUFFER_LENGTH];
 
 // Start peripherals and do the initial bookkeeping here:
 // - Activate the reception of telecommands from the USB interface.
@@ -125,20 +148,26 @@ byte wifiTelecommandBuffer[WHOLE_PACKET_BUFFER_LENGTH];
 //   handling module.
 // - Begin the subsystems.
 // - Begin the timer that keeps a precise timing of the main loop.
+// - Begin the OBC LED, which can be used to prove that the OBC
+//   board is working.
 // This is the first function of the program to be run at it runs only
 // once.
 void setup()
 {
-  Serial.begin(9600);
-  USB.begin();
+  ESAT_OBCLED.begin();
+  Serial.begin();
+  SerialWifi.begin(9600);
   Wire.begin();
-  SD.begin(SS1);
+  SD.begin(CS_SD);
+  ESAT_I2CMaster.begin(Wire);
   delay(1000);
   ESAT_OBCSubsystem.begin();
   ESAT_EPSSubsystem.begin();
   ESAT_ADCSSubsystem.begin();
-  ESAT_WifiSubsystem.begin(wifiTelecommandBuffer,
-                           sizeof(wifiTelecommandBuffer));
+  ESAT_WifiSubsystem.begin(wifiReaderBuffer,
+                           sizeof(wifiReaderBuffer),
+                           wifiPacketDataBuffer,
+                           sizeof(wifiPacketDataBuffer));
   ESAT_ExampleSubsystem.begin();
   ESAT_OnBoardDataHandling.enableUSBTelecommands(usbTelecommandBuffer,
                                                  sizeof(usbTelecommandBuffer));
@@ -149,6 +178,7 @@ void setup()
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_WifiSubsystem);
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ExampleSubsystem);
   ESAT_Timer.begin(PERIOD);
+  ESAT_OBCLED.begin();
 }
 
 // Body of the main loop of the program:
@@ -159,6 +189,7 @@ void setup()
 // - Forward the retrieved telemetry packets to the subsystems so that
 //   they can use them (for example, a subsystem may send telemetry
 //   packets to the ground station or it can store them for later use).
+// - Toggle the OBC LED to prove that the OBC board is working.
 // This function is run in an infinite loop that starts after setup().
 void loop()
 {
@@ -174,4 +205,5 @@ void loop()
   {
     ESAT_OnBoardDataHandling.writeTelemetry(packet);
   }
+  ESAT_OBCLED.toggle();
 }

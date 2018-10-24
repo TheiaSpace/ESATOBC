@@ -18,6 +18,32 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESAT_ADCSSubsystem_h
-#include "ESAT_OBC-subsystems/ESAT_ADCSSubsystem.h"
-#endif /* ESAT_ADCSSubsystem_h */
+#ifndef ESAT_OBCLED_h
+#define ESAT_OBCLED_h
+
+#include <Arduino.h>
+
+// Heartbeat LED on the OBC board.
+// Use the global instance ESAT_OBCLED.
+class ESAT_OBCLEDClass
+{
+  public:
+    // Configure the LED control line.
+    void begin();
+
+    // Toggle the state of the LED.
+    void toggle();
+
+  private:
+    // Pin number of the LED control line.
+    static const int LED_CONTROL_LINE = LED_O;
+
+    // Next state of the LED.
+    int nextState;
+};
+
+
+// Global instance of the OBC LED library.
+extern ESAT_OBCLEDClass ESAT_OBCLED;
+
+#endif /* ESAT_OBCLED_h */

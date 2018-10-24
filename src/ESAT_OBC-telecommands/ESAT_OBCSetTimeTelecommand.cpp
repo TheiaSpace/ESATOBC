@@ -18,6 +18,22 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESAT_ADCSSubsystem_h
-#include "ESAT_OBC-subsystems/ESAT_ADCSSubsystem.h"
-#endif /* ESAT_ADCSSubsystem_h */
+#include "ESAT_OBC-telecommands/ESAT_OBCSetTimeTelecommand.h"
+#include "ESAT_OBC-hardware/ESAT_OBCClock.h"
+
+boolean ESAT_OBCSetTimeTelecommandClass::handleUserData(ESAT_CCSDSPacket packet)
+{
+  const ESAT_Timestamp timestamp = packet.readTimestamp();
+  if (packet.triedToReadBeyondLength())
+  {
+    (void) timestamp; // Unused.
+    return false;
+  }
+  else
+  {
+    ESAT_OBCClock.write(timestamp);
+    return true;
+  }
+}
+
+ESAT_OBCSetTimeTelecommandClass ESAT_OBCSetTimeTelecommand;

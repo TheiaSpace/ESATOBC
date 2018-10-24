@@ -18,6 +18,26 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESAT_ADCSSubsystem_h
-#include "ESAT_OBC-subsystems/ESAT_ADCSSubsystem.h"
-#endif /* ESAT_ADCSSubsystem_h */
+#include "ESAT_OBC-hardware/ESAT_OBCLED.h"
+
+void ESAT_OBCLEDClass::begin()
+{
+  pinMode(LED_CONTROL_LINE, OUTPUT);
+  digitalWrite(LED_CONTROL_LINE, LOW);
+  nextState = HIGH;
+}
+
+void ESAT_OBCLEDClass::toggle()
+{
+  digitalWrite(LED_CONTROL_LINE, nextState);
+  if (nextState == HIGH)
+  {
+    nextState = LOW;
+  }
+  else
+  {
+    nextState = HIGH;
+  }
+}
+
+ESAT_OBCLEDClass ESAT_OBCLED;

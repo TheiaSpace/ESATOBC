@@ -18,6 +18,22 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESAT_ADCSSubsystem_h
-#include "ESAT_OBC-subsystems/ESAT_ADCSSubsystem.h"
-#endif /* ESAT_ADCSSubsystem_h */
+#include "ESAT_OBC-telecommands/ESAT_OBCDisableTelemetryTelecommand.h"
+#include "ESAT_OBC-subsystems/ESAT_OBCSubsystem.h"
+
+boolean ESAT_OBCDisableTelemetryTelecommandClass::handleUserData(ESAT_CCSDSPacket packet)
+{
+  const byte identifier = packet.readByte();
+  if (packet.triedToReadBeyondLength())
+  {
+    (void) identifier; // Unused.
+    return false;
+  }
+  else
+  {
+    ESAT_OBCSubsystem.disableTelemetry(identifier);
+    return true;
+  }
+}
+
+ESAT_OBCDisableTelemetryTelecommandClass ESAT_OBCDisableTelemetryTelecommand;
