@@ -42,6 +42,7 @@ class ESAT_ExampleSubsystemClass: public ESAT_Subsystem
 {
   public:
     // Start the subsystem.
+    // This will be called once, during setup().
     void begin()
     {
     }
@@ -69,6 +70,13 @@ class ESAT_ExampleSubsystemClass: public ESAT_Subsystem
     // Return true if the operation was successful;
     // otherwise return false.
     // Called from ESAT_OnBoardDataHandling.readTelecommand().
+    // This function will be called at least once on each loop() cycle
+    // and again and again as long as it returns true, so make sure to
+    // return false when there are no telecommand packets ready: for
+    // example, if there is only one telecommand packet per cycle, the
+    // first call to readTelecommand() has to return true to signal
+    // that there was a packet and the next call has to return false
+    // to signal that there were no more packets.
     boolean readTelecommand(ESAT_CCSDSPacket& packet)
     {
       (void) packet;
@@ -77,8 +85,15 @@ class ESAT_ExampleSubsystemClass: public ESAT_Subsystem
 
     // Fill a packet with the next telemetry packet available.
     // Return true if the operation was successful; otherwise return
-    // false.  Called from
-    // ESAT_OnBoardDataHandling.readSubsystemsTelemetry().
+    // false.
+    // Called from ESAT_OnBoardDataHandling.readSubsystemsTelemetry().
+    // This function will be called at least once on each loop() cycle
+    // and again and again as long as it returns true, so make sure
+    // to return false when there are no telemetry packets ready: for
+    // example, if there is only one telemetry packet per cycle, the
+    // first call to readTelemetry() has to return true to signal that
+    // there was a packet and the next call has to return false to
+    // signal that there were no more packets.
     boolean readTelemetry(ESAT_CCSDSPacket& packet)
     {
       (void) packet;
@@ -87,6 +102,10 @@ class ESAT_ExampleSubsystemClass: public ESAT_Subsystem
 
     // Update the subsystem.
     // Called from OnBoardDataHandling.updateSubsystems().
+    // This function will be called once per loop() cycle.
+    // If this subsystem has counters for keeping track of packets
+    // pending to be read with readTelecommand() or readTelemetry(),
+    // this is a good place to reset them.
     void update()
     {
     }
