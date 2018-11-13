@@ -33,13 +33,19 @@
 #else
 #include <ESAT_ADCS.h>
 #endif /* ESAT_ADCS_CODE_RUNNING_IN_ADCS */
+#include "ESAT_OBC-hardware/ESAT_OBCClock.h"
 
 
 void ESAT_ADCSSubsystemClass::begin()
 {
 #ifdef ESAT_ADCS_CODE_RUNNING_IN_ADCS
+  // The ADCS board might not be ready yet.  We will set the time as
+  // soon as we know the ADCS board is ready: upon reception of the
+  // first telemetry packet.
+  timeIsSet = false;
 #else
   ESAT_ADCS.begin();
+  setTime();
 #endif /* ESAT_ADCS_CODE_RUNNING_IN_ADCS */
 }
 
@@ -72,10 +78,36 @@ boolean ESAT_ADCSSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
 #ifdef ESAT_ADCS_CODE_RUNNING_IN_ADCS
   newTelemetryPacket =
     ESAT_I2CMaster.readNextTelemetry(packet, ADDRESS);
+  // If we received a telemetry packet, the ADCS board is ready, so we
+  // can set the time if we haven't done it yet.
+  if (newTelemetryPacket && !timeIsSet)
+  {
+    setTime();
+    timeIsSet = true;
+  }
   return newTelemetryPacket;
 #else
   return ESAT_ADCS.readTelemetry(packet);
 #endif /* ESAT_ADCS_CODE_RUNNING_IN_ADCS */
+}
+
+void ESAT_ADCSSubsystemClass::setTime()
+{
+  // Build and send a telecommand to set the ADCS time.
+  const byte packetDataBufferLength =
+    ESAT_CCSDSSecondaryHeader::LENGTH + 7;
+  byte packetDataBuffer[packetDataBufferLength];
+  ESAT_CCSDSPacket packet(packetDataBuffer, packetDataBufferLength);
+  const ESAT_Timestamp timestamp = ESAT_OBCClock.read();
+  packet.writeTelecommandHeaders(getApplicationProcessIdentifier(),
+                                 0,
+                                 timestamp,
+                                 SET_TIME_MAJOR_VERSION_NUMBER,
+                                 SET_TIME_MINOR_VERSION_NUMBER,
+                                 SET_TIME_PATCH_VERSION_NUMBER,
+                                 SET_TIME_PACKET_IDENTIFIER);
+  packet.writeTimestamp(timestamp);
+  handleTelecommand(packet);
 }
 
 boolean ESAT_ADCSSubsystemClass::telemetryAvailable()

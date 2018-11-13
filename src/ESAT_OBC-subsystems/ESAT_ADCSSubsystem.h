@@ -76,15 +76,25 @@ class ESAT_ADCSSubsystemClass: public ESAT_Subsystem
     // Unique identifier of the subsystem.
     static const word APPLICATION_PROCESS_IDENTIFIER = 2;
 
-    // Version numbers for I2C communication.
-    static const byte MAJOR_VERSION_NUMBER = 3;
-    static const byte MINOR_VERSION_NUMBER = 2;
-    static const byte PATCH_VERSION_NUMBER = 0;
-
     // True when there is a new telemetry packet available
     // (after update()); false otherwise (after readTelemetry()).
     boolean newTelemetryPacket;
+
+    // False before the first call to setTime() and true afterward.
+    boolean timeIsSet;
+
 #endif /* ESAT_ADCS_CODE_RUNNING_IN_ADCS */
+
+    // Version numbers of the telecommand for setting the time.
+    static const byte SET_TIME_MAJOR_VERSION_NUMBER = 3;
+    static const byte SET_TIME_MINOR_VERSION_NUMBER = 3;
+    static const byte SET_TIME_PATCH_VERSION_NUMBER = 0;
+
+    // Packet identifier of the telecommand for setting the time.
+    static const byte SET_TIME_PACKET_IDENTIFIER = 0xC0;
+
+    // Set the time of the ADCS.
+    void setTime();
 };
 
 // Global instance of ESAT_ADCSSubsystemClass.  Register
