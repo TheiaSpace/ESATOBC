@@ -69,7 +69,7 @@ class ESAT_ADCSSubsystemClass: public ESAT_Subsystem
     void writeTelemetry(ESAT_CCSDSPacket& packet);
 
 #ifdef ESAT_ADCS_CODE_RUNNING_IN_ADCS
-    private:
+  private:
     // I2C address of the ADCS board.
     static const byte ADDRESS = 2;
 
