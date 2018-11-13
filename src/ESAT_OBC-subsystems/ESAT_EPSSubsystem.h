@@ -76,14 +76,6 @@ class ESAT_EPSSubsystemClass: public ESAT_Subsystem
     static const byte MINOR_VERSION_NUMBER = 0;
     static const byte PATCH_VERSION_NUMBER = 0;
 
-    // True when there is a new telemetry packet available
-    // (after update()); false otherwise (after readTelemetry()).
-    boolean newTelemetryPacket;
-
-    // Set the time of the EPS board.
-    void setTime();
-
-  private:
     // Packet identifier of the EPS housekeeping telemetry packet.
     static const byte HOUSEKEEPING = 0x00;
 
@@ -93,6 +85,13 @@ class ESAT_EPSSubsystemClass: public ESAT_Subsystem
 
     // Command code for setting the time of the EPS clock.
     static const byte SET_CURRENT_TIME = 0x00;
+
+    // True when there is a new telemetry packet available
+    // (after update()); false otherwise (after readTelemetry()).
+    boolean newTelemetryPacket;
+
+    // Set the time of the EPS board.
+    void setTime();
 };
 
 // Global instance of ESAT_EPSSubsystemClass.  Register
