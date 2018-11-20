@@ -101,6 +101,9 @@ class ESAT_WifiSubsystemClass: public ESAT_Subsystem
     // board.
     static const byte RESET_TELEMETRY_QUEUE_SIGNAL_PIN = ESP_SLEEP;
 
+    // Command code for setting the time of the EPS clock.
+    static const byte SET_CURRENT_TIME = 0x30;
+
     // Number of microseconds to wait for the telemetry queue reset
     // condition to propagate.
     static const byte TELEMETRY_QUEUE_RESET_DELAY = 100;
@@ -149,6 +152,9 @@ class ESAT_WifiSubsystemClass: public ESAT_Subsystem
     // Return true if the ESAT Wifi board is connected to the server;
     // otherwise return false.
     boolean isConnected();
+
+    // Set the time of the Wifi board.
+    void setTime();
 
     // Return true if the buffered packet already contains a
     // telecommand packet; otherwise return false;
