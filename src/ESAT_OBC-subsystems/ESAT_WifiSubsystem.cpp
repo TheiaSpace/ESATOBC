@@ -32,6 +32,7 @@ void ESAT_WifiSubsystemClass::begin(byte readerBuffer[],
                   readerBufferLength,
                   packetDataBuffer,
                   packetDataBufferLength);
+  setTime();
   connect();
 }
 
@@ -175,6 +176,26 @@ boolean ESAT_WifiSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
       return false;
     }
   }
+}
+
+void ESAT_WifiSubsystemClass::setTime()
+{
+  // To set the time of the Wifi board, we send it the telecommand to
+  // do so with our CCSDS-Space-Packet-over-I2C protocol.
+  const byte packetDataBufferLength =
+    ESAT_CCSDSSecondaryHeader::LENGTH + 7;
+  byte packetDataBuffer[packetDataBufferLength];
+  ESAT_CCSDSPacket packet(packetDataBuffer, packetDataBufferLength);
+  const ESAT_Timestamp timestamp = ESAT_OBCClock.read();
+  packet.writeTelecommandHeaders(getApplicationProcessIdentifier(),
+                                 0,
+                                 timestamp,
+                                 MAJOR_VERSION_NUMBER,
+                                 MINOR_VERSION_NUMBER,
+                                 PATCH_VERSION_NUMBER,
+                                 SET_CURRENT_TIME);
+  packet.writeTimestamp(timestamp);
+  (void) wifiWriter.unbufferedWrite(packet);
 }
 
 boolean ESAT_WifiSubsystemClass::telemetryAvailable()
