@@ -17,7 +17,7 @@ along with Theia Space's ESAT OBC library.  If not, see
 <http://www.gnu.org/licenses/>.
 
 
-ESAT OBC library version 4.3.0.
+ESAT OBC library version 4.3.1.
 
 On-Board Computer (OBC) for ESAT.
 
