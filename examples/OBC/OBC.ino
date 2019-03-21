@@ -1,7 +1,7 @@
 /*
- * ESAT OBC Main Program version 4.3.1
+ * ESAT OBC Main Program version 4.3.2
  * Copyright (C) 2017, 2018 Theia Space, Universidad Politécnica de Madrid
- *
+ * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -27,6 +27,8 @@
 #include <ESAT_Timer.h>
 #include <SD.h>
 #include <Wire.h>
+#include <USBSerial.h>
+#include "ESAT_ThermalPayloadSubsystem.h"
 
 // Main program of the on-board computer.  It performs some initial
 // peripheral setup and bookkeeping in setup() and then it runs the
@@ -149,7 +151,7 @@ byte wifiPacketDataBuffer[PACKET_DATA_BUFFER_LENGTH];
 // - Begin the subsystems.
 // - Begin the timer that keeps a precise timing of the main loop.
 // - Begin the OBC LED, which can be used to prove that the OBC
-//   board is working.
+//   board is working (only in OBC board version X.X.X or newer).
 // This is the first function of the program to be run at it runs only
 // once.
 void setup()
@@ -178,7 +180,11 @@ void setup()
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_WifiSubsystem);
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ExampleSubsystem);
   ESAT_Timer.begin(PERIOD);
-  ESAT_OBCLED.begin();
+  if (UseThermalPayload == true) {
+    ESAT_ThermalPayloadSubsystem.begin();
+    ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ThermalPayloadSubsystem);
+    Serial.print(String("Thermal Payload is registered"));
+  }
 }
 
 // Body of the main loop of the program:
@@ -189,7 +195,6 @@ void setup()
 // - Forward the retrieved telemetry packets to the subsystems so that
 //   they can use them (for example, a subsystem may send telemetry
 //   packets to the ground station or it can store them for later use).
-// - Toggle the OBC LED to prove that the OBC board is working.
 // This function is run in an infinite loop that starts after setup().
 void loop()
 {
