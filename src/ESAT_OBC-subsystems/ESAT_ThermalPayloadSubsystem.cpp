@@ -91,4 +91,4 @@ void __attribute__((weak)) ESAT_ThermalPayloadSubsystemClass::writeTelemetry(ESA
 }
 
 // Unique global instance of ESAT_ThermalPayloadSubsystemClass.
-ESAT_ThermalPayloadSubsystemClass ESAT_ThermalPayloadSubsystem;
+__attribute__((weak)) ESAT_ThermalPayloadSubsystemClass ESAT_ThermalPayloadSubsystem;

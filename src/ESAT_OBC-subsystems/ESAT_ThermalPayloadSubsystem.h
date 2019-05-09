@@ -40,34 +40,34 @@ class ESAT_ThermalPayloadSubsystemClass: public ESAT_Subsystem
     static boolean enabled;
 
     // Start this subsystem.
-    void __attribute__((weak)) begin();
+    void begin();
 
     // Return the identifier of this subsystem.
-    word __attribute__((weak)) getApplicationProcessIdentifier();
+    word getApplicationProcessIdentifier();
 
     // Handle a telecommand.
-    void __attribute__((weak)) handleTelecommand(ESAT_CCSDSPacket& packet);
+    void handleTelecommand(ESAT_CCSDSPacket& packet);
 
     // Fill a packet with the next telecommand packet available.
     // Return true if the operation was successful;
     // otherwise return false.
-    boolean __attribute__((weak)) readTelecommand(ESAT_CCSDSPacket& packet);
+    boolean readTelecommand(ESAT_CCSDSPacket& packet);
 
     // Fill a packet with the next telemetry packet available.
     // Return true if the operation was successful;
     // otherwise return false.
-    boolean __attribute__((weak)) readTelemetry(ESAT_CCSDSPacket& packet);
+    boolean readTelemetry(ESAT_CCSDSPacket& packet);
 
     // Update the subsystem.
-    void __attribute__((weak)) update();
+    void update();
 
    // Send a telemetry packet to this subsystem.
-    void __attribute__((weak)) writeTelemetry(ESAT_CCSDSPacket& packet);
+    void writeTelemetry(ESAT_CCSDSPacket& packet);
 };
 
 // Global instance of ESAT_ThermalPayloadSubsystemClass.  Register
 // ESAT_ThermalPayloadSubsystem on the on-board data handling module with
 // ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ThermalPayloadSubsystem).
-extern __attribute__((weak)) ESAT_ThermalPayloadSubsystemClass ESAT_ThermalPayloadSubsystem;
+extern ESAT_ThermalPayloadSubsystemClass ESAT_ThermalPayloadSubsystem;
 
 #endif /* ESAT_ThermalPayloadSubsystem_h */
