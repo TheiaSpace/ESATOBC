@@ -36,6 +36,8 @@ class ESAT_ThermalPayloadSubsystemClass: public ESAT_Subsystem
   public:
     // The main program checks the value of this variable to decide
     // whether or not to use the thermal payload.
+    // This implies to use or leave unused and not initialized the OBC
+    // microcontroller pins used for the payload.
     static boolean enabled;
 
     // Start this subsystem.
