@@ -67,11 +67,6 @@ class ESAT_ThermalPayloadSubsystemClass: public ESAT_Subsystem
 
 };
 
-// Global variable to select if the Thermal Payload is registered
-// as a subsystem or not. This implies to use or leave
-// unused and not initialized the OBC uC PINs used for the PL.
-extern boolean __attribute__((weak)) UseThermalPayload;
-
 // Global instance of ESAT_ThermalPayloadSubsystemClass.  Register
 // ESAT_ThermalPayloadSubsystem on the on-board data handling module with
 // ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ThermalPayloadSubsystem).
