@@ -25,11 +25,11 @@
 #include <ESAT_OnBoardDataHandling.h>
 #include <ESAT_OBCClock.h>
 
-// Interface to the Thermal Payload  from the point
-// of view of the on-board data handling subsystem.  There is a global
-// instance: ESAT_ThermalPayloadSubsystem.  This should be the only instance of
-// ESAT_ThermalPayloadSubsystemClass.  Register the OBC subsystem on the on-board
-// data handling with
+// Interface to the Thermal Payload from the point of view of the
+// on-board data handling subsystem.  There is a global instance:
+// ESAT_ThermalPayloadSubsystem.  This should be the only instance of
+// ESAT_ThermalPayloadSubsystemClass.  Register the OBC subsystem on
+// the on-board data handling with
 // ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ThermalPayloadSubsystem).
 class ESAT_ThermalPayloadSubsystemClass: public ESAT_Subsystem
 {
@@ -64,7 +64,6 @@ class ESAT_ThermalPayloadSubsystemClass: public ESAT_Subsystem
 
    // Send a telemetry packet to this subsystem.
     void __attribute__((weak)) writeTelemetry(ESAT_CCSDSPacket& packet);
-
 };
 
 // Global instance of ESAT_ThermalPayloadSubsystemClass.  Register
