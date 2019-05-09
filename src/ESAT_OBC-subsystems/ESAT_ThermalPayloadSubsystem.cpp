@@ -27,7 +27,7 @@
      // Global variable to select if the Thermal Payload is registered
     // as a subsystem or not. This implies to use or leave
     // unused and not initialized the OBC uC PINs used for the PL.
-    boolean __attribute__((weak)) UseThermalPayload = true;
+boolean __attribute__((weak)) ESAT_ThermalPayloadSubsystemClass::enabled = true;
     
     void __attribute__((weak)) ESAT_ThermalPayloadSubsystemClass::begin()
     {

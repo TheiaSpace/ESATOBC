@@ -180,7 +180,7 @@ void setup()
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_WifiSubsystem);
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ExampleSubsystem);
   ESAT_Timer.begin(PERIOD);
-  if (UseThermalPayload == true) {
+  if (ESAT_ThermalPayloadSubsystem.enabled) {
     ESAT_ThermalPayloadSubsystem.begin();
     ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ThermalPayloadSubsystem);
     Serial.print(String("Thermal Payload is registered"));

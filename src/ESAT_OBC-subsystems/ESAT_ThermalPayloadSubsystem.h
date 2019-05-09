@@ -34,6 +34,10 @@
 class ESAT_ThermalPayloadSubsystemClass: public ESAT_Subsystem
 {
   public:
+    // The main program checks the value of this variable to decide
+    // whether or not to use the thermal payload.
+    static boolean enabled;
+
     // Start this subsystem.
     void __attribute__((weak)) begin();
 
