@@ -23,6 +23,7 @@
 
 #include <Arduino.h>
 #include <ESAT_OnBoardDataHandling.h>
+#include <ESAT_OBCClock.h>
 
 // Interface to the Thermal Payload from the point of view of the
 // on-board data handling subsystem.  There is a global instance:
