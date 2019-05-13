@@ -1,6 +1,7 @@
 /*
  * ESAT OBC Main Program version 4.3.2
- * Copyright (C) 2017, 2018 Theia Space, Universidad Politécnica de Madrid
+ * Copyright (C) 2017, 2018, 2019 Theia Space, Universidad Politécnica 
+ * de Madrid.
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Theia Space's ESAT OBC library.  If not, see 
+ * <http://www.gnu.org/licenses/>.
  */
 
 #include <ESAT_I2CMaster.h>
@@ -55,7 +57,7 @@ class ESAT_ExampleSubsystemClass: public ESAT_Subsystem
     // ESAT_OnBoardDataHandling uses this to identify the subsystem.
     word getApplicationProcessIdentifier()
     {
-      return 4;
+      return 9;
     }
 
     // Handle a telecommand.
