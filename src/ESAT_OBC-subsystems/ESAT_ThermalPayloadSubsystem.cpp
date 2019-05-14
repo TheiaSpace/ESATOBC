@@ -20,7 +20,7 @@
 
  /*
   Thermal payload version.
-  00 - Skeleton for your own Thermla Payload subsystem.
+  00 - Skeleton for your own Thermal Payload subsystem.
  */
 
 #include "ESAT_ThermalPayloadSubsystem.h"
