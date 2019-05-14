@@ -18,16 +18,15 @@
  * <http://www.gnu.org/licenses/>.
  */
 
- /*
-  Thermal payload version.
-  00 - Skeleton for your own Thermal Payload subsystem.
- */
+// Thermal Payload version.
+// 00 - Skeleton for your own Thermal Payload subsystem.
 
 #include "ESAT_ThermalPayloadSubsystem.h"
 
-// Global variable to select if the Thermal Payload is registered
-// as a subsystem or not. This implies to use or leave
-// unused and not initialized the OBC uC PINs used for the PL.
+// The main program checks the value of this variable to decide
+// whether or not to use the thermal payload.
+// This implies to use or leave unused and not initialized the OBC
+// microcontroller pins used for the payload.
 boolean __attribute__((weak)) ESAT_ThermalPayloadSubsystemClass::enabled = true;
 
 void __attribute__((weak)) ESAT_ThermalPayloadSubsystemClass::begin()
