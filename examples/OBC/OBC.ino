@@ -189,7 +189,7 @@ void setup()
   {
     ESAT_ThermalPayloadSubsystem.begin();
     ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ThermalPayloadSubsystem);
-    Serial.print(String("Thermal Payload is registered"));
+    Serial.print("Thermal Payload is registered");
   }
 }
 
