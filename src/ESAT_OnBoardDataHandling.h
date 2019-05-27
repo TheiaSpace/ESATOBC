@@ -25,7 +25,29 @@
 #include <ESAT_CCSDSPacket.h>
 #include <ESAT_CCSDSPacketFromKISSFrameReader.h>
 #include <ESAT_CCSDSPacketToKISSFrameWriter.h>
+#include <ESAT_I2CMaster.h>
+#include <ESAT_KISSStream.h>
+#include <ESAT_Timer.h>
+#include <SD.h>
+#include <Wire.h>
 #include "ESAT_OBC-subsystems/ESAT_Subsystem.h"
+#include "ESAT_OBC-hardware/ESAT_OBCClock.h"
+#include "ESAT_OBC-hardware/ESAT_OBCLED.h"
+#include "ESAT_OBC-hardware/ESAT_TelemetryStorage.h"
+#include "ESAT_OBC-subsystems/ESAT_ADCSSubsystem.h"
+#include "ESAT_OBC-subsystems/ESAT_EPSSubsystem.h"
+#include "ESAT_OBC-subsystems/ESAT_OBCSubsystem.h"
+#include "ESAT_OBC-subsystems/ESAT_Subsystem.h"
+#include "ESAT_OBC-subsystems/ESAT_ThermalPayloadSubsystem.h"
+#include "ESAT_OBC-subsystems/ESAT_WifiSubsystem.h"
+#include "ESAT_OBC-telecommands/ESAT_OBCDisableTelemetryTelecommand.h"
+#include "ESAT_OBC-telecommands/ESAT_OBCDownloadStoredTelemetryTelecommand.h"
+#include "ESAT_OBC-telecommands/ESAT_OBCEnableTelemetryTelecommand.h"
+#include "ESAT_OBC-telecommands/ESAT_OBCEraseStoredTelemetryTelecommand.h"
+#include "ESAT_OBC-telecommands/ESAT_OBCSetTimeTelecommand.h"
+#include "ESAT_OBC-telecommands/ESAT_OBCStoreTelemetryTelecommand.h"
+#include "ESAT_OBC-telemetry/ESAT_OBCHousekeepingTelemetry.h"
+#include "ESAT_OBC-telemetry/ESAT_OBCLinesTelemetry.h"
 
 // On-board data handling library.
 // ESAT_OnBoardDataHandling operates on the subsystems (which
