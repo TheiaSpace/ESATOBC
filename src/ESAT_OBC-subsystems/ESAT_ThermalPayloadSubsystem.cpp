@@ -317,13 +317,13 @@ void ESAT_ThermalPayloadSubsystemClass::update()
       writeHeater(LOW);
     }
     // This is the number of telemetry packets to dispatch per
-    // update() cycle with the Termal Payload in NOMINAL mode.
+    // update() cycle with the Thermal Payload in NOMINAL mode.
     pendingTelemetryPackets = 2;
   }
   else if (mode == MODE_STANDBY)
   {
     // This is the number of telemetry packets to dispatch per
-    // update() cycle with the Termal Payload in STANDBY mode.
+    // update() cycle with the Thermal Payload in STANDBY mode.
     pendingTelemetryPackets = 1;
   }
   else
