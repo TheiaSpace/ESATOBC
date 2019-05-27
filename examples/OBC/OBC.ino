@@ -56,6 +56,9 @@ class ESAT_ExampleSubsystemClass: public ESAT_Subsystem
     // getApplicationProcessIdentifier().
     void handleTelecommand(ESAT_CCSDSPacket& packet)
     {
+      // We aren't using the packet in this empty function skeleton,
+      // so we have to add the following line to avoid compiler
+      // warnings.
       (void) packet;
     }
 
@@ -72,7 +75,13 @@ class ESAT_ExampleSubsystemClass: public ESAT_Subsystem
     // to signal that there were no more packets.
     boolean readTelecommand(ESAT_CCSDSPacket& packet)
     {
+      // We aren't using the packet in this empty function skeleton,
+      // so we have to add the following line to avoid compiler
+      // warnings.
       (void) packet;
+      // This empty function skeleton doesn't fill telecommand packets,
+      // so we have to return false to let ESAT_OnBoardDataHandling
+      // know that we didn't produce a new telecommand packet.
       return false;
     }
 
@@ -89,7 +98,13 @@ class ESAT_ExampleSubsystemClass: public ESAT_Subsystem
     // signal that there were no more packets.
     boolean readTelemetry(ESAT_CCSDSPacket& packet)
     {
+      // We aren't using the packet in this empty function skeleton,
+      // so we have to add the following line to avoid compiler
+      // warnings.
       (void) packet;
+      // This empty function skeleton doesn't fill telemetry packets,
+      // so we have to return false to let ESAT_OnBoardDataHandling
+      // know that we didn't produce a new telemetry packet.
       return false;
     }
 
@@ -107,6 +122,9 @@ class ESAT_ExampleSubsystemClass: public ESAT_Subsystem
     // Called from ESAT_OnBoardDataHandling.writeTelemetry().
     void writeTelemetry(ESAT_CCSDSPacket& packet)
     {
+      // We aren't using the packet in this empty function skeleton,
+      // so we have to add the following line to avoid compiler
+      // warnings.
       (void) packet;
     }
 };
