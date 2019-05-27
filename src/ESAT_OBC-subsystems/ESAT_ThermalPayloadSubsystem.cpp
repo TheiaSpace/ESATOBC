@@ -233,7 +233,12 @@ void ESAT_ThermalPayloadSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& pack
 // to signal that there were no more packets.
 boolean ESAT_ThermalPayloadSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
 {
-  // Nothing to do here.
+  // We don't fill telecommand packets, so we don't use the packet
+  // argument.  We have to add the following line to avoid compiler
+  // warnings.
+  (void) packet;
+  // Return false to tell ESAT_OnBoardDataHandling that we didn't fill
+  // a telecommand packet.
   return false;
 }
 
@@ -292,6 +297,10 @@ boolean ESAT_ThermalPayloadSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packe
   }
   else
   {
+    // When there aren't pending telemetry packets left, we don't fill
+    // the packet argument.  We have to add the following line to
+    // avoid compiler warnings.
+    (void) packet;
     // We return false because we didn't fill a telemetry packet.
     return false;
   }
@@ -338,7 +347,10 @@ void ESAT_ThermalPayloadSubsystemClass::update()
 // Called from OnBoardDataHandling.writeTelemetry().
 void ESAT_ThermalPayloadSubsystemClass::writeTelemetry(ESAT_CCSDSPacket& packet)
 {
-  // Nothing to do here.
+  // We don't consume telemetry packets, so we don't use the packet
+  // argument.  We have to add the following line to avoid compiler
+  // warnings.
+  (void) packet;
 }
 
 // Unique global instance of ESAT_ThermalPayloadSubsystemClass.
