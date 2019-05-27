@@ -61,7 +61,7 @@ class ESAT_ThermalPayloadSubsystemClass: public ESAT_Subsystem
     // Update the subsystem.
     void __attribute__((weak)) update();
 
-   // Send a telemetry packet to this subsystem.
+    // Send a telemetry packet to this subsystem.
     void __attribute__((weak)) writeTelemetry(ESAT_CCSDSPacket& packet);
 };
 
