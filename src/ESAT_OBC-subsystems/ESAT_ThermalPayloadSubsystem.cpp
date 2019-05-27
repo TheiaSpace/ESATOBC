@@ -73,7 +73,7 @@ static const byte PATCH_VERSION_NUMBER = 0;
 
 // This function returns the mean value of the NUMBER_OF_SAMPLES
 // samples of the ADC_PIN.
-unsigned int readADCPin()
+static unsigned int readADCPin()
 {
   unsigned long meanValue = 0;
   for (byte sample = 0; sample < NUMBER_OF_SAMPLES; sample++)
@@ -85,7 +85,7 @@ unsigned int readADCPin()
 }
 
 // Return the current heater temperature.
-float readTemperature()
+static float readTemperature()
 {
   // Read ADC value.
   unsigned int ADCValue;
@@ -108,7 +108,7 @@ float readTemperature()
 }
 
 // Turn ON/OFF the heater.
-void writeHeater(int status)
+static void writeHeater(int status)
 {
   switch(status)
   {
@@ -124,7 +124,7 @@ void writeHeater(int status)
 }
 
 // Set the current operation mode of the payload.
-void setMode(byte theMode)
+static void setMode(byte theMode)
 {
   switch(theMode)
   {
