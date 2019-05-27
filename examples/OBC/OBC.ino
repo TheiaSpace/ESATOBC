@@ -1,8 +1,8 @@
 /*
  * ESAT OBC Main Program version 4.3.2
- * Copyright (C) 2017, 2018, 2019 Theia Space, Universidad Politécnica 
+ * Copyright (C) 2017, 2018, 2019 Theia Space, Universidad Politécnica
  * de Madrid.
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Theia Space's ESAT OBC library.  If not, see 
+ * along with Theia Space's ESAT OBC library.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
 
