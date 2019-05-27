@@ -23,7 +23,6 @@
 
 #include <Arduino.h>
 #include <ESAT_OnBoardDataHandling.h>
-#include <ESAT_OBCClock.h>
 
 // Interface to the Thermal Payload from the point of view of the
 // on-board data handling subsystem.  There is a global instance:
@@ -38,37 +37,37 @@ class ESAT_ThermalPayloadSubsystemClass: public ESAT_Subsystem
     // whether or not to use the thermal payload.
     // This implies to use or leave unused and not initialized the OBC
     // microcontroller pins used for the payload.
-    static boolean enabled;
+    static boolean __attribute__((weak)) enabled;
 
     // Start this subsystem.
-    void begin();
+    void __attribute__((weak)) begin();
 
     // Return the identifier of this subsystem.
-    word getApplicationProcessIdentifier();
+    word __attribute__((weak)) getApplicationProcessIdentifier();
 
     // Handle a telecommand.
-    void handleTelecommand(ESAT_CCSDSPacket& packet);
+    void __attribute__((weak)) handleTelecommand(ESAT_CCSDSPacket& packet);
 
     // Fill a packet with the next telecommand packet available.
     // Return true if the operation was successful;
     // otherwise return false.
-    boolean readTelecommand(ESAT_CCSDSPacket& packet);
+    boolean __attribute__((weak)) readTelecommand(ESAT_CCSDSPacket& packet);
 
     // Fill a packet with the next telemetry packet available.
     // Return true if the operation was successful;
     // otherwise return false.
-    boolean readTelemetry(ESAT_CCSDSPacket& packet);
+    boolean __attribute__((weak)) readTelemetry(ESAT_CCSDSPacket& packet);
 
     // Update the subsystem.
-    void update();
+    void __attribute__((weak)) update();
 
-   // Send a telemetry packet to this subsystem.
-    void writeTelemetry(ESAT_CCSDSPacket& packet);
+    // Send a telemetry packet to this subsystem.
+    void __attribute__((weak)) writeTelemetry(ESAT_CCSDSPacket& packet);
 };
 
 // Global instance of ESAT_ThermalPayloadSubsystemClass.  Register
 // ESAT_ThermalPayloadSubsystem on the on-board data handling module with
 // ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ThermalPayloadSubsystem).
-extern ESAT_ThermalPayloadSubsystemClass ESAT_ThermalPayloadSubsystem;
+extern ESAT_ThermalPayloadSubsystemClass __attribute__((weak)) ESAT_ThermalPayloadSubsystem;
 
 #endif /* ESAT_ThermalPayloadSubsystem_h */
