@@ -1,4 +1,4 @@
-Copyright (C) 2018 Theia Space, Universidad Politécnica de Madrid
+Copyright (C) 2019 Theia Space, Universidad Politécnica de Madrid
 
 This file is part of Theia Space's ESAT OBC library.
 
@@ -43,6 +43,11 @@ Electrical Power Subsystem.  Communicates with the EPS board.
 # ESAT_OBCSubsystem
 
 On-Board Computer subsystem.
+
+
+# ESAT_ThermalPayloadSubsystem
+
+Thermal Payload subsystem.  Drives the Thermal Payload board.
 
 
 # ESAT_WifiSubsystem
