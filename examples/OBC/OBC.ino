@@ -19,7 +19,6 @@
  */
 
 #include <ESAT_OnBoardDataHandling.h>
-#include "ESAT_ThermalPayloadSubsystem.h"
 
 // Main program of the on-board computer.  It performs some initial
 // peripheral setup and bookkeeping in setup() and then it runs the
