@@ -159,13 +159,10 @@ byte wifiPacketDataBuffer[PACKET_DATA_BUFFER_LENGTH];
 //   handling module.
 // - Begin the subsystems.
 // - Begin the timer that keeps a precise timing of the main loop.
-// - Begin the OBC LED, which can be used to prove that the OBC
-//   board is working (only in OBC board version X.X.X or newer).
 // This is the first function of the program to be run at it runs only
 // once.
 void setup()
 {
-  ESAT_OBCLED.begin();
   Serial.begin();
   SerialWifi.begin(9600);
   Wire.begin();
@@ -219,5 +216,4 @@ void loop()
   {
     ESAT_OnBoardDataHandling.writeTelemetry(packet);
   }
-  ESAT_OBCLED.toggle();
 }
