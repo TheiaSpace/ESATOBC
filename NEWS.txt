@@ -1,6 +1,6 @@
 ESATOBC NEWS -- history of changes.
 
-Copyright (C) 2018 Theia Space, Universidad Politécnica de Madrid
+Copyright (C) 2018, 2019 Theia Space, Universidad Politécnica de Madrid
 
 This file is part of Theia Space's ESAT OBC library.
 
@@ -17,6 +17,17 @@ See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Theia Space's ESAT OBC library.  If not, see
 <http://www.gnu.org/licenses/>.
+
+
+* Changes in ESATOBC 4.4.0, 2019-05-27
+
+** All ESATOBC includes are available through ESAT_OnBoardDataHandling.h
+
+** There is a new Thermal Payload subsystem.
+
+** ESAT_OBCSubsystem manages the OBC LED (through ESAT_OBCLED).
+
+** A compatibility issue with older EPS software has been fixed.
 
 
 * Changes in ESATOBC 4.3.1, 2018-11-20
