@@ -64,8 +64,15 @@ boolean ESAT_EPSSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
     ESAT_I2CMaster.readProtocolVersionNumber(ADDRESS);
   if (protocolVersionNumber == ESAT_SemanticVersionNumber(0, 0, 0))
   {
-    newTelemetryPacket = false;
-    return ESAT_I2CMaster.readNamedTelemetry(packet, HOUSEKEEPING, ADDRESS);
+    if (newTelemetryPacket)
+    {
+      newTelemetryPacket = false;
+      return ESAT_I2CMaster.readNamedTelemetry(packet, HOUSEKEEPING, ADDRESS);
+    }
+    else
+    {
+      return false;
+    }
   }
   else
   {
