@@ -23,7 +23,7 @@
 // Global variable to select if the Thermal Payload is registered as a
 // subsystem or not. This implies to use or leave unused and not
 // initialized the OBC microcontroller pins used for the payload.
-boolean ESAT_ThermalPayloadSubsystemClass::enabled = true;
+boolean ESAT_ThermalPayloadSubsystemClass::enabled = false;
 
 // We use the ADC14 pin from the header.
 static const int ADC_PIN = ADC14;
@@ -73,7 +73,7 @@ static const byte PATCH_VERSION_NUMBER = 0;
 
 // This function returns the mean value of the NUMBER_OF_SAMPLES
 // samples of the ADC_PIN.
-unsigned int readADCPin()
+static unsigned int readADCPin()
 {
   unsigned long meanValue = 0;
   for (byte sample = 0; sample < NUMBER_OF_SAMPLES; sample++)
@@ -85,7 +85,7 @@ unsigned int readADCPin()
 }
 
 // Return the current heater temperature.
-float readTemperature()
+static float readTemperature()
 {
   // Read ADC value.
   unsigned int ADCValue;
@@ -108,7 +108,7 @@ float readTemperature()
 }
 
 // Turn ON/OFF the heater.
-void writeHeater(int status)
+static void writeHeater(int status)
 {
   switch(status)
   {
@@ -124,7 +124,7 @@ void writeHeater(int status)
 }
 
 // Set the current operation mode of the payload.
-void setMode(byte theMode)
+static void setMode(byte theMode)
 {
   switch(theMode)
   {
@@ -233,7 +233,12 @@ void ESAT_ThermalPayloadSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& pack
 // to signal that there were no more packets.
 boolean ESAT_ThermalPayloadSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
 {
-  // Nothing to do here.
+  // We don't fill telecommand packets, so we don't use the packet
+  // argument.  We have to add the following line to avoid compiler
+  // warnings.
+  (void) packet;
+  // Return false to tell ESAT_OnBoardDataHandling that we didn't fill
+  // a telecommand packet.
   return false;
 }
 
@@ -292,6 +297,10 @@ boolean ESAT_ThermalPayloadSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packe
   }
   else
   {
+    // When there aren't pending telemetry packets left, we don't fill
+    // the packet argument.  We have to add the following line to
+    // avoid compiler warnings.
+    (void) packet;
     // We return false because we didn't fill a telemetry packet.
     return false;
   }
@@ -338,7 +347,10 @@ void ESAT_ThermalPayloadSubsystemClass::update()
 // Called from OnBoardDataHandling.writeTelemetry().
 void ESAT_ThermalPayloadSubsystemClass::writeTelemetry(ESAT_CCSDSPacket& packet)
 {
-  // Nothing to do here.
+  // We don't consume telemetry packets, so we don't use the packet
+  // argument.  We have to add the following line to avoid compiler
+  // warnings.
+  (void) packet;
 }
 
 // Unique global instance of ESAT_ThermalPayloadSubsystemClass.

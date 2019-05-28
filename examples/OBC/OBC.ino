@@ -1,5 +1,5 @@
 /*
- * ESAT OBC Main Program version 4.3.2
+ * ESAT OBC Main Program version 4.4.0
  * Copyright (C) 2017, 2018, 2019 Theia Space, Universidad Politécnica
  * de Madrid.
  *
@@ -19,7 +19,6 @@
  */
 
 #include <ESAT_OnBoardDataHandling.h>
-#include "ESAT_ThermalPayloadSubsystem.h"
 
 // Main program of the on-board computer.  It performs some initial
 // peripheral setup and bookkeeping in setup() and then it runs the
@@ -186,10 +185,11 @@ void setup()
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_WifiSubsystem);
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ExampleSubsystem);
   ESAT_Timer.begin(PERIOD);
-  if (ESAT_ThermalPayloadSubsystem.enabled) {
+  if (ESAT_ThermalPayloadSubsystem.enabled)
+  {
     ESAT_ThermalPayloadSubsystem.begin();
     ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ThermalPayloadSubsystem);
-    Serial.print(String("Thermal Payload is registered"));
+    Serial.print("Thermal Payload is registered");
   }
 }
 
