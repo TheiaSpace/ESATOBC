@@ -1,6 +1,7 @@
 /*
- * ESAT OBC Main Program version 4.3.1
- * Copyright (C) 2017, 2018 Theia Space, Universidad Politécnica de Madrid
+ * ESAT OBC Main Program version 4.4.0
+ * Copyright (C) 2017, 2018, 2019 Theia Space, Universidad Politécnica
+ * de Madrid.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,20 +14,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Theia Space's ESAT OBC library.  If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 
-#include <ESAT_I2CMaster.h>
-#include <ESAT_KISSStream.h>
 #include <ESAT_OnBoardDataHandling.h>
-#include <ESAT_OBC-hardware/ESAT_OBCLED.h>
-#include <ESAT_OBC-subsystems/ESAT_ADCSSubsystem.h>
-#include <ESAT_OBC-subsystems/ESAT_EPSSubsystem.h>
-#include <ESAT_OBC-subsystems/ESAT_OBCSubsystem.h>
-#include <ESAT_OBC-subsystems/ESAT_WifiSubsystem.h>
-#include <ESAT_Timer.h>
-#include <SD.h>
-#include <Wire.h>
 
 // Main program of the on-board computer.  It performs some initial
 // peripheral setup and bookkeeping in setup() and then it runs the
@@ -53,7 +45,7 @@ class ESAT_ExampleSubsystemClass: public ESAT_Subsystem
     // ESAT_OnBoardDataHandling uses this to identify the subsystem.
     word getApplicationProcessIdentifier()
     {
-      return 4;
+      return 9;
     }
 
     // Handle a telecommand.
@@ -63,6 +55,9 @@ class ESAT_ExampleSubsystemClass: public ESAT_Subsystem
     // getApplicationProcessIdentifier().
     void handleTelecommand(ESAT_CCSDSPacket& packet)
     {
+      // We aren't using the packet in this empty function skeleton,
+      // so we have to add the following line to avoid compiler
+      // warnings.
       (void) packet;
     }
 
@@ -79,7 +74,13 @@ class ESAT_ExampleSubsystemClass: public ESAT_Subsystem
     // to signal that there were no more packets.
     boolean readTelecommand(ESAT_CCSDSPacket& packet)
     {
+      // We aren't using the packet in this empty function skeleton,
+      // so we have to add the following line to avoid compiler
+      // warnings.
       (void) packet;
+      // This empty function skeleton doesn't fill telecommand packets,
+      // so we have to return false to let ESAT_OnBoardDataHandling
+      // know that we didn't produce a new telecommand packet.
       return false;
     }
 
@@ -96,7 +97,13 @@ class ESAT_ExampleSubsystemClass: public ESAT_Subsystem
     // signal that there were no more packets.
     boolean readTelemetry(ESAT_CCSDSPacket& packet)
     {
+      // We aren't using the packet in this empty function skeleton,
+      // so we have to add the following line to avoid compiler
+      // warnings.
       (void) packet;
+      // This empty function skeleton doesn't fill telemetry packets,
+      // so we have to return false to let ESAT_OnBoardDataHandling
+      // know that we didn't produce a new telemetry packet.
       return false;
     }
 
@@ -114,6 +121,9 @@ class ESAT_ExampleSubsystemClass: public ESAT_Subsystem
     // Called from ESAT_OnBoardDataHandling.writeTelemetry().
     void writeTelemetry(ESAT_CCSDSPacket& packet)
     {
+      // We aren't using the packet in this empty function skeleton,
+      // so we have to add the following line to avoid compiler
+      // warnings.
       (void) packet;
     }
 };
@@ -148,13 +158,10 @@ byte wifiPacketDataBuffer[PACKET_DATA_BUFFER_LENGTH];
 //   handling module.
 // - Begin the subsystems.
 // - Begin the timer that keeps a precise timing of the main loop.
-// - Begin the OBC LED, which can be used to prove that the OBC
-//   board is working.
 // This is the first function of the program to be run at it runs only
 // once.
 void setup()
 {
-  ESAT_OBCLED.begin();
   Serial.begin();
   SerialWifi.begin(9600);
   Wire.begin();
@@ -178,7 +185,12 @@ void setup()
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_WifiSubsystem);
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ExampleSubsystem);
   ESAT_Timer.begin(PERIOD);
-  ESAT_OBCLED.begin();
+  if (ESAT_ThermalPayloadSubsystem.enabled)
+  {
+    ESAT_ThermalPayloadSubsystem.begin();
+    ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ThermalPayloadSubsystem);
+    Serial.print("Thermal Payload is registered");
+  }
 }
 
 // Body of the main loop of the program:
@@ -189,7 +201,6 @@ void setup()
 // - Forward the retrieved telemetry packets to the subsystems so that
 //   they can use them (for example, a subsystem may send telemetry
 //   packets to the ground station or it can store them for later use).
-// - Toggle the OBC LED to prove that the OBC board is working.
 // This function is run in an infinite loop that starts after setup().
 void loop()
 {
@@ -205,5 +216,4 @@ void loop()
   {
     ESAT_OnBoardDataHandling.writeTelemetry(packet);
   }
-  ESAT_OBCLED.toggle();
 }

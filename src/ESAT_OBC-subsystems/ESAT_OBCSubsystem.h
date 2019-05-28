@@ -93,8 +93,8 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
 
     // Version numbers.
     static const byte MAJOR_VERSION_NUMBER = 4;
-    static const byte MINOR_VERSION_NUMBER = 3;
-    static const byte PATCH_VERSION_NUMBER = 1;
+    static const byte MINOR_VERSION_NUMBER = 4;
+    static const byte PATCH_VERSION_NUMBER = 0;
 
     // List of enabled telemetry packet identifiers.
     ESAT_FlagContainer enabledTelemetry;

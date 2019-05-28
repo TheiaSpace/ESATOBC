@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017, 2018 Theia Space, Universidad Politécnica de Madrid
+ * Copyright (C) 2017, 2018, 2019 Theia Space, Universidad Politécnica de Madrid
  *
  * This file is part of Theia Space's ESAT OBC library.
  *
@@ -19,6 +19,7 @@
  */
 
 #include "ESAT_OBC-subsystems/ESAT_OBCSubsystem.h"
+#include "ESAT_OBC-hardware/ESAT_OBCLED.h"
 #include "ESAT_OBC-hardware/ESAT_TelemetryStorage.h"
 #include "ESAT_OBC-telecommands/ESAT_OBCDisableTelemetryTelecommand.h"
 #include "ESAT_OBC-telecommands/ESAT_OBCDownloadStoredTelemetryTelecommand.h"
@@ -52,6 +53,7 @@ void ESAT_OBCSubsystemClass::begin()
 void ESAT_OBCSubsystemClass::beginHardware()
 {
   storeTelemetry = false;
+  ESAT_OBCLED.begin();
 }
 
 void ESAT_OBCSubsystemClass::beginTelemetry()
@@ -147,12 +149,14 @@ boolean ESAT_OBCSubsystemClass::telemetryAvailable()
 void ESAT_OBCSubsystemClass::update()
 {
   // The OBC has a few periodic tasks that it must do on each cycle:
-  // - reset the list of pending telemetry packets.
+  // - reset the list of pending telemetry packets;
   const ESAT_FlagContainer availableTelemetry =
     telemetryPacketBuilder.available();
   const ESAT_FlagContainer availableAndEnabledTelemetry =
     availableTelemetry & enabledTelemetry;
   pendingTelemetry = availableAndEnabledTelemetry;
+  // - toggle the OBC LED.
+  ESAT_OBCLED.toggle();
 }
 
 void ESAT_OBCSubsystemClass::writeTelemetry(ESAT_CCSDSPacket& packet)
