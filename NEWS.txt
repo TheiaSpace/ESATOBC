@@ -1,4 +1,4 @@
-ESATOBC NEWS -- history of changes.
+﻿ESATOBC NEWS -- history of changes.
 
 Copyright (C) 2018, 2019 Theia Space, Universidad Politécnica de Madrid
 
@@ -19,7 +19,7 @@ along with Theia Space's ESAT OBC library.  If not, see
 <http://www.gnu.org/licenses/>.
 
 
-* Changes in ESATOBC 4.4.0, 2019-05-27
+* Changes in ESATOBC 4.4.0, 2019-05-28
 
 ** All ESATOBC includes are available through ESAT_OnBoardDataHandling.h
 
