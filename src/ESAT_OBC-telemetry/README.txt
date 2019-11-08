@@ -1,4 +1,4 @@
-Copyright (C) 2018 Theia Space, Universidad Politécnica de Madrid
+Copyright (C) 2019 Theia Space, Universidad Politécnica de Madrid
 
 This file is part of Theia Space's ESAT OBC library.
 
@@ -31,3 +31,8 @@ Fill the OBC_HOUSEKEEPING (0x00) telemetry packet.
 # ESAT_OBCLinesTelemetry
 
 Fill the OBC_LINES (0x01) telemetry packet.
+
+
+# ESAT_OBCProcessorTelemetry
+
+Fill the OBC_PROCESSOR (0x02) telemetry packet.

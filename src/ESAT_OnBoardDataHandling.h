@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017, 2018 Theia Space, Universidad Politécnica de Madrid
+ * Copyright (C) 2017, 2018, 2019 Theia Space, Universidad Politécnica de Madrid
  *
  * This file is part of Theia Space's ESAT OBC library.
  *
@@ -28,6 +28,7 @@
 #include <ESAT_I2CMaster.h>
 #include <ESAT_KISSStream.h>
 #include <ESAT_Timer.h>
+#include <RAMStatistics.h>
 #include <SD.h>
 #include <Wire.h>
 #include "ESAT_OBC-subsystems/ESAT_Subsystem.h"
@@ -48,6 +49,7 @@
 #include "ESAT_OBC-telecommands/ESAT_OBCStoreTelemetryTelecommand.h"
 #include "ESAT_OBC-telemetry/ESAT_OBCHousekeepingTelemetry.h"
 #include "ESAT_OBC-telemetry/ESAT_OBCLinesTelemetry.h"
+#include "ESAT_OBC-telemetry/ESAT_OBCProcessorTelemetry.h"
 
 // On-board data handling library.
 // ESAT_OnBoardDataHandling operates on the subsystems (which

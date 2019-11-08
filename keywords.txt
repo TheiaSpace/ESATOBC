@@ -36,6 +36,7 @@ ESAT_OBCEraseStoredTelemetryTelecommandClass	KEYWORD1
 ESAT_OBCHousekeepingTelemetryClass	KEYWORD1
 ESAT_OBCLEDClass	KEYWORD1
 ESAT_OBCLinesTelemetryClass	KEYWORD1
+ESAT_OBCProcessorTelemetryClass	KEYWORD1
 ESAT_OBCSetTimeTelecommandClass	KEYWORD1
 ESAT_OBCStoreTelemetryTelecommandClass	KEYWORD1
 ESAT_OBCSubsystemClass	KEYWORD1
@@ -63,6 +64,7 @@ ESAT_OBCEraseStoredTelemetryTelecommand	KEYWORD2
 ESAT_OBCHousekeepingTelemetry	KEYWORD2
 ESAT_OBCLED	KEYWORD2
 ESAT_OBCLinesTelemetry	KEYWORD2
+ESAT_OBCProcessorTelemetry	KEYWORD2
 ESAT_OBCSetTimeTelecommand	KEYWORD2
 ESAT_OBCStoreTelemetryTelecommand	KEYWORD2
 ESAT_OBCSubsystem	KEYWORD2
