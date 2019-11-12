@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017, 2018 Theia Space, Universidad Politécnica de Madrid
+ * Copyright (C) 2017, 2018, 2019 Theia Space, Universidad Politécnica de Madrid
  *
  * This file is part of Theia Space's ESAT OBC library.
  *
@@ -61,6 +61,10 @@ class ESAT_TelemetryStorageClass
     // Return true between beginReading() and endReading();
     // return false the rest of the time.
     boolean reading() const;
+
+    // Return the size in bytes of the telemetry store.
+    // Set the error flag on error.
+    unsigned long size();
 
     // Write a packet to the packet store.
     // Set the error flag on failure.

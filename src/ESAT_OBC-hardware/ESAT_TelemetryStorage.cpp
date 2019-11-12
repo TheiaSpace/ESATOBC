@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017, 2018 Theia Space, Universidad Politécnica de Madrid
+ * Copyright (C) 2017, 2018, 2019 Theia Space, Universidad Politécnica de Madrid
  *
  * This file is part of Theia Space's ESAT OBC library.
  *
@@ -109,6 +109,31 @@ boolean ESAT_TelemetryStorageClass::read(ESAT_CCSDSPacket& packet)
 boolean ESAT_TelemetryStorageClass::reading() const
 {
   return readingInProgress;
+}
+
+unsigned long ESAT_TelemetryStorageClass::size()
+{
+  if (file)
+  {
+    return file.size();
+  }
+  else
+  {
+    // If the telemetry store file isn't already open, just open it to
+    // get its size and close it back to leave it as we found it.
+    file = SD.open(TELEMETRY_FILE, FILE_READ);
+    if (!file)
+    {
+      error = true;
+      return 0;
+    }
+    else
+    {
+      const unsigned long fileSize = file.size();
+      file.close();
+      return fileSize;
+    }
+  }
 }
 
 void ESAT_TelemetryStorageClass::write(ESAT_CCSDSPacket& packet)
