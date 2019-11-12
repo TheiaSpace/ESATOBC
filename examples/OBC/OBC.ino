@@ -162,6 +162,7 @@ byte wifiPacketDataBuffer[PACKET_DATA_BUFFER_LENGTH];
 // once.
 void setup()
 {
+  RAMStatistics.begin();
   Serial.begin();
   SerialWifi.begin(9600);
   Wire.begin();
