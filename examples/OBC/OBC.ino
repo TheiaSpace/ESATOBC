@@ -1,5 +1,5 @@
 /*
- * ESAT OBC Main Program version 4.4.0
+ * ESAT OBC Main Program version 4.5.0
  * Copyright (C) 2017, 2018, 2019 Theia Space, Universidad Politécnica
  * de Madrid.
  *
@@ -162,6 +162,7 @@ byte wifiPacketDataBuffer[PACKET_DATA_BUFFER_LENGTH];
 // once.
 void setup()
 {
+  RAMStatistics.begin();
   Serial.begin();
   SerialWifi.begin(9600);
   Wire.begin();

@@ -29,6 +29,7 @@
 #include "ESAT_OBC-telecommands/ESAT_OBCStoreTelemetryTelecommand.h"
 #include "ESAT_OBC-telemetry/ESAT_OBCHousekeepingTelemetry.h"
 #include "ESAT_OBC-telemetry/ESAT_OBCLinesTelemetry.h"
+#include "ESAT_OBC-telemetry/ESAT_OBCProcessorTelemetry.h"
 #include <ESAT_Timer.h>
 #include <ESAT_Timestamp.h>
 
@@ -62,6 +63,8 @@ void ESAT_OBCSubsystemClass::beginTelemetry()
   enableTelemetry(ESAT_OBCHousekeepingTelemetry.packetIdentifier());
   addTelemetry(ESAT_OBCLinesTelemetry);
   disableTelemetry(ESAT_OBCLinesTelemetry.packetIdentifier());
+  addTelemetry(ESAT_OBCProcessorTelemetry);
+  enableTelemetry(ESAT_OBCProcessorTelemetry.packetIdentifier());
 }
 
 void ESAT_OBCSubsystemClass::beginTelecommands()
