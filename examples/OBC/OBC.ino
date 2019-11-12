@@ -1,5 +1,5 @@
 /*
- * ESAT OBC Main Program version 4.4.0
+ * ESAT OBC Main Program version 4.5.0
  * Copyright (C) 2017, 2018, 2019 Theia Space, Universidad Politécnica
  * de Madrid.
  *
