@@ -24,7 +24,7 @@ On-Board Computer (OBC) for ESAT.
 
 This software runs in the ESAT OBC board.  Use it with Arduino 1.8.0
 or newer together with the Arduino core for MSP430-based ESAT boards
-(Theia Space's ESAT Boards (MSP430)) 3.0.0 or a newer 3.x.y version
+(Theia Space's ESAT Boards (MSP430)) 3.1.0 or a newer 3.x.y version
 and the ESAT utility library (ESATUtil) version 2.1.0 or a newer 2.x.y
 version.  Use ESAT-OBC as the target board.  Depending on your ADCS
 module, select ADCS Code Running in ADCS (option ADCS=ADCS, for newer
