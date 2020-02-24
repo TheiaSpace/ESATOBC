@@ -53,6 +53,10 @@ static const byte MODE_DISABLED = 2;
 static const byte MODE_NOMINAL = 1;
 static const byte MODE_STANDBY = 0;
 
+// Telecommands.
+static const byte SET_MODE = 0;
+static const byte SET_TARGET_TEMPERATURE = 1;
+
 // Current mode: MODE_NOMINAL or NODE_STANDBY.
 static byte mode;
 
@@ -211,10 +215,10 @@ void ESAT_ThermalPayloadSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& pack
   // And use the packet identifier to process the telecommand.
   switch (secondaryHeader.packetIdentifier)
   {
-    case 0:
+    case SET_MODE:
       setMode(packet.readByte());
       break;
-    case 1:
+    case SET_TARGET_TEMPERATURE:
       targetTemperature = packet.readFloat();
       break;
     default:
