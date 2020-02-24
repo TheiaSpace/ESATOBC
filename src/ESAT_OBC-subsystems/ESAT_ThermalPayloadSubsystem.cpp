@@ -78,38 +78,34 @@ static const byte PATCH_VERSION_NUMBER = 0;
 
 // This function returns the mean value of the NUMBER_OF_SAMPLES
 // samples of the ADC_PIN.
-static unsigned int readADCPin()
+static word readADCPin()
 {
   unsigned long meanValue = 0;
-  for (byte sample = 0; sample < NUMBER_OF_SAMPLES; sample++)
+  for (byte sample = 0; sample < NUMBER_OF_SAMPLES; sample = sample + 1)
   {
     meanValue = meanValue + analogRead(ADC_PIN);
   }
   meanValue = meanValue / NUMBER_OF_SAMPLES;
-  return meanValue;
+  return (word) meanValue;
 }
 
 // Return the current heater temperature.
 static float readTemperature()
 {
   // Read ADC value.
-  unsigned int ADCValue;
-  ADCValue = readADCPin();
+  const word ADCValue = readADCPin();
   // Get r to use the temperature expression.
-  float r = float(ADCValue) / float(ADC_RESOLUTION - ADCValue);
+  const float r = float(ADCValue) / float(ADC_RESOLUTION - ADCValue);
   // Use the expression to get the temperature.
-  float T;
   const float A_1 = 3.354016E-03;
   const float B_1 = 2.569850E-04;
   const float C_1 = 2.620131E-06;
   const float D_1 = 6.383091E-08;
-  T = A_1
-    + B_1 * log(r)
-    + C_1 * pow(log(r), 2)
-    + D_1 * pow(log(r), 3);
-  // Temperature in kelvin.
-  T = 1 / T;
-  return T;
+  // Temperature in Kelvin.
+  return 1. / (A_1
+               + B_1 * log(r)
+               + C_1 * pow(log(r), 2)
+               + D_1 * pow(log(r), 3));
 }
 
 // Switch the heater off by leaving the heater control pin at high impedance.
@@ -130,9 +126,9 @@ static void switchOnHeater()
 }
 
 // Set the current operation mode of the payload.
-static void setMode(byte theMode)
+static void setMode(const byte theMode)
 {
-  switch(theMode)
+  switch (theMode)
   {
     case MODE_NOMINAL:
       mode = MODE_NOMINAL;
