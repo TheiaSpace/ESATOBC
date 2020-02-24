@@ -107,20 +107,21 @@ static float readTemperature()
   return T;
 }
 
-// Turn ON/OFF the heater.
-static void writeHeater(int status)
+// Switch the heater off by leaving the heater control pin at high impedance.
+// This is safe because the thermal payload has a pull-down that will leave
+// the heater powered off.
+static void switchOffHeater()
 {
-  switch(status)
-  {
-    case HIGH:
-      digitalWrite(HEATER_CONTROL_PIN, HIGH);
-      heaterStatus = HIGH;
-      break;
-    case LOW:
-      digitalWrite(HEATER_CONTROL_PIN, LOW);
-      heaterStatus = LOW;
-      break;
-  }
+  pinMode(HEATER_CONTROL_PIN, INPUT);
+}
+
+// Switch the heater on by driving the heater control pin high.
+// This is potentially unsafe if, instead of the thermal payload,
+// there is another device driving the heater control pin.
+static void switchOnHeater()
+{
+  pinMode(HEATER_CONTROL_PIN, OUTPUT);
+  digitalWrite(HEATER_CONTROL_PIN, HIGH);
 }
 
 // Set the current operation mode of the payload.
@@ -133,7 +134,7 @@ static void setMode(byte theMode)
       break;
     case MODE_STANDBY:
       mode = MODE_STANDBY;
-      writeHeater(LOW);
+      switchOffHeater();
       break;
     default:
       break;
@@ -144,8 +145,6 @@ static void setMode(byte theMode)
 // This will be called once, during setup().
 void ESAT_ThermalPayloadSubsystemClass::begin()
 {
-  // We set the HEATER_CONTROL_PIN as an output.
-  pinMode(HEATER_CONTROL_PIN, OUTPUT);
   // Let's start with in stand-by mode.
   setMode(MODE_STANDBY);
   // We initialize the temperature thresholds.
@@ -319,11 +318,11 @@ void ESAT_ThermalPayloadSubsystemClass::update()
     temperature = readTemperature();
     if (temperature < (targetTemperature - allowedTemperatureDeviation))
     {
-      writeHeater(HIGH);
+      switchOnHeater();
     }
     if (temperature > (targetTemperature + allowedTemperatureDeviation))
     {
-      writeHeater(LOW);
+      switchOffHeater();
     }
     // This is the number of telemetry packets to dispatch per
     // update() cycle with the Thermal Payload in NOMINAL mode.
