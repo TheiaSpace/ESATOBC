@@ -73,7 +73,7 @@ static const word APPLICATION_PROCESS_IDENTIFIER = 4;
 
 // Version numbers.
 static const byte MAJOR_VERSION_NUMBER = 1;
-static const byte MINOR_VERSION_NUMBER = 0;
+static const byte MINOR_VERSION_NUMBER = 1;
 static const byte PATCH_VERSION_NUMBER = 0;
 
 // This function returns the mean value of the NUMBER_OF_SAMPLES
