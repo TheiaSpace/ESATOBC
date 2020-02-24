@@ -148,8 +148,8 @@ static void setMode(byte theMode)
 // This will be called once, during setup().
 void ESAT_ThermalPayloadSubsystemClass::begin()
 {
-  // Let's start with in stand-by mode.
-  setMode(MODE_STANDBY);
+  // Let's start with in disabled mode.
+  setMode(MODE_DISABLED);
   // We initialize the temperature thresholds.
   targetTemperature = 273.15 + 28.0;
   allowedTemperatureDeviation = 1.0;
