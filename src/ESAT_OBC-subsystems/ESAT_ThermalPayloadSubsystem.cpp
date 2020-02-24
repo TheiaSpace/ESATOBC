@@ -49,6 +49,7 @@ static float targetTemperature;
 static float allowedTemperatureDeviation;
 
 // Payload modes.
+static const byte MODE_DISABLED = 2;
 static const byte MODE_NOMINAL = 1;
 static const byte MODE_STANDBY = 0;
 
@@ -137,6 +138,8 @@ static void setMode(byte theMode)
       switchOffHeater();
       break;
     default:
+      mode = MODE_DISABLED;
+      switchOffHeater();
       break;
   }
 }
@@ -333,6 +336,12 @@ void ESAT_ThermalPayloadSubsystemClass::update()
     // This is the number of telemetry packets to dispatch per
     // update() cycle with the Thermal Payload in STANDBY mode.
     pendingTelemetryPackets = 1;
+  }
+  else if (mode == MODE_DISABLED)
+  {
+    // This is the number of telemetry packets to dispatch per
+    // update() cycle with the Thermal Payload in DISABLED mode.
+    pendingTelemetryPackets = 0;
   }
   else
   {
