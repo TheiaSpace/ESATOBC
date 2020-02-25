@@ -41,6 +41,10 @@ static float temperature;
 // control the heater.
 static const int HEATER_CONTROL_PIN = GPIO2;
 
+// Possible heater status values.
+static const byte HEATER_ON = 1;
+static const byte HEATER_OFF = 0;
+
 // Current HEATER status.
 static byte heaterStatus;
 
@@ -114,6 +118,7 @@ static float readTemperature()
 static void switchOffHeater()
 {
   pinMode(HEATER_CONTROL_PIN, INPUT);
+  heaterStatus = HEATER_OFF;
 }
 
 // Switch the heater on by driving the heater control pin high.
@@ -123,6 +128,7 @@ static void switchOnHeater()
 {
   pinMode(HEATER_CONTROL_PIN, OUTPUT);
   digitalWrite(HEATER_CONTROL_PIN, HIGH);
+  heaterStatus = HEATER_ON;
 }
 
 // Set the current operation mode of the payload.
