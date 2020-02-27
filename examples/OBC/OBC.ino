@@ -1,6 +1,6 @@
 /*
  * ESAT OBC Main Program version 4.5.0
- * Copyright (C) 2017, 2018, 2019 Theia Space, Universidad Politécnica
+ * Copyright (C) 2017, 2018, 2019, 2020 Theia Space, Universidad Politécnica
  * de Madrid.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -185,13 +185,12 @@ void setup()
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ADCSSubsystem);
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_WifiSubsystem);
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ExampleSubsystem);
-  ESAT_Timer.begin(PERIOD);
   if (ESAT_ThermalPayloadSubsystem.enabled)
   {
     ESAT_ThermalPayloadSubsystem.begin();
     ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ThermalPayloadSubsystem);
-    Serial.print("Thermal Payload is registered");
   }
+  ESAT_Timer.begin(PERIOD);
 }
 
 // Body of the main loop of the program:
