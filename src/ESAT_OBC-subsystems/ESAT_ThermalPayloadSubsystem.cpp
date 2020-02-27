@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Theia Space, Universidad Politécnica de Madrid.
+ * Copyright (C) 2019, 2020 Theia Space, Universidad Politécnica de Madrid.
  *
  * This file is part of Theia Space's ESAT OBC library.
  *
@@ -23,7 +23,7 @@
 // Global variable to select if the Thermal Payload is registered as a
 // subsystem or not. This implies to use or leave unused and not
 // initialized the OBC microcontroller pins used for the payload.
-boolean ESAT_ThermalPayloadSubsystemClass::enabled = false;
+boolean ESAT_ThermalPayloadSubsystemClass::enabled = true;
 
 // We use the ADC14 pin from the header.
 static const int ADC_PIN = ADC14;
@@ -41,6 +41,10 @@ static float temperature;
 // control the heater.
 static const int HEATER_CONTROL_PIN = GPIO2;
 
+// Possible heater status values.
+static const byte HEATER_ON = 1;
+static const byte HEATER_OFF = 0;
+
 // Current HEATER status.
 static byte heaterStatus;
 
@@ -49,8 +53,13 @@ static float targetTemperature;
 static float allowedTemperatureDeviation;
 
 // Payload modes.
+static const byte MODE_DISABLED = 2;
 static const byte MODE_NOMINAL = 1;
 static const byte MODE_STANDBY = 0;
+
+// Telecommands.
+static const byte SET_MODE = 0;
+static const byte SET_TARGET_TEMPERATURE = 1;
 
 // Current mode: MODE_NOMINAL or NODE_STANDBY.
 static byte mode;
@@ -68,74 +77,75 @@ static const word APPLICATION_PROCESS_IDENTIFIER = 4;
 
 // Version numbers.
 static const byte MAJOR_VERSION_NUMBER = 1;
-static const byte MINOR_VERSION_NUMBER = 0;
+static const byte MINOR_VERSION_NUMBER = 1;
 static const byte PATCH_VERSION_NUMBER = 0;
 
 // This function returns the mean value of the NUMBER_OF_SAMPLES
 // samples of the ADC_PIN.
-static unsigned int readADCPin()
+static word readADCPin()
 {
   unsigned long meanValue = 0;
-  for (byte sample = 0; sample < NUMBER_OF_SAMPLES; sample++)
+  for (byte sample = 0; sample < NUMBER_OF_SAMPLES; sample = sample + 1)
   {
     meanValue = meanValue + analogRead(ADC_PIN);
   }
   meanValue = meanValue / NUMBER_OF_SAMPLES;
-  return meanValue;
+  return (word) meanValue;
 }
 
 // Return the current heater temperature.
 static float readTemperature()
 {
   // Read ADC value.
-  unsigned int ADCValue;
-  ADCValue = readADCPin();
+  const word ADCValue = readADCPin();
   // Get r to use the temperature expression.
-  float r = float(ADCValue) / float(ADC_RESOLUTION - ADCValue);
+  const float r = float(ADCValue) / float(ADC_RESOLUTION - ADCValue);
   // Use the expression to get the temperature.
-  float T;
   const float A_1 = 3.354016E-03;
   const float B_1 = 2.569850E-04;
   const float C_1 = 2.620131E-06;
   const float D_1 = 6.383091E-08;
-  T = A_1
-    + B_1 * log(r)
-    + C_1 * pow(log(r), 2)
-    + D_1 * pow(log(r), 3);
-  // Temperature in kelvin.
-  T = 1 / T;
-  return T;
+  // Temperature in Kelvin.
+  return 1. / (A_1
+               + B_1 * log(r)
+               + C_1 * pow(log(r), 2)
+               + D_1 * pow(log(r), 3));
 }
 
-// Turn ON/OFF the heater.
-static void writeHeater(int status)
+// Switch the heater off by leaving the heater control pin at high impedance.
+// This is safe because the thermal payload has a pull-down that will leave
+// the heater powered off.
+static void switchOffHeater()
 {
-  switch(status)
-  {
-    case HIGH:
-      digitalWrite(HEATER_CONTROL_PIN, HIGH);
-      heaterStatus = HIGH;
-      break;
-    case LOW:
-      digitalWrite(HEATER_CONTROL_PIN, LOW);
-      heaterStatus = LOW;
-      break;
-  }
+  pinMode(HEATER_CONTROL_PIN, INPUT);
+  heaterStatus = HEATER_OFF;
+}
+
+// Switch the heater on by driving the heater control pin high.
+// This is potentially unsafe if, instead of the thermal payload,
+// there is another device driving the heater control pin.
+static void switchOnHeater()
+{
+  pinMode(HEATER_CONTROL_PIN, OUTPUT);
+  digitalWrite(HEATER_CONTROL_PIN, HIGH);
+  heaterStatus = HEATER_ON;
 }
 
 // Set the current operation mode of the payload.
-static void setMode(byte theMode)
+static void setMode(const byte theMode)
 {
-  switch(theMode)
+  switch (theMode)
   {
     case MODE_NOMINAL:
       mode = MODE_NOMINAL;
       break;
     case MODE_STANDBY:
       mode = MODE_STANDBY;
-      writeHeater(LOW);
+      switchOffHeater();
       break;
     default:
+      mode = MODE_DISABLED;
+      switchOffHeater();
       break;
   }
 }
@@ -144,10 +154,8 @@ static void setMode(byte theMode)
 // This will be called once, during setup().
 void ESAT_ThermalPayloadSubsystemClass::begin()
 {
-  // We set the HEATER_CONTROL_PIN as an output.
-  pinMode(HEATER_CONTROL_PIN, OUTPUT);
-  // Let's start with in stand-by mode.
-  setMode(MODE_STANDBY);
+  // Let's start with in disabled mode.
+  setMode(MODE_DISABLED);
   // We initialize the temperature thresholds.
   targetTemperature = 273.15 + 28.0;
   allowedTemperatureDeviation = 1.0;
@@ -209,10 +217,10 @@ void ESAT_ThermalPayloadSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& pack
   // And use the packet identifier to process the telecommand.
   switch (secondaryHeader.packetIdentifier)
   {
-    case 0:
+    case SET_MODE:
       setMode(packet.readByte());
       break;
-    case 1:
+    case SET_TARGET_TEMPERATURE:
       targetTemperature = packet.readFloat();
       break;
     default:
@@ -319,21 +327,27 @@ void ESAT_ThermalPayloadSubsystemClass::update()
     temperature = readTemperature();
     if (temperature < (targetTemperature - allowedTemperatureDeviation))
     {
-      writeHeater(HIGH);
+      switchOnHeater();
     }
     if (temperature > (targetTemperature + allowedTemperatureDeviation))
     {
-      writeHeater(LOW);
+      switchOffHeater();
     }
     // This is the number of telemetry packets to dispatch per
     // update() cycle with the Thermal Payload in NOMINAL mode.
-    pendingTelemetryPackets = 2;
+    pendingTelemetryPackets = 1;
   }
   else if (mode == MODE_STANDBY)
   {
     // This is the number of telemetry packets to dispatch per
     // update() cycle with the Thermal Payload in STANDBY mode.
     pendingTelemetryPackets = 1;
+  }
+  else if (mode == MODE_DISABLED)
+  {
+    // This is the number of telemetry packets to dispatch per
+    // update() cycle with the Thermal Payload in DISABLED mode.
+    pendingTelemetryPackets = 0;
   }
   else
   {
