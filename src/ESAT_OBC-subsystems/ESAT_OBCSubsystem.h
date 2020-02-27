@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017, 2018, 2019 Theia Space, Universidad Politécnica de Madrid
+ * Copyright (C) 2017, 2018, 2019, 2020 Theia Space, Universidad Politécnica de Madrid
  *
  * This file is part of Theia Space's ESAT OBC library.
  *
@@ -93,7 +93,7 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
 
     // Version numbers.
     static const byte MAJOR_VERSION_NUMBER = 4;
-    static const byte MINOR_VERSION_NUMBER = 5;
+    static const byte MINOR_VERSION_NUMBER = 6;
     static const byte PATCH_VERSION_NUMBER = 0;
 
     // List of enabled telemetry packet identifiers.
