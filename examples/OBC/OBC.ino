@@ -185,12 +185,12 @@ void setup()
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ADCSSubsystem);
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_WifiSubsystem);
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ExampleSubsystem);
-  ESAT_Timer.begin(PERIOD);
   if (ESAT_ThermalPayloadSubsystem.enabled)
   {
     ESAT_ThermalPayloadSubsystem.begin();
     ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ThermalPayloadSubsystem);
   }
+  ESAT_Timer.begin(PERIOD);
 }
 
 // Body of the main loop of the program:
