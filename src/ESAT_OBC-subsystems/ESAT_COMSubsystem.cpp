@@ -83,7 +83,7 @@ void ESAT_COMSubsystemClass::setTime()
 
 void ESAT_COMSubsystemClass::update()
 {
-
+  (void) ESAT_I2CMaster.resetTelemetryQueue(ADDRESS);
 }
 
 void ESAT_COMSubsystemClass::writeTelemetry(ESAT_CCSDSPacket& packet)
