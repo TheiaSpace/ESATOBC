@@ -20,6 +20,7 @@
 
 #include "ESAT_OBC-subsystems/ESAT_COMSubsystem.h"
 #include "ESAT_OBC-hardware/ESAT_OBCClock.h"
+#include <ESAT_I2CMaster.h>
 
 void ESAT_COMSubsystemClass::begin()
 {
@@ -93,4 +94,4 @@ void ESAT_COMSubsystemClass::writeTelemetry(ESAT_CCSDSPacket& packet)
                                     MICROSECONDS_BETWEEN_CHUNKS);
 }
 
-ESAT_COMSubsystemClass ESAT_WifiSubsystem;
+ESAT_COMSubsystemClass ESAT_COMSubsystem;

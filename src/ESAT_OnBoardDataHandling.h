@@ -36,6 +36,7 @@
 #include "ESAT_OBC-hardware/ESAT_OBCLED.h"
 #include "ESAT_OBC-hardware/ESAT_TelemetryStorage.h"
 #include "ESAT_OBC-subsystems/ESAT_ADCSSubsystem.h"
+#include "ESAT_OBC-subsystems/ESAT_COMSubsystem.h"
 #include "ESAT_OBC-subsystems/ESAT_EPSSubsystem.h"
 #include "ESAT_OBC-subsystems/ESAT_OBCSubsystem.h"
 #include "ESAT_OBC-subsystems/ESAT_Subsystem.h"
