@@ -4,7 +4,7 @@
 
 const char NAME8[] = "NOMBRE8_";
 
-ESAT_SDCardStorageClass storage8 = ESAT_SDCardStorageClass(NAME8);
+ESAT_SDCardStorage storage8 = ESAT_SDCardStorage(NAME8);
 
 char charbuff;
 
@@ -12,8 +12,7 @@ void setup()
 {
   Serial.begin();
   SD.begin(CS_SD);
-  delay(3000);
-  storage8 = ESAT_SDCardStorageClass(NAME8);
+  delay(3000);  
   boolean retval = storage8.read(charbuff, 0);
   Serial.print("Read at 0 result: ");
   Serial.println(retval);
