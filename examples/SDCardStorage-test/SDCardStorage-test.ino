@@ -1,42 +1,49 @@
 
 #include <ESAT_SDCardStorage.h>
+#include <SD.h>
 
 const char NAME8[] = "NOMBRE8_";
-const char NAME7[] = "NOMBRE7";
-const char NAME9[] = "NOMBRES9_";
-
 
 ESAT_SDCardStorageClass storage8 = ESAT_SDCardStorageClass(NAME8);
 
-
-char charbuff;;
+char charbuff;
 
 void setup() 
 {
   Serial.begin();
+  SD.begin(CS_SD);
   delay(3000);
   storage8 = ESAT_SDCardStorageClass(NAME8);
   boolean retval = storage8.read(charbuff, 0);
   Serial.print("Read at 0 result: ");
   Serial.println(retval);
   Serial.print("Read at 0 value: ");
-  Serial.println(charbuff);
+  Serial.println(charbuff, DEC);
   retval = storage8.read(charbuff, 1);
   Serial.print("Read at 1 result: ");
   Serial.println(retval);
   Serial.print("Read at 1 value: ");
-  Serial.println(charbuff);
+  Serial.println(charbuff, DEC);
 
-  charbuff = 'a';
-  retval = storage8.write(charbuff, 0);
+  retval = storage8.write(++charbuff, 0);
   Serial.print("Write at 0 result: ");
   Serial.println(retval);
-  charbuff = 'f';
+  charbuff = -1;
   retval = storage8.read(charbuff, 0);
   Serial.print("Read at 0 result: ");
   Serial.println(retval);
   Serial.print("Read at 0 value: ");
-  Serial.println(charbuff);
+  Serial.println(charbuff, DEC);
+  
+  retval = storage8.write(++charbuff, 17);
+  Serial.print("Write at 17 result: ");
+  Serial.println(retval);
+  charbuff = -1;
+  retval = storage8.read(charbuff, 17);
+  Serial.print("Read at 17 result: ");
+  Serial.println(retval);
+  Serial.print("Read at 17 value: ");
+  Serial.println(charbuff, DEC);
   
 
 }
