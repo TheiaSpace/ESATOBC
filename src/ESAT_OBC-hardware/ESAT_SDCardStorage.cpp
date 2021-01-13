@@ -21,7 +21,7 @@
 #include "ESAT_OBC-hardware/ESAT_SDCardStorage.h"
 #include <SD.h>
 
-ESAT_SDCardStorageClass::ESAT_SDCardStorageClass(const char* filename)
+ESAT_SDCardStorage::ESAT_SDCardStorage(const char* filename)
 {
   // Crop filename to the first 8 characters if it is bigger due to
   // file system limitations.
@@ -33,7 +33,7 @@ ESAT_SDCardStorageClass::ESAT_SDCardStorageClass(const char* filename)
   storageFile[index] = 0;
 }
 
-boolean ESAT_SDCardStorageClass::read(char& data, word pos)
+boolean ESAT_SDCardStorage::read(char& data, word pos)
 {
   File file = SD.open(storageFile, FILE_READ);
   if (file.available() > pos && pos < file.size())
@@ -47,7 +47,7 @@ boolean ESAT_SDCardStorageClass::read(char& data, word pos)
   return false;
 }
 
-boolean ESAT_SDCardStorageClass::write(char data, word pos)
+boolean ESAT_SDCardStorage::write(char data, word pos)
 {
   File file = SD.open(storageFile, FILE_WRITE);
   if (file.size() > pos) // Edit a position

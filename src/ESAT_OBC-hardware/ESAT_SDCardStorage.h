@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Theia Space, Universidad Politécnica de Madrid
+ * Copyright (C) 2020, 2021 Theia Space, Universidad Politécnica de Madrid
  *
  * This file is part of Theia Space's ESAT OBC library.
  *
@@ -24,15 +24,21 @@
 #include <Arduino.h>
 
 // SD Card storage library.
+// This class allows you to store things on the SD-Card by using a file.
+// To use this storage system, an instance of the class should be created
+// with a proper filename.
+// Then, user should take car of the reading and writing postions of the
+// data inside the file. Readings and writings beyond the file size will fail.
 // The SPI interface must be configured before using this library. You
-// must have called SPI.begin(CS_SD) before using this library.
-// Use the global instance ESAT_SDCardStorage.
-class ESAT_SDCardStorageClass
+// must have called SD.begin(CS_SD) before using this library.
+class ESAT_SDCardStorage
 {
   public:
-    // Creates an storage object.
-    // Requires the file name.
-    ESAT_SDCardStorageClass(const char* filename);
+    // Creates a SD-Card storage instance.
+    // Requires the name of the file where to store the data.
+    // Due to a file system limitation, filename is limited to 
+    // 8 characters. Longer names will be crop.
+    ESAT_SDCardStorage(const char* filename);
   
     // Read the character located at the given position and
     // copies it to the given buffer.
@@ -47,8 +53,5 @@ class ESAT_SDCardStorageClass
     // Store data in this file.
     char storageFile[9];          
 };
-
-// Global instance of the SDCard storage library.
-extern ESAT_SDCardStorageClass ESAT_SDCardStorage;
 
 #endif /* ESAT_SDCardStorage_h */
