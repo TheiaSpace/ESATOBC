@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017, 2018, 2019 Theia Space, Universidad Politécnica de Madrid
+ * Copyright (C) 2017, 2018, 2019, 2021 Theia Space, Universidad Politécnica de Madrid
  *
  * This file is part of Theia Space's ESAT OBC library.
  *
@@ -28,7 +28,7 @@
 
 // Telemetry storage library.
 // The SPI interface must be configured before using this library. You
-// must have called SPI.begin(CS_SD) before using this library.
+// must have called SD.begin(CS_SD) before using this library.
 // Use the global instance ESAT_TelemetryStorage.
 class ESAT_TelemetryStorageClass
 {
