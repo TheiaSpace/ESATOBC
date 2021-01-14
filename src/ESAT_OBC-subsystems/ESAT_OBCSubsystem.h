@@ -26,6 +26,7 @@
 #include <ESAT_CCSDSTelemetryPacketBuilder.h>
 #include <ESAT_FlagContainer.h>
 #include "ESAT_OBC-hardware/ESAT_OBCClock.h"
+#include "ESAT_OBC-hardware/ESAT_SDCardStorage.h"
 #include "ESAT_OBC-subsystems/ESAT_Subsystem.h"
 
 // Interface to the OBC (on-board computer subsystem) from the point
@@ -37,10 +38,13 @@
 class ESAT_OBCSubsystemClass: public ESAT_Subsystem
 {
   public:
+    // Module for storing the processor telemetry enable flag.
+    ESAT_SDCardStorage ESAT_OBCProcessorTelemetryEnableStatusStorage;
+  
     // True when commanded to store telemetry.  False when commanded
     // not to store telemetry.
     boolean storeTelemetry;
-
+    
     // Register a telecommand packet handler.
     void addTelecommand(ESAT_CCSDSTelecommandPacketHandler& telecommand);
 
@@ -95,6 +99,8 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
     static const byte MAJOR_VERSION_NUMBER = 4;
     static const byte MINOR_VERSION_NUMBER = 6;
     static const byte PATCH_VERSION_NUMBER = 0;
+    
+    const char* OBC_PROCESSOR_TELEMETRY_ENABLE_STATUS_STORAGE_FILENAME = "PROCTMEN";
 
     // List of enabled telemetry packet identifiers.
     ESAT_FlagContainer enabledTelemetry;
@@ -113,7 +119,7 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
                                        MINOR_VERSION_NUMBER,
                                        PATCH_VERSION_NUMBER,
                                        ESAT_OBCClock);
-
+    
     // Configure the hardware modules used by the OBC subsystem.
     void beginHardware();
 

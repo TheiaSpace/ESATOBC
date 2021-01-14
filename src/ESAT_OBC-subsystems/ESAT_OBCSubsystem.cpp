@@ -21,6 +21,7 @@
 #include "ESAT_OBC-subsystems/ESAT_OBCSubsystem.h"
 #include "ESAT_OBC-hardware/ESAT_OBCLED.h"
 #include "ESAT_OBC-hardware/ESAT_TelemetryStorage.h"
+#include "ESAT_OBC-hardware/ESAT_SDCardStorage.h"
 #include "ESAT_OBC-telecommands/ESAT_OBCDisableTelemetryTelecommand.h"
 #include "ESAT_OBC-telecommands/ESAT_OBCDownloadStoredTelemetryTelecommand.h"
 #include "ESAT_OBC-telecommands/ESAT_OBCEnableTelemetryTelecommand.h"
@@ -46,13 +47,14 @@ void ESAT_OBCSubsystemClass::addTelemetry(ESAT_CCSDSTelemetryPacketContents& tel
 
 void ESAT_OBCSubsystemClass::begin()
 {
-  beginTelemetry();
-  beginTelecommands();
   beginHardware();
+  beginTelemetry();
+  beginTelecommands();  
 }
 
 void ESAT_OBCSubsystemClass::beginHardware()
 {
+  ESAT_OBCProcessorTelemetryEnableStatusStorage = ESAT_SDCardStorage(OBC_PROCESSOR_TELEMETRY_ENABLE_STATUS_STORAGE_FILENAME);
   storeTelemetry = false;
   ESAT_OBCLED.begin();
 }
@@ -64,7 +66,25 @@ void ESAT_OBCSubsystemClass::beginTelemetry()
   addTelemetry(ESAT_OBCLinesTelemetry);
   disableTelemetry(ESAT_OBCLinesTelemetry.packetIdentifier());
   addTelemetry(ESAT_OBCProcessorTelemetry);
-  enableTelemetry(ESAT_OBCProcessorTelemetry.packetIdentifier());
+  char isOBCProcessorTelemetryEnabled;
+  // If SD-card read was successful.
+  if (ESAT_OBCProcessorTelemetryEnableStatusStorage.read(isOBCProcessorTelemetryEnabled, 0))
+  {
+      // Then check the stored value.
+      if (isOBCProcessorTelemetryEnabled > 0)
+      {          
+        enableTelemetry(ESAT_OBCProcessorTelemetry.packetIdentifier());
+      }
+      else
+      {
+        disableTelemetry(ESAT_OBCProcessorTelemetry.packetIdentifier());
+      }
+  }
+  else
+  {
+    // Default is enabled for legacy issues.
+    enableTelemetry(ESAT_OBCProcessorTelemetry.packetIdentifier());
+  }          
 }
 
 void ESAT_OBCSubsystemClass::beginTelecommands()
