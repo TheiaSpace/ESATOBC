@@ -20,6 +20,7 @@
 
 #include "ESAT_OBC-telecommands/ESAT_OBCEnableTelemetryTelecommand.h"
 #include "ESAT_OBC-subsystems/ESAT_OBCSubsystem.h"
+#include "../ESAT_OBC-telemetry/ESAT_OBCProcessorTelemetry.h"
 
 boolean ESAT_OBCEnableTelemetryTelecommandClass::handleUserData(ESAT_CCSDSPacket packet)
 {
@@ -32,6 +33,11 @@ boolean ESAT_OBCEnableTelemetryTelecommandClass::handleUserData(ESAT_CCSDSPacket
   else
   {
     ESAT_OBCSubsystem.enableTelemetry(identifier);
+    if (identifier == ESAT_OBCProcessorTelemetry.packetIdentifier())
+    {
+        boolean telemetyEnabled = true;
+        (void) ESAT_OBCSubsystem.ESAT_OBCProcessorTelemetryEnableStatusStorage.write((char&) telemetyEnabled, 0);
+    }
     return true;
   }
 }

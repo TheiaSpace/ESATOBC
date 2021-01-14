@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Theia Space, Universidad Politécnica de Madrid
+ * Copyright (C) 2018, 2021 Theia Space, Universidad Politécnica de Madrid
  *
  * This file is part of Theia Space's ESAT OBC library.
  *
@@ -20,6 +20,7 @@
 
 #include "ESAT_OBC-telecommands/ESAT_OBCDisableTelemetryTelecommand.h"
 #include "ESAT_OBC-subsystems/ESAT_OBCSubsystem.h"
+#include "../ESAT_OBC-telemetry/ESAT_OBCProcessorTelemetry.h"
 
 boolean ESAT_OBCDisableTelemetryTelecommandClass::handleUserData(ESAT_CCSDSPacket packet)
 {
@@ -32,6 +33,11 @@ boolean ESAT_OBCDisableTelemetryTelecommandClass::handleUserData(ESAT_CCSDSPacke
   else
   {
     ESAT_OBCSubsystem.disableTelemetry(identifier);
+    if (identifier == ESAT_OBCProcessorTelemetry.packetIdentifier())
+    {
+        boolean telemetyEnabled = false;
+        (void) ESAT_OBCSubsystem.ESAT_OBCProcessorTelemetryEnableStatusStorage.write((char&) telemetyEnabled, 0);
+    }
     return true;
   }
 }
