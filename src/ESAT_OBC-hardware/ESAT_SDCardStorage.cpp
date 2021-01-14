@@ -21,6 +21,10 @@
 #include "ESAT_OBC-hardware/ESAT_SDCardStorage.h"
 #include <SD.h>
 
+ESAT_SDCardStorage::ESAT_SDCardStorage()
+{
+}
+
 ESAT_SDCardStorage::ESAT_SDCardStorage(const char* filename)
 {
   // Crop filename to the first 8 characters if it is bigger due to

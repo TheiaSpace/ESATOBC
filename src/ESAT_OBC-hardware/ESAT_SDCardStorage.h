@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020, 2021 Theia Space, Universidad Politécnica de Madrid
+ * Copyright (C) 2021 Theia Space, Universidad Politécnica de Madrid
  *
  * This file is part of Theia Space's ESAT OBC library.
  *
@@ -34,6 +34,9 @@
 class ESAT_SDCardStorage
 {
   public:
+    // Default constructor.
+    ESAT_SDCardStorage();
+    
     // Creates a SD-Card storage instance.
     // Requires the name of the file where to store the data.
     // Due to a file system limitation, filename is limited to 
