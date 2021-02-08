@@ -33,11 +33,7 @@ boolean ESAT_OBCDisableTelemetryTelecommandClass::handleUserData(ESAT_CCSDSPacke
   else
   {
     ESAT_OBCSubsystem.disableTelemetry(identifier);
-    if (identifier == ESAT_OBCProcessorTelemetry.packetIdentifier())
-    {
-        boolean telemetyEnabled = false;
-        (void) ESAT_OBCSubsystem.ESAT_OBCProcessorTelemetryEnableStatusStorage.write((char&) telemetyEnabled, 0);
-    }
+    ESAT_OBCSubsystem.writeEnabledTelemetryList();
     return true;
   }
 }

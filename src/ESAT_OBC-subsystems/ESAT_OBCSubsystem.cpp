@@ -21,7 +21,6 @@
 #include "ESAT_OBC-subsystems/ESAT_OBCSubsystem.h"
 #include "ESAT_OBC-hardware/ESAT_OBCLED.h"
 #include "ESAT_OBC-hardware/ESAT_TelemetryStorage.h"
-#include "ESAT_OBC-hardware/ESAT_SDCardStorage.h"
 #include "ESAT_OBC-telecommands/ESAT_OBCDisableTelemetryTelecommand.h"
 #include "ESAT_OBC-telecommands/ESAT_OBCDownloadStoredTelemetryTelecommand.h"
 #include "ESAT_OBC-telecommands/ESAT_OBCEnableTelemetryTelecommand.h"
@@ -54,37 +53,21 @@ void ESAT_OBCSubsystemClass::begin()
 
 void ESAT_OBCSubsystemClass::beginHardware()
 {
-  ESAT_OBCProcessorTelemetryEnableStatusStorage = ESAT_SDCardStorage(OBC_PROCESSOR_TELEMETRY_ENABLE_STATUS_STORAGE_FILENAME);
   storeTelemetry = false;
   ESAT_OBCLED.begin();
 }
 
 void ESAT_OBCSubsystemClass::beginTelemetry()
 {
+  // The list of enabled telemetry packets is persistent and must be
+  // read from a configuration file.  The housekeeping telemetry will
+  // be enabled on startup regardless of what the configuration file
+  // says, though, so that the satellite isn't silent.
+  readEnabledTelemetryList();
   addTelemetry(ESAT_OBCHousekeepingTelemetry);
   enableTelemetry(ESAT_OBCHousekeepingTelemetry.packetIdentifier());
   addTelemetry(ESAT_OBCLinesTelemetry);
-  disableTelemetry(ESAT_OBCLinesTelemetry.packetIdentifier());
   addTelemetry(ESAT_OBCProcessorTelemetry);
-  char isOBCProcessorTelemetryEnabled;
-  // If SD-card read was successful.
-  if (ESAT_OBCProcessorTelemetryEnableStatusStorage.read(isOBCProcessorTelemetryEnabled, 0))
-  {
-      // Then check the stored value.
-      if (isOBCProcessorTelemetryEnabled > 0)
-      {          
-        enableTelemetry(ESAT_OBCProcessorTelemetry.packetIdentifier());
-      }
-      else
-      {
-        disableTelemetry(ESAT_OBCProcessorTelemetry.packetIdentifier());
-      }
-  }
-  else
-  {
-    // Default is enabled for legacy issues.
-    enableTelemetry(ESAT_OBCProcessorTelemetry.packetIdentifier());
-  }          
 }
 
 void ESAT_OBCSubsystemClass::beginTelecommands()
@@ -117,6 +100,17 @@ void ESAT_OBCSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& packet)
   // A telecommand packet dispatcher hides the complexity of dispatching
   // and handling telecommands.
   (void) telecommandPacketDispatcher.dispatch(packet);
+}
+
+void ESAT_OBCSubsystemClass::readEnabledTelemetryList()
+{
+  // The enabled telemetry list will be empty if reading it from
+  // storage fails for some reason (for example, if the configuration
+  // file is missing).  This means that, by default, all telemetry
+  // packets are disabled.
+  File file = SD.open(ENABLED_TELEMETRY_FILENAME, FILE_READ);
+  (void) enabledTelemetry.readFrom(file);
+  file.close();
 }
 
 boolean ESAT_OBCSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
@@ -180,6 +174,13 @@ void ESAT_OBCSubsystemClass::update()
   pendingTelemetry = availableAndEnabledTelemetry;
   // - toggle the OBC LED.
   ESAT_OBCLED.toggle();
+}
+
+void ESAT_OBCSubsystemClass::writeEnabledTelemetryList()
+{
+  File file = SD.open(ENABLED_TELEMETRY_FILENAME, FILE_WRITE);
+  (void) enabledTelemetry.writeTo(file);
+  file.close();
 }
 
 void ESAT_OBCSubsystemClass::writeTelemetry(ESAT_CCSDSPacket& packet)
