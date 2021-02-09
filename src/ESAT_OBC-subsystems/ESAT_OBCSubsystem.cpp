@@ -41,7 +41,6 @@ void ESAT_OBCSubsystemClass::addTelecommand(ESAT_CCSDSTelecommandPacketHandler& 
 void ESAT_OBCSubsystemClass::addTelemetry(ESAT_CCSDSTelemetryPacketContents& telemetry)
 {
   telemetryPacketBuilder.add(telemetry);
-  enableTelemetry(telemetry.packetIdentifier());
 }
 
 void ESAT_OBCSubsystemClass::begin()
