@@ -108,6 +108,7 @@ void ESAT_OBCSubsystemClass::readEnabledTelemetryList()
   // file is missing).  This means that, by default, all telemetry
   // packets are disabled.
   File file = SD.open(ENABLED_TELEMETRY_FILENAME, FILE_READ);
+  file.seek(0);
   (void) enabledTelemetry.readFrom(file);
   file.close();
 }
@@ -178,6 +179,7 @@ void ESAT_OBCSubsystemClass::update()
 void ESAT_OBCSubsystemClass::writeEnabledTelemetryList()
 {
   File file = SD.open(ENABLED_TELEMETRY_FILENAME, FILE_WRITE);
+  file.seek(0);
   (void) enabledTelemetry.writeTo(file);
   file.close();
 }
