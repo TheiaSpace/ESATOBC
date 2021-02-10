@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017, 2018, 2019 Theia Space, Universidad Politécnica de Madrid
+ * Copyright (C) 2017, 2018, 2019, 2021 Theia Space, Universidad Politécnica de Madrid
  *
  * This file is part of Theia Space's ESAT OBC library.
  *
@@ -41,14 +41,13 @@ void ESAT_OBCSubsystemClass::addTelecommand(ESAT_CCSDSTelecommandPacketHandler& 
 void ESAT_OBCSubsystemClass::addTelemetry(ESAT_CCSDSTelemetryPacketContents& telemetry)
 {
   telemetryPacketBuilder.add(telemetry);
-  enableTelemetry(telemetry.packetIdentifier());
 }
 
 void ESAT_OBCSubsystemClass::begin()
 {
-  beginTelemetry();
-  beginTelecommands();
   beginHardware();
+  beginTelemetry();
+  beginTelecommands();  
 }
 
 void ESAT_OBCSubsystemClass::beginHardware()
@@ -59,12 +58,15 @@ void ESAT_OBCSubsystemClass::beginHardware()
 
 void ESAT_OBCSubsystemClass::beginTelemetry()
 {
+  // The list of enabled telemetry packets is persistent and must be
+  // read from a configuration file.  The housekeeping telemetry will
+  // be enabled on startup regardless of what the configuration file
+  // says, though, so that the satellite isn't silent.
+  readEnabledTelemetry();
   addTelemetry(ESAT_OBCHousekeepingTelemetry);
   enableTelemetry(ESAT_OBCHousekeepingTelemetry.packetIdentifier());
   addTelemetry(ESAT_OBCLinesTelemetry);
-  disableTelemetry(ESAT_OBCLinesTelemetry.packetIdentifier());
   addTelemetry(ESAT_OBCProcessorTelemetry);
-  enableTelemetry(ESAT_OBCProcessorTelemetry.packetIdentifier());
 }
 
 void ESAT_OBCSubsystemClass::beginTelecommands()
@@ -97,6 +99,18 @@ void ESAT_OBCSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& packet)
   // A telecommand packet dispatcher hides the complexity of dispatching
   // and handling telecommands.
   (void) telecommandPacketDispatcher.dispatch(packet);
+}
+
+void ESAT_OBCSubsystemClass::readEnabledTelemetry()
+{
+  // The enabled telemetry list will be empty if reading it from
+  // storage fails for some reason (for example, if the configuration
+  // file is missing).  This means that, by default, all telemetry
+  // packets are disabled.
+  File file = SD.open(ENABLED_TELEMETRY_FILENAME, FILE_READ);
+  file.seek(0);
+  (void) enabledTelemetry.readFrom(file);
+  file.close();
 }
 
 boolean ESAT_OBCSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
@@ -160,6 +174,14 @@ void ESAT_OBCSubsystemClass::update()
   pendingTelemetry = availableAndEnabledTelemetry;
   // - toggle the OBC LED.
   ESAT_OBCLED.toggle();
+}
+
+void ESAT_OBCSubsystemClass::writeEnabledTelemetry()
+{
+  File file = SD.open(ENABLED_TELEMETRY_FILENAME, FILE_WRITE);
+  file.seek(0);
+  (void) enabledTelemetry.writeTo(file);
+  file.close();
 }
 
 void ESAT_OBCSubsystemClass::writeTelemetry(ESAT_CCSDSPacket& packet)
