@@ -40,7 +40,7 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
     // True when commanded to store telemetry.  False when commanded
     // not to store telemetry.
     boolean storeTelemetry;
-    
+
     // Register a telecommand packet handler.
     void addTelecommand(ESAT_CCSDSTelecommandPacketHandler& telecommand);
 
@@ -118,7 +118,7 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
                                        MINOR_VERSION_NUMBER,
                                        PATCH_VERSION_NUMBER,
                                        ESAT_OBCClock);
-    
+
     // Configure the hardware modules used by the OBC subsystem.
     void beginHardware();
 

@@ -20,7 +20,6 @@
 
 #include "ESAT_OBC-telecommands/ESAT_OBCDisableTelemetryTelecommand.h"
 #include "ESAT_OBC-subsystems/ESAT_OBCSubsystem.h"
-#include "../ESAT_OBC-telemetry/ESAT_OBCProcessorTelemetry.h"
 
 boolean ESAT_OBCDisableTelemetryTelecommandClass::handleUserData(ESAT_CCSDSPacket packet)
 {

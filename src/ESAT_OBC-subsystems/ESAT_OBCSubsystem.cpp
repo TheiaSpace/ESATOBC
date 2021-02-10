@@ -47,7 +47,7 @@ void ESAT_OBCSubsystemClass::begin()
 {
   beginHardware();
   beginTelemetry();
-  beginTelecommands();  
+  beginTelecommands();
 }
 
 void ESAT_OBCSubsystemClass::beginHardware()
