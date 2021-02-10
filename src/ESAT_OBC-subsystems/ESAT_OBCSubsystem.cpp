@@ -62,7 +62,7 @@ void ESAT_OBCSubsystemClass::beginTelemetry()
   // read from a configuration file.  The housekeeping telemetry will
   // be enabled on startup regardless of what the configuration file
   // says, though, so that the satellite isn't silent.
-  readEnabledTelemetryList();
+  readEnabledTelemetry();
   addTelemetry(ESAT_OBCHousekeepingTelemetry);
   enableTelemetry(ESAT_OBCHousekeepingTelemetry.packetIdentifier());
   addTelemetry(ESAT_OBCLinesTelemetry);
@@ -101,7 +101,7 @@ void ESAT_OBCSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& packet)
   (void) telecommandPacketDispatcher.dispatch(packet);
 }
 
-void ESAT_OBCSubsystemClass::readEnabledTelemetryList()
+void ESAT_OBCSubsystemClass::readEnabledTelemetry()
 {
   // The enabled telemetry list will be empty if reading it from
   // storage fails for some reason (for example, if the configuration
@@ -176,7 +176,7 @@ void ESAT_OBCSubsystemClass::update()
   ESAT_OBCLED.toggle();
 }
 
-void ESAT_OBCSubsystemClass::writeEnabledTelemetryList()
+void ESAT_OBCSubsystemClass::writeEnabledTelemetry()
 {
   File file = SD.open(ENABLED_TELEMETRY_FILENAME, FILE_WRITE);
   file.seek(0);

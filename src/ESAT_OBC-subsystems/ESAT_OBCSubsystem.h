@@ -85,7 +85,7 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
     virtual void update();
 
     // Write the list of enabled telemetry packets to a configuration file.
-    void writeEnabledTelemetryList();
+    void writeEnabledTelemetry();
 
    // Send a telemetry packet to this subsystem.
     void writeTelemetry(ESAT_CCSDSPacket& packet);
@@ -129,7 +129,7 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
     void beginTelemetry();
 
     // Read the list of enabled telemetry packets from the configuration file.
-    void readEnabledTelemetryList();
+    void readEnabledTelemetry();
 
     // Read the next stored telemetry packet and fill the given packet buffer.
     // Return true on success; otherwise return false.
