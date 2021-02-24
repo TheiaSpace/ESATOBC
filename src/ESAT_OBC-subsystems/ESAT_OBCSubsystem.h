@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017, 2018, 2019, 2020 Theia Space, Universidad Politécnica de Madrid
+ * Copyright (C) 2017, 2018, 2019, 2020, 2021 Theia Space, Universidad Politécnica de Madrid
  *
  * This file is part of Theia Space's ESAT OBC library.
  *
@@ -84,6 +84,9 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
     // Update the subsystem.
     virtual void update();
 
+    // Write the list of enabled telemetry packets to a configuration file.
+    void writeEnabledTelemetry();
+
    // Send a telemetry packet to this subsystem.
     void writeTelemetry(ESAT_CCSDSPacket& packet);
 
@@ -93,8 +96,10 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
 
     // Version numbers.
     static const byte MAJOR_VERSION_NUMBER = 4;
-    static const byte MINOR_VERSION_NUMBER = 6;
+    static const byte MINOR_VERSION_NUMBER = 7;
     static const byte PATCH_VERSION_NUMBER = 0;
+
+    const char* ENABLED_TELEMETRY_FILENAME = "ENABLETM";
 
     // List of enabled telemetry packet identifiers.
     ESAT_FlagContainer enabledTelemetry;
@@ -122,6 +127,9 @@ class ESAT_OBCSubsystemClass: public ESAT_Subsystem
 
     // Configure the telemetry packets of the OBC subsystem.
     void beginTelemetry();
+
+    // Read the list of enabled telemetry packets from the configuration file.
+    void readEnabledTelemetry();
 
     // Read the next stored telemetry packet and fill the given packet buffer.
     // Return true on success; otherwise return false.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Theia Space, Universidad Politécnica de Madrid
+ * Copyright (C) 2018, 2021 Theia Space, Universidad Politécnica de Madrid
  *
  * This file is part of Theia Space's ESAT OBC library.
  *
@@ -32,6 +32,7 @@ boolean ESAT_OBCEnableTelemetryTelecommandClass::handleUserData(ESAT_CCSDSPacket
   else
   {
     ESAT_OBCSubsystem.enableTelemetry(identifier);
+    ESAT_OBCSubsystem.writeEnabledTelemetry();
     return true;
   }
 }

@@ -1,6 +1,6 @@
 ﻿ESATOBC NEWS -- history of changes.
 
-Copyright (C) 2018, 2019, 2020 Theia Space, Universidad Politécnica de Madrid
+Copyright (C) 2018, 2019, 2020, 2021 Theia Space, Universidad Politécnica de Madrid
 
 This file is part of Theia Space's ESAT OBC library.
 
@@ -18,6 +18,10 @@ You should have received a copy of the GNU General Public License
 along with Theia Space's ESAT OBC library.  If not, see
 <http://www.gnu.org/licenses/>.
 
+* Changes in ESATOBC 4.7.0, 2021-02-10
+
+** The telemetry enable value is persistent beyond power resets for
+non-housekeeping packets (these ones always start enabled).
 
 * Changes in ESATOBC 4.6.0, 2020-02-27
 
