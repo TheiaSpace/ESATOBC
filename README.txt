@@ -1,4 +1,4 @@
-Copyright (C) 2017, 2018, 2019, 2020 Theia Space, Universidad Politécnica de
+Copyright (C) 2017, 2018, 2019, 2020, 2021 Theia Space, Universidad Politécnica de
 Madrid
 
 This file is part of Theia Space's ESAT OBC library.
@@ -18,7 +18,7 @@ along with Theia Space's ESAT OBC library.  If not, see
 <http://www.gnu.org/licenses/>.
 
 
-ESAT OBC library version 4.6.0.
+ESAT OBC library version 4.7.0
 
 On-Board Computer (OBC) for ESAT.
 
