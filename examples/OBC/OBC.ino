@@ -1,6 +1,6 @@
 /*
- * ESAT OBC Main Program version 4.7.0
- * Copyright (C) 2017, 2018, 2019, 2020 Theia Space, Universidad Politécnica
+ * ESAT OBC Main Program version 4.8.0
+ * Copyright (C) 2017, 2018, 2019, 2020, 2021 Theia Space, Universidad Politécnica
  * de Madrid.
  *
  * This program is free software: you can redistribute it and/or modify
