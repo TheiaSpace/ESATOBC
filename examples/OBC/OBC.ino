@@ -172,6 +172,7 @@ void setup()
   ESAT_OBCSubsystem.begin();
   ESAT_EPSSubsystem.begin();
   ESAT_ADCSSubsystem.begin();
+  ESAT_COMSubsystem.begin();
   ESAT_WifiSubsystem.begin(wifiReaderBuffer,
                            sizeof(wifiReaderBuffer),
                            wifiPacketDataBuffer,
@@ -183,6 +184,7 @@ void setup()
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_OBCSubsystem);
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_EPSSubsystem);
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ADCSSubsystem);
+  ESAT_OnBoardDataHandling.registerSubsystem(ESAT_COMSubsystem);
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_WifiSubsystem);
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ExampleSubsystem);
   if (ESAT_ThermalPayloadSubsystem.enabled)
