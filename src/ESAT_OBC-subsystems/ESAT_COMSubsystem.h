@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Theia Space, Universidad Politécnica de Madrid
+ * Copyright (C) 2020, 2021 Theia Space, Universidad Politécnica de Madrid
  *
  * This file is part of Theia Space's ESAT OBC library.
  *
@@ -24,8 +24,8 @@
 #include <Arduino.h>
 #include "ESAT_OBC-subsystems/ESAT_Subsystem.h"
 
-// Interface to the COM (radio communications) subsystem from the point 
-// of view of the on-board data handling subsystem.  There is a global 
+// Interface to the COM (radio communications) subsystem from the point
+// of view of the on-board data handling subsystem.  There is a global
 // instance: ESAT_COMSubsystem.  This should be the only instance of
 // ESAT_COMSubsystemClass.  Register the ESAT COM subsystem on the
 // on-board data handling with
@@ -52,16 +52,17 @@ class ESAT_COMSubsystemClass: public ESAT_Subsystem
     // otherwise return false.
     boolean readTelemetry(ESAT_CCSDSPacket& packet);
 
+    // Handles the periodic tasks required for a proper operation
+    // of the subsystem.
     void update();
 
    // Send a telemetry packet to this subsystem.
     void writeTelemetry(ESAT_CCSDSPacket& packet);
 
   private:
-  
     // I2C address of the COM board.
     static const byte ADDRESS = 3;
-	
+
     // Unique identifier of the subsystem.
     static const word APPLICATION_PROCESS_IDENTIFIER = 5;
 
@@ -69,8 +70,8 @@ class ESAT_COMSubsystemClass: public ESAT_Subsystem
     static const byte MAJOR_VERSION_NUMBER = 1;
     static const byte MINOR_VERSION_NUMBER = 0;
     static const byte PATCH_VERSION_NUMBER = 0;
-	
-	// Wait this number of microseconds between successive chunks when
+
+    // Wait this number of microseconds between successive chunks when
     // writing packets to the COM board.
     static const word MICROSECONDS_BETWEEN_CHUNKS = 1000;
 

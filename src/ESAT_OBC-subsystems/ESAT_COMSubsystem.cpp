@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Theia Space, Universidad Politécnica de Madrid
+ * Copyright (C) 2020, 2021 Theia Space, Universidad Politécnica de Madrid
  *
  * This file is part of Theia Space's ESAT OBC library.
  *
@@ -39,20 +39,14 @@ void ESAT_COMSubsystemClass::handleTelecommand(ESAT_CCSDSPacket& packet)
   (void) ESAT_I2CMaster.writePacket(packet,
                                     ADDRESS,
                                     MICROSECONDS_BETWEEN_CHUNKS);
-									// TODO
-									// Check microseconds
 }
 
 boolean ESAT_COMSubsystemClass::readTelecommand(ESAT_CCSDSPacket& packet)
 {
-	
   // We read telecommand packets from the COM board with our
   // CCSDS-Space-Packet-over-I2C protocol.
-  
-  // TODO
-  // May need a while loop to empty the incoming telecommand buffer
   return ESAT_I2CMaster.readTelecommand(packet,
-										ADDRESS);
+         ADDRESS);
 }
 
 boolean ESAT_COMSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
@@ -60,13 +54,11 @@ boolean ESAT_COMSubsystemClass::readTelemetry(ESAT_CCSDSPacket& packet)
 	return ESAT_I2CMaster.readNextTelemetry(packet, ADDRESS);
 }
 
-
 void ESAT_COMSubsystemClass::setTime()
 {
   // To set the time of the COM board, we send it the telecommand to
   // do so with our CCSDS-Space-Packet-over-I2C protocol.
-  const byte packetDataBufferLength =
-    ESAT_CCSDSSecondaryHeader::LENGTH + 7;
+  const byte packetDataBufferLength = ESAT_CCSDSSecondaryHeader::LENGTH + 7;
   byte packetDataBuffer[packetDataBufferLength];
   ESAT_CCSDSPacket packet(packetDataBuffer, packetDataBufferLength);
   const ESAT_Timestamp timestamp = ESAT_OBCClock.read();
@@ -80,7 +72,6 @@ void ESAT_COMSubsystemClass::setTime()
   packet.writeTimestamp(timestamp);
   handleTelecommand(packet);
 }
-
 
 void ESAT_COMSubsystemClass::update()
 {
