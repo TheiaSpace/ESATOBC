@@ -17,6 +17,10 @@
  * along with Theia Space's ESAT OBC library.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+ 
+#ifndef ARDUINO_ESAT_OBC
+#error Wrong board: you need to use the ESAT-OBC board with this program.
+#endif
 
 #include <ESAT_OnBoardDataHandling.h>
 
