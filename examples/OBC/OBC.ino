@@ -1,6 +1,6 @@
 /*
- * ESAT OBC Main Program version 4.7.0
- * Copyright (C) 2017, 2018, 2019, 2020 Theia Space, Universidad Politécnica
+ * ESAT OBC Main Program version 4.8.0
+ * Copyright (C) 2017, 2018, 2019, 2020, 2021 Theia Space, Universidad Politécnica
  * de Madrid.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,6 +17,10 @@
  * along with Theia Space's ESAT OBC library.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+ 
+#ifndef ARDUINO_ESAT_OBC
+#error Wrong board: you need to use the ESAT-OBC board with this program.
+#endif
 
 #include <ESAT_OnBoardDataHandling.h>
 
@@ -172,6 +176,7 @@ void setup()
   ESAT_OBCSubsystem.begin();
   ESAT_EPSSubsystem.begin();
   ESAT_ADCSSubsystem.begin();
+  ESAT_COMSubsystem.begin();
   ESAT_WifiSubsystem.begin(wifiReaderBuffer,
                            sizeof(wifiReaderBuffer),
                            wifiPacketDataBuffer,
@@ -183,6 +188,7 @@ void setup()
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_OBCSubsystem);
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_EPSSubsystem);
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ADCSSubsystem);
+  ESAT_OnBoardDataHandling.registerSubsystem(ESAT_COMSubsystem);
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_WifiSubsystem);
   ESAT_OnBoardDataHandling.registerSubsystem(ESAT_ExampleSubsystem);
   if (ESAT_ThermalPayloadSubsystem.enabled)

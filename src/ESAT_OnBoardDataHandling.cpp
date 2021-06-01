@@ -231,7 +231,7 @@ void ESAT_OnBoardDataHandlingClass::updateSubsystems()
 
 void ESAT_OnBoardDataHandlingClass::writeTelemetry(ESAT_CCSDSPacket& packet)
 {
-  // The telemetry packe is written to the subsystems and to the USB
+  // The telemetry packet is written to the subsystems and to the USB
   // packet writer.  The packet is passed to the subsystems as a
   // reference, so the subsystems can modify the read/write pointer;
   // to ensure that it is at the start of the packet data, the packet
